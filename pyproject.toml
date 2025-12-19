@@ -4,10 +4,17 @@ version = "0.1.0"
 description = ""
 authors = ["Lukas Rosenthaler <lukas.rosenthaler@unibas.ch>"]
 readme = "README.md"
+packages = [{ include = "oldap_tools", from = "src" }]
+
 
 [tool.poetry.dependencies]
 python = "^3.13"
+oldaplib = "^0.3.28"
+typer = "^0.20.0"
+rdflib = "^7.5.0"
 
+[tool.poetry.scripts]
+oldap-tools = "oldap_tools.cli:main"
 
 [build-system]
 requires = ["poetry-core"]
