@@ -1,45 +1,39 @@
-import sys
-from argparse import ArgumentParser
+import logging
 from pathlib import Path
 
+import typer
 from oldaplib.src.connection import Connection
 from oldaplib.src.helpers.oldaperror import OldapError
-from oldaplib.src.oldaplist_helpers import load_list_from_yaml, print_sublist
+from oldaplib.src.oldaplist_helpers import load_list_from_yaml
 from oldaplib.src.project import Project
 
+log = logging.getLogger(__name__)
 
-def load_list():
-    parser = ArgumentParser(prog="load_list",
-                            description="Loads YAML file with hierarchical list.")
-    parser.add_argument("file", help="YAML file with hierarchical list")
-    parser.add_argument('-v', '--verbose', action='store_true', help="Show some informational output")
-    parser.add_argument('-u', '--user', required=True, help="Username")
-    parser.add_argument('-p', '--password', required=True, help="Password")
-    parser.add_argument('--project', required=True, help="Project ID")
-    #parser.add_argument('-h', '--help', help="Show help information")
-    args = parser.parse_args()
+def load_list(project_id: str,
+              graphdb_base: str,
+              repo: str,
+              filepath: Path,
+              user: str,
+              password: str,
+              graphdb_user: str | None = None,
+              graphdb_password: str | None = None):
 
     try:
-        connection = Connection(server='http://localhost:7200',
-                                repo="oldap",
-                                userId=args.user,
-                                credentials=args.password,
+        connection = Connection(server=graphdb_base,
+                                repo=repo,
+                                dbuser=graphdb_user,
+                                dbpassword=graphdb_password,
+                                userId=user,
+                                credentials=password,
                                 context_name="DEFAULT")
-        project = Project.read(connection, args.project)
-        path = Path(args.file)
+        project = Project.read(connection, project_id)
         listnodes = load_list_from_yaml(con=connection,
-                                        project=args.project,
-                                        filepath=path)
-        if args.verbose:
-            listnode = listnodes[0]
-            print_sublist(listnode.nodes)
+                                        project=project_id,
+                                        filepath=filepath)
     except OldapError as error:
-        print(f'ERROR: {error}!', file=sys.stderr)
-        exit(-1)
+        log.error(f"ERROR: Failed to connect to GraphDB database at '{graphdb_base}': {error}")
+        raise typer.Exit(code=1)
     except FileNotFoundError as error:
-        print(f'ERROR: {error}!', file=sys.stderr)
-        exit(-1)
+        log.error(f"ERROR: File {filepath} not found': {error}")
+        raise typer.Exit(code=1)
 
-
-if __name__ == '__main__':
-    load_list()

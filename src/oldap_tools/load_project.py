@@ -7,9 +7,9 @@ import requests
 import typer
 from oldaplib.src.cachesingleton import CacheSingletonRedis
 from oldaplib.src.connection import Connection
-from oldaplib.src.helpers.oldaperror import OldapErrorAlreadyExists, OldapError
+from oldaplib.src.helpers.oldaperror import OldapErrorAlreadyExists, OldapError, OldapErrorNotFound
+from oldaplib.src.helpers.serializer import serializer
 from oldaplib.src.user import User
-from rdflib import serializer
 
 log = logging.getLogger(__name__)
 
@@ -51,28 +51,34 @@ def import_trig_gz(
         auth=auth,
         timeout=timeout,
     )
-    if r.status_code != 200:
+    if r.status_code < 200 or r.status_code >= 300:
         log.error(f"ERROR: Request to '{url}' failed with status code {r.status_code}")
         raise typer.Exit(code=1)
 
 
-def load_oldap(graphdb_base: str,
-               repo: str,
-               inf: Path,
-               user: str | None,
-               password: str | None) -> None:
+def load_project(graphdb_base: str,
+                 repo: str,
+                 inf: Path,
+                 user: str,
+                 password: str,
+                 graphdb_user: str | None = None,
+                 graphdb_password: str | None = None) -> None:
     cache = CacheSingletonRedis()
     cache.clear()
 
-    inf = inf.with_suffix(".trig.gz")
     with open(inf, "rb") as f:
         import_trig_gz(graphdb_base=graphdb_base,
                        repo=repo,
-                       auth=(user, password) if user and password else None,
+                       auth=(graphdb_user, graphdb_password) if graphdb_user and graphdb_password else None,
                        trig_gz=f.read())
 
     try:
-        con = Connection(server=graphdb_base, userId=user, credentials=password, repo=repo)
+        con = Connection(server=graphdb_base,
+                         repo=repo,
+                         dbuser=graphdb_user,
+                         dbpassword=graphdb_password,
+                         userId=user,
+                         credentials=password)
     except OldapError as e:
         log.error(f"ERROR: Failed to connect to GraphDB database at '{graphdb_base}': {e}")
         raise typer.Exit(code=1)
@@ -84,7 +90,7 @@ def load_oldap(graphdb_base: str,
                 user = json.loads(user_json, object_hook=serializer.make_decoder_hook(connection=con))
                 try:
                     existing_user = User.read(con=con, userId=user.userId)
-                except OldapErrorAlreadyExists:
+                except OldapErrorNotFound:
                     # user does not exist -> create it
                     user.create(keep_dates=True)
                     log.info(f"Created user {user.userId}")

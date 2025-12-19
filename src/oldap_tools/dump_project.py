@@ -50,15 +50,22 @@ def export_graphs_as_trig(
     return trig.decode("utf-8") if isinstance(trig, bytes) else trig
 
 
-def dump_oldap(project_id: str,
-               graphdb_base: str,
-               repo: str,
-               out: Path,
-               include_data: bool,
-               user: str | None,
-               password: str | None):
+def dump_project(project_id: str,
+                 graphdb_base: str,
+                 repo: str,
+                 out: Path,
+                 include_data: bool,
+                 user: str,
+                 password: str,
+                 graphdb_user: str | None = None,
+                 graphdb_password: str | None = None):
     try:
-        con = Connection(server=graphdb_base, userId=user, credentials=password, repo=repo)
+        con = Connection(server=graphdb_base,
+                         repo = repo,
+                         dbuser=graphdb_user,
+                         dbpassword=graphdb_password,
+                         userId=user,
+                         credentials=password)
     except OldapError as e:
         log.error(f"ERROR: Failed to connect to GraphDB database at '{graphdb_base}': {e}")
         raise typer.Exit(code=1)
@@ -114,8 +121,6 @@ def dump_oldap(project_id: str,
         auth=None,  # or None
     )
 
-
-    out = out.with_suffix(".trig.gz")
     with gzip.open(out, "wt", encoding="utf-8", newline="") as f:
         f.write(trig)
 
