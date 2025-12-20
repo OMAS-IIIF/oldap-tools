@@ -1,5 +1,5 @@
 [![PyPI version](https://badge.fury.io/py/oldap-tools.svg)](https://badge.fury.io/py/oldap-tools)
-
+[![GitHub release](https://img.shields.io/github/v/release/OMAS-IIIF/oldap-tools)](https://github.com/OMAS-IIIF/oldap-tools/releases)
 # OLADP tools
 
 OLDAP tools is a CLI tool for managing parts of the OLDAP framework. It allows to
