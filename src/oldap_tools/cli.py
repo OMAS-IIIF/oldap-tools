@@ -1,10 +1,9 @@
-import enum
 from pathlib import Path
 
 import typer
 from importlib.metadata import version
 
-from dump_list import dump_list
+from oldap_tools.dump_list import dump_list
 from oldap_tools.config import AppConfig
 from oldap_tools.dump_project import dump_project
 from oldap_tools.load_list import load_list

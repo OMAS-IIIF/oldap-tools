@@ -96,12 +96,15 @@ def load_project(graphdb_base: str,
                     log.info(f"Created user {user.userId}")
                 else:
                     # user exists -> update it
-                    if user.hasPermissions != existing_user.hasPermissions or user.inProject != existing_user.inProject:
+                    if user.hasRole != existing_user.hasRole or user.inProject != existing_user.inProject:
                         existing_user.delete()
                         user.create(keep_dates=True)
                         log.info(f"Updated (replaced) user {user.userId}")
                     pass
             if line.startswith('#<<'):
                 break
+    cache = CacheSingletonRedis()
+    cache.clear()
+
 
 

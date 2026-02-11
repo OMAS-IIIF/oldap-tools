@@ -11,7 +11,7 @@ from oldaplib.src.connection import Connection
 from oldaplib.src.helpers.context import Context
 from oldaplib.src.helpers.oldaperror import OldapError
 from oldaplib.src.helpers.serializer import serializer
-from oldaplib.src.permissionset import PermissionSet
+from oldaplib.src.role import Role
 from oldaplib.src.project import Project
 from oldaplib.src.user import User
 from oldaplib.src.xsd.xsd_qname import Xsd_QName
@@ -97,11 +97,11 @@ def dump_project(project_id: str,
     trig += project.trig_to_str(created=project.created, modified=project.modified, indent=1)
     trig += " .\n\n"
 
-    trig += "\n#\n# PermissionSet info\n#\n"
-    permsetQNames = PermissionSet.search(con=con, definedByProject=project.projectIri)
-    for permsetQName in permsetQNames:
-        permset = PermissionSet.read(con=con, qname=permsetQName)
-        trig += permset.trig_to_str(created=permset.created, modified=permset.modified, indent=1)
+    trig += "\n#\n# Roles info\n#\n"
+    roleQNames = Role.search(con=con, definedByProject=project.projectIri)
+    for roleQName in roleQNames:
+        role = Role.read(con=con, qname=roleQName)
+        trig += role.trig_to_str(created=role.created, modified=role.modified, indent=1)
         trig += " .\n\n"
 
     trig += "\n}\n\n"
