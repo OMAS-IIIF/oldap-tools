@@ -13,7 +13,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Install your tool from PyPI
-ARG OLDAP_TOOLS_VERSION=0.1.4
+ARG OLDAP_TOOLS_VERSION=0.1.5
 RUN pip install --no-cache-dir oldap-tools==${OLDAP_TOOLS_VERSION}
 
 # Default entrypoint

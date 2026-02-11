@@ -115,8 +115,8 @@ def dump_project(project_id: str,
         project_graphs.append(str(context.qname2iri(Xsd_QName(project.projectShortName, "data"))))
 
     trig += export_graphs_as_trig(
-        graphdb_base="http://localhost:7200",
-        repo="oldap",
+        graphdb_base=graphdb_base,
+        repo=repo,
         graph_iris=project_graphs,
         auth=None,  # or None
     )
