@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "oldap-tools"
-version = "0.1.5"
+version = "0.1.6"
 description = "CLI tools for OLDAP"
 authors = ["Lukas Rosenthaler <lukas.rosenthaler@unibas.ch>"]
 readme = "README.md"
@@ -19,7 +19,7 @@ bump-my-version = "^0.28.1"
 oldap-tools = "oldap_tools.cli:main"
 
 [tool.bumpversion]
-current_version = "0.1.5"
+current_version = "0.1.6"
 commit = true
 tag = true
 message = "Bump version: {current_version} → {new_version}"
