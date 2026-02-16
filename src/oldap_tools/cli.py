@@ -8,8 +8,10 @@ from oldap_tools.config import AppConfig
 from oldap_tools.dump_project import dump_project
 from oldap_tools.load_list import load_list
 from oldap_tools.load_project import load_project
+from oldap_tools.load_sysgraph import load_sysgraph, restore_sysgraph, SystemGraphs
 
 from oldap_tools.logging import setup_logging
+
 
 app = typer.Typer(
     no_args_is_help=True,
@@ -109,6 +111,48 @@ def list_load(ctx: typer.Context,
               filepath=inf,
               user=cfg.user,
               password=cfg.password)
+
+sys = typer.Typer(help="System graphs commands")
+app.add_typer(sys, name="system")
+
+@sys.command("load", help="Load system graph from trig")
+def sys_load(ctx: typer.Context,
+             graph: SystemGraphs = typer.Argument(..., help="System graph to load. Allowed are 'oldap', 'shared', 'admin'."),
+             inf: Path = typer.Option(Path("oldap.trig"),"--inf", "-i", help="Input file for load")):
+    cfg = ctx.obj
+    load_sysgraph(graphdb_base=cfg.graphdb_base,
+                  repo=cfg.repo,
+                  inf=inf,
+                  graph=graph,
+                  user=cfg.user,
+                  password=cfg.password,
+                  graphdb_user=cfg.graphdb_user,
+                  graphdb_password=cfg.graphdb_password)
+
+
+@sys.command("restore", help="Restore system graph from last backup")
+def sys_restore(ctx: typer.Context,
+                graph: SystemGraphs = typer.Argument(..., help="System graph to restore. Allowed are 'oldap', 'shared', 'admin'.")):
+    cfg = ctx.obj
+    restore_sysgraph(graphdb_base=cfg.graphdb_base,
+                     repo=cfg.repo,
+                     graph=graph,
+                     user=cfg.user,
+                     password=cfg.password,
+                     graphdb_user=cfg.graphdb_user,
+                     graphdb_password=cfg.graphdb_password)
+
+@sys.command("purge", help="Purge system graph from last backup")
+def sys_purge(ctx: typer.Context,
+                graph: SystemGraphs = typer.Argument(..., help="System graph to purge backup. Allowed are 'oldap', 'shared', 'admin'.")):
+    cfg = ctx.obj
+    purge_sysgraph(graphdb_base=cfg.graphdb_base,
+                   repo=cfg.repo,
+                   graph=graph,
+                   user=cfg.user,
+                   password=cfg.password,
+                   graphdb_user=cfg.graphdb_user,
+                   graphdb_password=cfg.graphdb_password)
 
 def main():
     app()
