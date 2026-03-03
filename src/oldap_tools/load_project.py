@@ -24,11 +24,13 @@ def import_trig(
     r = requests.post(
         url,
         data=trig_str.encode("utf-8"),
-        headers={"Content-Type": "application/trig"},
+        headers={
+            "Content-Type": "application/trig"
+        },
         auth=auth,
         timeout=timeout,
     )
-    if r.status_code != 200:
+    if r.status_code < 200 or r.status_code >= 300:
         log.error(f"ERROR: Request to '{url}' failed with status code {r.status_code}")
         raise typer.Exit(code=1)
 

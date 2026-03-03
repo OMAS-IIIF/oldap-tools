@@ -8,7 +8,7 @@ from oldap_tools.config import AppConfig
 from oldap_tools.dump_project import dump_project
 from oldap_tools.load_list import load_list
 from oldap_tools.load_project import load_project
-from oldap_tools.load_sysgraph import load_sysgraph, restore_sysgraph, SystemGraphs
+from oldap_tools.load_sysgraph import load_sysgraph, restore_sysgraph, purge_sysgraph, SystemGraphs
 
 from oldap_tools.logging import setup_logging
 
