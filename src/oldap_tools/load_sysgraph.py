@@ -41,13 +41,18 @@ def load_sysgraph(
 
     try:
         if graph == 'oldap':
-            con.move_graph(Xsd_QName('oldap:shacl'), Xsd_QName('oldap:shacl_bak'))
-            con.move_graph(Xsd_QName('oldap:onto'), Xsd_QName('oldap:onto_bak'))
+            if con.graph_exists(Xsd_QName('oldap:shacl')):
+                con.move_graph(Xsd_QName('oldap:shacl'), Xsd_QName('oldap:shacl_bak'))
+            if con.graph_exists(Xsd_QName('oldap:onto')):
+                con.move_graph(Xsd_QName('oldap:onto'), Xsd_QName('oldap:onto_bak'))
         if graph == 'shared':
-            con.move_graph(Xsd_QName('shared:shacl'), Xsd_QName('shared:shacl_bak'))
-            con.move_graph(Xsd_QName('shared:onto'), Xsd_QName('shared:onto_bak'))
+            if con.graph_exists(Xsd_QName('shared:shacl')):
+                con.move_graph(Xsd_QName('shared:shacl'), Xsd_QName('shared:shacl_bak'))
+            if con.graph_exists(Xsd_QName('shared:onto')):
+                con.move_graph(Xsd_QName('shared:onto'), Xsd_QName('shared:onto_bak'))
         if graph == 'admin':
-            con.move_graph(Xsd_QName('oldap:admin'), Xsd_QName('oldap:admin_bak'))
+            if con.graph_exists(Xsd_QName('oldap:admin')):
+                con.move_graph(Xsd_QName('oldap:admin'), Xsd_QName('oldap:admin_bak'))
     except OldapError as e:
         log.error(f"Failed to move graphs '{graph}': {e}")
         raise typer.Exit(code=1)
