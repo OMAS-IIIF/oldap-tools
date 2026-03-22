@@ -27,6 +27,7 @@ def dump_project(project_id: str,
                  include_data: bool,
                  include_model: bool,
                  include_admin: bool,
+                 include_lists: bool,
                  user: str,
                  password: str,
                  graphdb_user: str | None = None,
@@ -82,9 +83,11 @@ def dump_project(project_id: str,
 
     project_graphs = []
     if include_model:
-        project_graphs.append(str(context.qname2iri(Xsd_QName(project.projectShortName, "shacl")))),
-        project_graphs.append(str(context.qname2iri(Xsd_QName(project.projectShortName, "onto")))),
-        project_graphs.append(str(context.qname2iri(Xsd_QName(project.projectShortName, "lists")))),
+        project_graphs.append(str(context.qname2iri(Xsd_QName(project.projectShortName, "shacl"))))
+        project_graphs.append(str(context.qname2iri(Xsd_QName(project.projectShortName, "onto"))))
+
+    if include_lists:
+        project_graphs.append(str(context.qname2iri(Xsd_QName(project.projectShortName, "lists"))))
 
     if include_data:
         project_graphs.append(str(context.qname2iri(Xsd_QName(project.projectShortName, "data"))))
