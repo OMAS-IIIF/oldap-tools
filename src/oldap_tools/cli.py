@@ -52,6 +52,9 @@ def project_dump(
         project_id: str = typer.Argument(..., help="Project ID (e.g. swissbritnet, hyha, ...)"),
         out: Path = typer.Option(Path("<project>.trig.gz"), "--out", "-o", help="Output dump file"),
         include_data: bool = typer.Option(True, "--data/--no-data", help="Include '<project>:data' graph"),
+        include_model: bool = typer.Option(True, "--model/--no-model", help="Include '<project>:model' graph"),
+        include_admin: bool = typer.Option(True, "--admin/--no-admin", help="Include '<project>:admin' graph"),
+        include_lists: bool = typer.Option(True, "--lists/--no-lists", help="Include '<project>:lists' graph")
 ):
     """Export project data."""
     if out == Path("<project>.trig.gz"):
@@ -63,6 +66,9 @@ def project_dump(
                  repo=cfg.repo,
                  out=out,
                  include_data=include_data,
+                 include_model=include_model,
+                 include_admin=include_admin,
+                 include_lists=include_lists,
                  user=cfg.user,
                  password=cfg.password,
                  graphdb_user=cfg.graphdb_user,
