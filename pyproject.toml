@@ -12,7 +12,7 @@ packages = [{ include = "oldap_tools", from = "src" }]
 python = "^3.12,<4.0"
 typer = "^0.20.0"
 rdflib = "^7.5.0"
-oldaplib = "^0.5.0"
+oldaplib = "^0.5.1"
 bump-my-version = "^1.2.7"
 
 [tool.poetry.scripts]
