@@ -609,18 +609,18 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
 name = "idna"
-version = "3.11"
+version = "3.12"
 description = "Internationalized Domain Names in Applications (IDNA)"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "idna-3.11-py3-none-any.whl", hash = "sha256:771a87f49d9defaf64091e6e6fe9c18d4833f140bd19464795bc32d966ca37ea"},
-    {file = "idna-3.11.tar.gz", hash = "sha256:795dafcc9c04ed0c1fb032c2aa73654d8e8c5023a7df64a53f39190ada629902"},
+    {file = "idna-3.12-py3-none-any.whl", hash = "sha256:60ffaa1858fac94c9c124728c24fcde8160f3fb4a7f79aa8cdd33a9d1af60a67"},
+    {file = "idna-3.12.tar.gz", hash = "sha256:724e9952cc9e2bd7550ea784adb098d837ab5267ef67a1ab9cf7846bdbdd8254"},
 ]
 
 [package.extras]
-all = ["flake8 (>=7.1.1)", "mypy (>=1.11.2)", "pytest (>=8.3.2)", "ruff (>=0.6.2)"]
+all = ["mypy (>=1.11.2)", "pytest (>=8.3.2)", "ruff (>=0.6.2)"]
 
 [[package]]
 name = "isodate"
@@ -1066,14 +1066,14 @@ files = [
 
 [[package]]
 name = "oldaplib"
-version = "0.5.1"
+version = "0.5.2"
 description = "Open Media Access Server Library (Linked Open Data middleware/RESTApi)"
 optional = false
 python-versions = "<4.0,>=3.12"
 groups = ["main"]
 files = [
-    {file = "oldaplib-0.5.1-py3-none-any.whl", hash = "sha256:7f678b1fdbc2d2c09c07f47f60f6cb3b56efb822921c7c82f94677aef4a0b4b2"},
-    {file = "oldaplib-0.5.1.tar.gz", hash = "sha256:51b977940b41245a87a1949631f126cddb1dd851df0126c8a64a21aedb5d12cb"},
+    {file = "oldaplib-0.5.2-py3-none-any.whl", hash = "sha256:4fa9ad48cb714328f3275a0befda8e07ca693b361b32ee283b46d1af020882ac"},
+    {file = "oldaplib-0.5.2.tar.gz", hash = "sha256:0f10c49cba2f071098692aa1d8676e40adaaa80ebc49e69facbf5b8a2845d6ef"},
 ]
 
 [package.dependencies]
