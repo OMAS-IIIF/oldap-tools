@@ -6,6 +6,7 @@ ontology:
   external_ontologies: map(str(), include('external_ontology'), required=False)
   classes: map(str(), include('resource_class'), required=False)
   standalone_properties: map(str(), include('property'), required=False)
+  lucene_connectors: map(str(), include('lucene_connector'), required=False)
 
 project:
   shortname: str()
@@ -60,3 +61,14 @@ property:
   order: any(num(), null(), required=False)
   group: any(str(), null(), required=False)
   editor: any(str(), null(), required=False)
+
+lucene_connector:
+  types: list(str())
+  languages: list(str(), required=False)
+  fields: map(str(), any(), required=False)
+  readonly: bool(required=False)
+  detectFields: bool(required=False)
+  importGraph: bool(required=False)
+  skipInitialIndexing: bool(required=False)
+  boostProperties: list(any(), required=False)
+  stripMarkup: bool(required=False)

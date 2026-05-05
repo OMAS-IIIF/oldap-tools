@@ -178,6 +178,7 @@ def ontology_load(
         ctx: typer.Context,
         inf: Path = typer.Option(..., "--inf", "-i", help="Input ontology YAML file"),
         mode: str = typer.Option("update", "--mode", "-m", help="Load mode: 'update' or 'replace'"),
+        connectors: str = typer.Option("skip", "--connectors", help="Lucene connector mode: 'skip', 'create', or 'replace'"),
         backup: bool = typer.Option(True, "--backup/--no-backup", help="Dump model and lists before loading"),
         backup_out: Path | None = typer.Option(None, "--backup-out", help="Backup TriG gzip output file")):
     cfg = ctx.obj
@@ -187,6 +188,7 @@ def ontology_load(
                   user=cfg.user,
                   password=cfg.password,
                   mode=mode,
+                  connector_mode=connectors,
                   backup=backup,
                   backup_out=backup_out,
                   graphdb_user=cfg.graphdb_user,

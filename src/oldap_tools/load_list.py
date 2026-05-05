@@ -2,6 +2,7 @@ import logging
 from pathlib import Path
 
 import typer
+from oldaplib.src.cachesingleton import CacheSingletonRedis
 from oldaplib.src.connection import Connection
 from oldaplib.src.helpers.oldaperror import OldapError
 from oldaplib.src.oldaplist_helpers import load_list_from_yaml
@@ -27,6 +28,7 @@ def load_list(project_id: str,
                                 credentials=password,
                                 context_name="DEFAULT")
         project = Project.read(connection, project_id)
+        CacheSingletonRedis().clear()
         listnodes = load_list_from_yaml(con=connection,
                                         project=project_id,
                                         filepath=filepath)
@@ -36,4 +38,3 @@ def load_list(project_id: str,
     except FileNotFoundError as error:
         log.error(f"ERROR: File {filepath} not found': {error}")
         raise typer.Exit(code=1)
-

@@ -114,7 +114,7 @@ This command validates an ontology YAML file against the bundled schema:
 
 This command loads or updates a project datamodel from a YAML file:
 
-```oldap-tools [common_options] ontology load --inf <filename> [--mode update|replace] [--backup|--no-backup] [--backup-out <filename>]```
+```oldap-tools [common_options] ontology load --inf <filename> [--mode update|replace] [--connectors create|replace] [--backup|--no-backup] [--backup-out <filename>]```
 
 By default, the command makes a TriG gzip backup of the model and list graphs before loading. The
 `replace` mode deletes the existing datamodel graphs (`<project>:shacl` and `<project>:onto`) and
@@ -125,6 +125,10 @@ Set an attribute to `null` in update mode to delete it, for example `label`, `co
 
 Hierarchical lists can be referenced as external YAML files or defined inline. A property can point to
 a list node class with `to_class: list:<ListId>`.
+
+Lucene connectors can be declared in the same YAML file. They are skipped by default and only applied
+when `--connectors create` or `--connectors replace` is passed. Single-property fields can use a QName
+directly; multi-step fields use `chain`.
 
 Example:
 
@@ -164,6 +168,24 @@ ontology:
           max_count: 1
           order: 1
           editor: TEXT_FIELD
+
+  lucene_connectors:
+    fasnacht_story:
+      types:
+        - fasnacht:Story
+      fields:
+        content: fasnacht:storyContent
+        abstract: schema:abstract
+
+    fasnacht_archive:
+      types:
+        - fasnacht:ArchiveObject
+        - fasnacht:ArchiveMediaObject
+      fields:
+        representedArchiveObjectTitle:
+          chain:
+            - fasnacht:archiveMediaObjectOf
+            - fasnacht:archiveObjectTitle
 ```
 
 ## Ontology dump

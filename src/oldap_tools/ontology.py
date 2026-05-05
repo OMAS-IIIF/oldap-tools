@@ -1,4 +1,5 @@
 import gzip
+import json
 import logging
 import tempfile
 from datetime import datetime
@@ -20,6 +21,7 @@ from oldaplib.src.enums.propertyclassattr import PropClassAttr
 from oldaplib.src.enums.resourceclassattr import ResClassAttribute
 from oldaplib.src.enums.xsd_datatypes import XsdDatatypes
 from oldaplib.src.externalontology import ExternalOntology
+from oldaplib.src.helpers.context import Context
 from oldaplib.src.helpers.langstring import LangString
 from oldaplib.src.helpers.oldaperror import OldapError, OldapErrorNotFound
 from oldaplib.src.oldaplist import OldapList
@@ -178,14 +180,27 @@ def _build_property(con: Connection, project: Project, spec: dict[str, Any], lis
     )
 
 
+def _list_exists_in_store(con: Connection, project: Project, list_id: str) -> bool:
+    context = Context(name=con.context_name)
+    context[project.projectShortName] = project.namespaceIri
+    list_iri = f"{project.projectShortName}:{list_id}"
+    sparql = context.sparql_context
+    sparql += f"""
+    ASK {{
+        GRAPH {project.projectShortName}:lists {{
+            {list_iri} a oldap:OldapList .
+        }}
+    }}
+    """
+    return con.query(sparql)["boolean"]
+
+
 def _load_lists(con: Connection, project: Project, base_dir: Path, lists_spec: dict[str, Any] | None) -> dict[str, OldapList]:
     loaded: dict[str, OldapList] = {}
     for list_id, spec in (lists_spec or {}).items():
-        try:
+        if _list_exists_in_store(con, project, list_id):
             loaded[list_id] = OldapList.read(con=con, project=project, oldapListId=list_id)
             continue
-        except OldapErrorNotFound:
-            pass
         if isinstance(spec, str):
             path = (base_dir / spec).resolve()
             load_list_from_yaml(con=con, project=project, filepath=path)
@@ -196,6 +211,8 @@ def _load_lists(con: Connection, project: Project, base_dir: Path, lists_spec: d
             load_list_from_yaml(con=con, project=project, filepath=path)
         else:
             raise ValueError(f'Invalid list specification for "{list_id}"')
+        if not _list_exists_in_store(con, project, list_id):
+            raise ValueError(f'List "{list_id}" was loaded, but no triples were found in {project.projectShortName}:lists.')
         loaded[list_id] = OldapList.read(con=con, project=project, oldapListId=list_id)
     return loaded
 
@@ -236,6 +253,128 @@ def _build_external_ontology(con: Connection, project: Project, prefix: str, spe
         proposedDatatypePropertyClass=set(datatype_properties or []),
         proposedObjectPropertyClass=set(object_properties or []),
     )
+
+
+def _ontology_context(project: Project, ontology: dict[str, Any]) -> Context:
+    context = Context(name="OLDAP_TOOLS_ONTOLOGY")
+    context[project.projectShortName] = project.namespaceIri
+    project_spec = ontology.get("project") or {}
+    if project_spec.get("shortname") and project_spec.get("namespace"):
+        context[project_spec["shortname"]] = project_spec["namespace"]
+    for prefix, spec in (ontology.get("external_ontologies") or {}).items():
+        if spec.get("namespace"):
+            context[prefix] = spec["namespace"]
+    return context
+
+
+def _qname_to_iri(context: Context, value: str) -> str:
+    if value.startswith(("http://", "https://", "urn:")):
+        return value
+    return str(context.qname2iri(Xsd_QName(value)))
+
+
+def _lucene_field_defaults(field_name: str, spec: str | list[str] | dict[str, Any], context: Context) -> dict[str, Any]:
+    if isinstance(spec, str):
+        field_spec: dict[str, Any] = {"chain": [spec]}
+    elif isinstance(spec, list):
+        field_spec = {"chain": spec}
+    elif isinstance(spec, dict):
+        field_spec = spec
+    else:
+        raise ValueError(f'Invalid Lucene field specification for "{field_name}"')
+
+    chain = field_spec.get("chain", field_spec.get("propertyChain"))
+    if isinstance(chain, str):
+        chain = [chain]
+    if not chain:
+        raise ValueError(f'Lucene field "{field_name}" needs a chain/propertyChain.')
+
+    result = {
+        "fieldName": field_name,
+        "propertyChain": [_qname_to_iri(context, item) for item in chain],
+        "indexed": True,
+        "stored": True,
+        "analyzed": True,
+        "multivalued": True,
+        "ignoreInvalidValues": False,
+        "facet": False,
+    }
+    for key in ("indexed", "stored", "analyzed", "multivalued", "ignoreInvalidValues", "facet"):
+        if key in field_spec:
+            result[key] = field_spec[key]
+    return result
+
+
+def _build_lucene_payload(name: str, spec: dict[str, Any], context: Context) -> dict[str, Any]:
+    fields = spec.get("fields") or {}
+    if not isinstance(fields, dict):
+        raise ValueError(f'Lucene connector "{name}" fields must be a mapping.')
+    payload = {
+        "fields": [_lucene_field_defaults(field_name, field_spec, context) for field_name, field_spec in fields.items()],
+        "languages": spec.get("languages", ["en", "de", "fr", "it"]),
+        "types": [_qname_to_iri(context, item) for item in spec.get("types", [])],
+        "readonly": False,
+        "detectFields": False,
+        "importGraph": False,
+        "skipInitialIndexing": False,
+        "boostProperties": [],
+        "stripMarkup": False,
+    }
+    if not payload["types"]:
+        raise ValueError(f'Lucene connector "{name}" needs at least one type.')
+    for key in ("readonly", "detectFields", "importGraph", "skipInitialIndexing", "boostProperties", "stripMarkup"):
+        if key in spec:
+            payload[key] = spec[key]
+    return payload
+
+
+def _lucene_connector_exists(con: Connection, connector_name: str) -> bool:
+    sparql = f"""
+    PREFIX luc: <http://www.ontotext.com/connectors/lucene#>
+    ASK {{
+        ?connector luc:listConnectors "inst:{connector_name}" .
+    }}
+    """
+    return con.query(sparql)["boolean"]
+
+
+def _drop_lucene_connector(con: Connection, connector_name: str) -> None:
+    sparql = f"""
+    PREFIX luc: <http://www.ontotext.com/connectors/lucene#>
+    PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
+    INSERT DATA {{
+        inst:{connector_name} luc:dropConnector [] .
+    }}
+    """
+    con.update_query(sparql)
+
+
+def _create_lucene_connector(con: Connection, connector_name: str, payload: dict[str, Any]) -> None:
+    payload_json = json.dumps(payload, ensure_ascii=False, indent=2)
+    sparql = f"""
+    PREFIX luc: <http://www.ontotext.com/connectors/lucene#>
+    PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
+    INSERT DATA {{
+        inst:{connector_name} luc:createConnector '''{payload_json}''' .
+    }}
+    """
+    con.update_query(sparql)
+
+
+def _apply_lucene_connectors(con: Connection, project: Project, ontology: dict[str, Any], mode: str) -> None:
+    if mode == "skip":
+        return
+    if mode not in {"replace", "create"}:
+        raise ValueError('Connector mode must be "skip", "replace", or "create".')
+    context = _ontology_context(project, ontology)
+    for connector_name, spec in (ontology.get("lucene_connectors") or {}).items():
+        exists = _lucene_connector_exists(con, connector_name)
+        if exists and mode == "create":
+            raise ValueError(f'Lucene connector "{connector_name}" already exists.')
+        if exists and mode == "replace":
+            _drop_lucene_connector(con, connector_name)
+        if not exists or mode == "replace":
+            _create_lucene_connector(con, connector_name, _build_lucene_payload(connector_name, spec, context))
 
 
 def _build_resource_class(
@@ -393,6 +532,7 @@ def load_ontology(
     user: str,
     password: str,
     mode: str,
+    connector_mode: str,
     backup: bool,
     backup_out: Path | None,
     graphdb_user: str | None = None,
@@ -432,6 +572,7 @@ def load_ontology(
             _apply_update(con, project, ontology, lists)
         else:
             raise ValueError(f'Unknown mode "{mode}"')
+        _apply_lucene_connectors(con, project, ontology, connector_mode)
         CacheSingletonRedis().clear()
     except (OldapError, ValueError) as err:
         log.error(f"ERROR: Failed to load ontology: {err}")
