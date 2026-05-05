@@ -9,6 +9,7 @@ from oldap_tools.dump_project import dump_project
 from oldap_tools.load_list import load_list
 from oldap_tools.load_project import load_project
 from oldap_tools.load_sysgraph import load_sysgraph, restore_sysgraph, purge_sysgraph, SystemGraphs
+from oldap_tools.ontology import dump_ontology, load_ontology, validate_ontology_yaml
 
 from oldap_tools.logging import setup_logging
 
@@ -159,6 +160,55 @@ def sys_purge(ctx: typer.Context,
                    password=cfg.password,
                    graphdb_user=cfg.graphdb_user,
                    graphdb_password=cfg.graphdb_password)
+
+ontology = typer.Typer(help="Ontology datamodel commands")
+app.add_typer(ontology, name="ontology")
+
+
+@ontology.command("validate", help="Validate an ontology YAML file.")
+def ontology_validate(
+        inf: Path = typer.Option(..., "--inf", "-i", help="Input ontology YAML file"),
+        schema: Path | None = typer.Option(None, "--schema", "-s", help="Alternative Yamale schema file")):
+    validate_ontology_yaml(inf=inf, schema=schema)
+    typer.echo(f"{inf} is valid")
+
+
+@ontology.command("load", help="Load or update an ontology datamodel from YAML.")
+def ontology_load(
+        ctx: typer.Context,
+        inf: Path = typer.Option(..., "--inf", "-i", help="Input ontology YAML file"),
+        mode: str = typer.Option("update", "--mode", "-m", help="Load mode: 'update' or 'replace'"),
+        backup: bool = typer.Option(True, "--backup/--no-backup", help="Dump model and lists before loading"),
+        backup_out: Path | None = typer.Option(None, "--backup-out", help="Backup TriG gzip output file")):
+    cfg = ctx.obj
+    load_ontology(graphdb_base=cfg.graphdb_base,
+                  repo=cfg.repo,
+                  inf=inf,
+                  user=cfg.user,
+                  password=cfg.password,
+                  mode=mode,
+                  backup=backup,
+                  backup_out=backup_out,
+                  graphdb_user=cfg.graphdb_user,
+                  graphdb_password=cfg.graphdb_password)
+
+
+@ontology.command("dump", help="Dump an ontology datamodel to YAML or TriG.")
+def ontology_dump(
+        ctx: typer.Context,
+        project_id: str = typer.Argument(..., help="Project ID (e.g. fasnacht, hyha, ...)"),
+        out: Path = typer.Option(Path("ontology.yaml"), "--out", "-o", help="Output file"),
+        fmt: str = typer.Option("yaml", "--format", "-f", help="Output format: 'yaml' or 'trig'")):
+    cfg = ctx.obj
+    dump_ontology(graphdb_base=cfg.graphdb_base,
+                  repo=cfg.repo,
+                  project_id=project_id,
+                  out=out,
+                  fmt=fmt,
+                  user=cfg.user,
+                  password=cfg.password,
+                  graphdb_user=cfg.graphdb_user,
+                  graphdb_password=cfg.graphdb_password)
 
 def main():
     app()

@@ -21,6 +21,9 @@ The CLI tool provides the following commands:
 - `oldap-tools project load`: Load a project from a gzipped TriG file created by oldap-tools
 - `oldap-tools list dump`: Dump a hierarchical list to a YAML file
 - `oldap-tools list load`: Load a hierarchical list from a YAML file
+- `oldap-tools ontology validate`: Validate an ontology datamodel YAML file
+- `oldap-tools ontology load`: Load or update an ontology datamodel from YAML
+- `oldap-tools ontology dump`: Dump an ontology datamodel to YAML or TriG
 
 # Common options
 
@@ -101,4 +104,71 @@ The options are as follows:
 - `--inf`, `-i`: Name of the input file (required)
 - `<project_id>`: Project identifier (project shortname)
 
+## Ontology validate
 
+This command validates an ontology YAML file against the bundled schema:
+
+```oldap-tools [common_options] ontology validate --inf <filename>```
+
+## Ontology load
+
+This command loads or updates a project datamodel from a YAML file:
+
+```oldap-tools [common_options] ontology load --inf <filename> [--mode update|replace] [--backup|--no-backup] [--backup-out <filename>]```
+
+By default, the command makes a TriG gzip backup of the model and list graphs before loading. The
+`replace` mode deletes the existing datamodel graphs (`<project>:shacl` and `<project>:onto`) and
+recreates them from YAML. The `update` mode compares the YAML classes and properties with the current
+datamodel and lets `oldaplib` perform the corresponding updates.
+Set an attribute to `null` in update mode to delete it, for example `label`, `comment`, `name`,
+`description`, `min_count`, or `max_count`.
+
+Hierarchical lists can be referenced as external YAML files or defined inline. A property can point to
+a list node class with `to_class: list:<ListId>`.
+
+Example:
+
+```yaml
+ontology:
+  project:
+    shortname: fasnacht
+    iri: https://fasnacht.digital
+    namespace: http://fasnacht.digital/ns/
+    start: 2025-06-01
+
+  lists:
+    CreativeCommons: CreativeCommons.yaml
+
+  external_ontologies:
+    schema:
+      namespace: https://schema.org/
+      label: schema.org
+      proposedResourceClass:
+        - Person
+        - Organization
+
+  classes:
+    fasnacht:Person:
+      label:
+        en: Person
+        de: Person
+      superclass:
+        - schema:Person
+      properties:
+        - iri: schema:familyName
+          datatype: xsd:string
+          name:
+            en: Family name
+            de: Nachname
+          min_count: 1
+          max_count: 1
+          order: 1
+          editor: TEXT_FIELD
+```
+
+## Ontology dump
+
+This command dumps an ontology datamodel either as YAML or as a TriG gzip file containing the
+`<project>:shacl`, `<project>:onto`, and `<project>:lists` graphs:
+
+```oldap-tools [common_options] ontology dump [-out <filename>] [--format yaml|trig] <project_id>```

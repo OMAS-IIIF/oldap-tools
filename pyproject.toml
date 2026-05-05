@@ -6,6 +6,7 @@ authors = ["Lukas Rosenthaler <lukas.rosenthaler@unibas.ch>"]
 readme = "README.md"
 license = "GPL-3.0-only"
 packages = [{ include = "oldap_tools", from = "src" }]
+include = ["src/oldap_tools/schemas/*.yaml"]
 
 
 [tool.poetry.dependencies]
@@ -14,6 +15,8 @@ typer = "^0.20.0"
 rdflib = "^7.5.0"
 oldaplib = "^0.5.1"
 bump-my-version = "^1.2.7"
+pyyaml = "^6.0.2"
+yamale = "^6.1.0"
 
 [tool.poetry.scripts]
 oldap-tools = "oldap_tools.cli:main"

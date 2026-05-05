@@ -1,0 +1,543 @@
+import gzip
+import logging
+import tempfile
+from datetime import datetime
+from importlib import resources
+from pathlib import Path
+from typing import Any
+
+import typer
+import yaml
+import yamale
+from oldaplib.src.cachesingleton import CacheSingletonRedis
+from oldaplib.src.connection import Connection
+from oldaplib.src.datamodel import DataModel
+from oldaplib.src.dtypes.languagein import LanguageIn
+from oldaplib.src.dtypes.namespaceiri import NamespaceIRI
+from oldaplib.src.enums.editor import Editor
+from oldaplib.src.enums.externalontologyattr import ExternalOntologyAttr
+from oldaplib.src.enums.propertyclassattr import PropClassAttr
+from oldaplib.src.enums.resourceclassattr import ResClassAttribute
+from oldaplib.src.enums.xsd_datatypes import XsdDatatypes
+from oldaplib.src.externalontology import ExternalOntology
+from oldaplib.src.helpers.langstring import LangString
+from oldaplib.src.helpers.oldaperror import OldapError, OldapErrorNotFound
+from oldaplib.src.oldaplist import OldapList
+from oldaplib.src.oldaplist_helpers import load_list_from_yaml
+from oldaplib.src.project import Project
+from oldaplib.src.propertyclass import PropertyClass
+from oldaplib.src.resourceclass import ResourceClass
+from oldaplib.src.xsd.xsd_date import Xsd_date
+from oldaplib.src.xsd.xsd_decimal import Xsd_decimal
+from oldaplib.src.xsd.xsd_integer import Xsd_integer
+from oldaplib.src.xsd.xsd_ncname import Xsd_NCName
+from oldaplib.src.xsd.xsd_qname import Xsd_QName
+
+from oldap_tools.dump_project import dump_project
+
+log = logging.getLogger(__name__)
+
+
+PROP_KEY_MAP = {
+    "subproperty_of": "subPropertyOf",
+    "to_class": "toClass",
+    "node_kind": "nodeKind",
+    "language_in": "languageIn",
+    "unique_lang": "uniqueLang",
+    "in": "inSet",
+    "min_length": "minLength",
+    "max_length": "maxLength",
+    "min_exclusive": "minExclusive",
+    "min_inclusive": "minInclusive",
+    "max_exclusive": "maxExclusive",
+    "max_inclusive": "maxInclusive",
+    "less_than": "lessThan",
+    "less_than_or_equals": "lessThanOrEquals",
+    "inverse_of": "inverseOf",
+    "equivalent_property": "equivalentProperty",
+    "min_count": "minCount",
+    "max_count": "maxCount",
+}
+
+ATTR_TO_YAML = {
+    "subPropertyOf": "subproperty_of",
+    "toClass": "to_class",
+    "nodeKind": "node_kind",
+    "languageIn": "language_in",
+    "uniqueLang": "unique_lang",
+    "inSet": "in",
+    "minLength": "min_length",
+    "maxLength": "max_length",
+    "minExclusive": "min_exclusive",
+    "minInclusive": "min_inclusive",
+    "maxExclusive": "max_exclusive",
+    "maxInclusive": "max_inclusive",
+    "lessThan": "less_than",
+    "lessThanOrEquals": "less_than_or_equals",
+    "inverseOf": "inverse_of",
+    "equivalentProperty": "equivalent_property",
+    "minCount": "min_count",
+    "maxCount": "max_count",
+}
+
+
+def _schema_path() -> Path:
+    return Path(str(resources.files("oldap_tools") / "schemas" / "ontology_schema.yaml"))
+
+
+def validate_ontology_yaml(inf: Path, schema: Path | None = None) -> None:
+    schema_file = schema or _schema_path()
+    try:
+        schema_obj = yamale.make_schema(str(schema_file))
+        data = yamale.make_data(str(inf))
+        yamale.validate(schema=schema_obj, data=data)
+    except Exception as err:
+        log.error(f"ERROR: YAML validation failed: {err}")
+        raise typer.Exit(code=1)
+
+
+def _read_yaml(inf: Path) -> dict[str, Any]:
+    validate_ontology_yaml(inf)
+    with inf.open("r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    if not isinstance(data, dict) or not isinstance(data.get("ontology"), dict):
+        log.error("ERROR: Ontology YAML must contain a top-level 'ontology' mapping.")
+        raise typer.Exit(code=1)
+    return data["ontology"]
+
+
+def _as_langstring(value: Any) -> LangString | None:
+    if value is None:
+        return None
+    if isinstance(value, LangString):
+        return value
+    if isinstance(value, str):
+        return LangString([value])
+    if isinstance(value, list):
+        return LangString(value)
+    if isinstance(value, dict):
+        return LangString([f"{text}@{lang}" for lang, text in value.items() if text is not None])
+    raise ValueError(f"Cannot convert {value!r} to LangString")
+
+
+def _as_datatype(value: str | None) -> XsdDatatypes | None:
+    if value is None:
+        return None
+    try:
+        return XsdDatatypes(value)
+    except ValueError:
+        return XsdDatatypes[value]
+
+
+def _resolve_class(value: str | None, lists: dict[str, OldapList]) -> Xsd_QName | None:
+    if value is None:
+        return None
+    if value.startswith("list:"):
+        list_id = value.split(":", 1)[1]
+        if list_id not in lists:
+            raise ValueError(f'Unknown list reference "{value}"')
+        return lists[list_id].node_classIri
+    return Xsd_QName(value)
+
+
+def _property_kwargs(spec: dict[str, Any], lists: dict[str, OldapList]) -> dict[str, Any]:
+    kwargs: dict[str, Any] = {}
+    for yaml_key, value in spec.items():
+        if yaml_key == "iri" or value is None:
+            continue
+        key = PROP_KEY_MAP.get(yaml_key, yaml_key)
+        match key:
+            case "datatype":
+                kwargs[key] = _as_datatype(value)
+            case "toClass":
+                kwargs[key] = _resolve_class(value, lists)
+            case "name" | "description":
+                kwargs[key] = _as_langstring(value)
+            case "languageIn":
+                kwargs[key] = LanguageIn(value)
+            case "editor":
+                kwargs[key] = Editor(value)
+            case "minCount" | "maxCount" | "minLength" | "maxLength":
+                kwargs[key] = Xsd_integer(value)
+            case "order":
+                kwargs[key] = Xsd_decimal(value)
+            case _:
+                kwargs[key] = Xsd_QName(value) if isinstance(value, str) and ":" in value and key not in {"pattern"} else value
+    return kwargs
+
+
+def _build_property(con: Connection, project: Project, spec: dict[str, Any], lists: dict[str, OldapList]) -> PropertyClass:
+    iri = spec.get("iri")
+    if not iri:
+        raise ValueError("Every inline property needs an 'iri'.")
+    return PropertyClass(
+        con=con,
+        project=project,
+        property_class_iri=Xsd_QName(iri),
+        **_property_kwargs(spec, lists),
+    )
+
+
+def _load_lists(con: Connection, project: Project, base_dir: Path, lists_spec: dict[str, Any] | None) -> dict[str, OldapList]:
+    loaded: dict[str, OldapList] = {}
+    for list_id, spec in (lists_spec or {}).items():
+        try:
+            loaded[list_id] = OldapList.read(con=con, project=project, oldapListId=list_id)
+            continue
+        except OldapErrorNotFound:
+            pass
+        if isinstance(spec, str):
+            path = (base_dir / spec).resolve()
+            load_list_from_yaml(con=con, project=project, filepath=path)
+        elif isinstance(spec, dict):
+            with tempfile.NamedTemporaryFile("w", suffix=".yaml", encoding="utf-8", delete=False) as f:
+                yaml.safe_dump({list_id: spec}, f, allow_unicode=True, sort_keys=False)
+                path = Path(f.name)
+            load_list_from_yaml(con=con, project=project, filepath=path)
+        else:
+            raise ValueError(f'Invalid list specification for "{list_id}"')
+        loaded[list_id] = OldapList.read(con=con, project=project, oldapListId=list_id)
+    return loaded
+
+
+def _read_or_create_project(con: Connection, project_spec: dict[str, Any]) -> Project:
+    shortname = project_spec["shortname"]
+    try:
+        return Project.read(con, shortname, ignore_cache=True)
+    except OldapErrorNotFound:
+        missing = [key for key in ("iri", "namespace", "start") if not project_spec.get(key)]
+        if missing:
+            raise ValueError(f'Project "{shortname}" does not exist and YAML is missing: {", ".join(missing)}')
+        project = Project(
+            con=con,
+            projectIri=project_spec["iri"],
+            projectShortName=shortname,
+            namespaceIri=NamespaceIRI(project_spec["namespace"]),
+            projectStart=Xsd_date(str(project_spec["start"])),
+            label=_as_langstring(project_spec.get("label")),
+            comment=_as_langstring(project_spec.get("comment")),
+        )
+        project.create()
+        return project
+
+
+def _build_external_ontology(con: Connection, project: Project, prefix: str, spec: dict[str, Any]) -> ExternalOntology:
+    resource_classes = spec.get("proposedResourceClass", spec.get("resource_classes", []))
+    datatype_properties = spec.get("proposedDatatypePropertyClass", spec.get("datatype_properties", []))
+    object_properties = spec.get("proposedObjectPropertyClass", spec.get("object_properties", []))
+    return ExternalOntology(
+        con=con,
+        projectShortName=project.projectShortName,
+        prefix=Xsd_NCName(prefix),
+        namespaceIri=NamespaceIRI(spec["namespace"]),
+        label=_as_langstring(spec.get("label")),
+        comment=_as_langstring(spec.get("comment")),
+        proposedResourceClass=set(resource_classes or []),
+        proposedDatatypePropertyClass=set(datatype_properties or []),
+        proposedObjectPropertyClass=set(object_properties or []),
+    )
+
+
+def _build_resource_class(
+    con: Connection,
+    project: Project,
+    iri: str,
+    spec: dict[str, Any],
+    lists: dict[str, OldapList],
+) -> ResourceClass:
+    properties = [_build_property(con, project, prop, lists) for prop in spec.get("properties", [])]
+    kwargs: dict[str, Any] = {
+        "label": _as_langstring(spec.get("label")),
+        "comment": _as_langstring(spec.get("comment")),
+        "closed": spec.get("closed"),
+        "properties": properties,
+    }
+    if spec.get("superclass"):
+        kwargs["superclass"] = [Xsd_QName(x) for x in spec["superclass"]]
+    return ResourceClass(con=con, project=project, owlclass_iri=Xsd_QName(iri), **kwargs)
+
+
+def _build_datamodel(con: Connection, project: Project, ontology: dict[str, Any], lists: dict[str, OldapList]) -> DataModel:
+    extontos = [
+        _build_external_ontology(con, project, prefix, spec)
+        for prefix, spec in (ontology.get("external_ontologies") or {}).items()
+    ]
+    propclasses = [
+        _build_property(con, project, {"iri": iri} | spec, lists)
+        for iri, spec in (ontology.get("standalone_properties") or {}).items()
+    ]
+    resclasses = [
+        _build_resource_class(con, project, iri, spec, lists)
+        for iri, spec in (ontology.get("classes") or {}).items()
+    ]
+    return DataModel(con=con, project=project, extontos=extontos, propclasses=propclasses, resclasses=resclasses)
+
+
+def _set_attr(obj: Any, attr: Any, value: Any) -> None:
+    current = obj.get(attr)
+    if current != value:
+        obj[attr] = value
+
+
+def _sync_property(existing: PropertyClass, desired_spec: dict[str, Any], lists: dict[str, OldapList]) -> None:
+    desired = _property_kwargs(desired_spec, lists)
+    for attr in PropClassAttr:
+        fragment = attr.value.fragment
+        if fragment == "type":
+            continue
+        yaml_key = ATTR_TO_YAML.get(fragment, fragment)
+        if fragment in desired:
+            _set_attr(existing, attr, desired[fragment])
+        elif yaml_key in desired_spec or fragment in desired_spec:
+            _set_attr(existing, attr, None)
+
+
+def _sync_resource(existing: ResourceClass, desired_spec: dict[str, Any], desired: ResourceClass, lists: dict[str, OldapList]) -> None:
+    for attr, key in ((ResClassAttribute.LABEL, "label"), (ResClassAttribute.COMMENT, "comment"), (ResClassAttribute.CLOSED, "closed")):
+        if key in desired_spec:
+            _set_attr(existing, attr, desired.get(attr))
+    if "superclass" in desired_spec:
+        _set_attr(existing, ResClassAttribute.SUPERCLASS, desired.get(ResClassAttribute.SUPERCLASS))
+
+    if "properties" not in desired_spec:
+        return
+
+    desired_iris = {Xsd_QName(prop["iri"]) for prop in desired_spec["properties"]}
+    for prop_spec in desired_spec["properties"]:
+        prop_iri = Xsd_QName(prop_spec["iri"])
+        current_prop = existing.get(prop_iri)
+        if current_prop is None:
+            existing[prop_iri] = _build_property(existing._con, existing._project, prop_spec, lists)
+        else:
+            _sync_property(current_prop, prop_spec, lists)
+    for prop_iri, _prop in list(existing.properties_items()):
+        if prop_iri not in desired_iris:
+            del existing[prop_iri]
+
+
+def _apply_update(con: Connection, project: Project, ontology: dict[str, Any], lists: dict[str, OldapList]) -> None:
+    try:
+        model = DataModel.read(con, project, ignore_cache=True)
+    except OldapErrorNotFound:
+        model = DataModel(con=con, project=project)
+        model.create()
+        model = DataModel.read(con, project, ignore_cache=True)
+
+    for prefix, spec in (ontology.get("external_ontologies") or {}).items():
+        key = Xsd_QName(project.projectShortName, prefix)
+        desired = _build_external_ontology(con, project, prefix, spec)
+        existing = model.get(key)
+        if existing is None:
+            model[key] = desired
+        elif isinstance(existing, ExternalOntology):
+            external_attrs = (
+                (ExternalOntologyAttr.LABEL, ("label",)),
+                (ExternalOntologyAttr.COMMENT, ("comment",)),
+                (ExternalOntologyAttr.PROPOSED_RESOURCE_CLASS, ("proposedResourceClass", "resource_classes")),
+                (ExternalOntologyAttr.PROPOSED_DATATYPE_PROPERTY_CLASS, ("proposedDatatypePropertyClass", "datatype_properties")),
+                (ExternalOntologyAttr.PROPOSED_OBJECT_PROPERTY_CLASS, ("proposedObjectPropertyClass", "object_properties")),
+            )
+            for attr, yaml_keys in external_attrs:
+                if any(yaml_key in spec for yaml_key in yaml_keys):
+                    _set_attr(existing, attr, desired.get(attr))
+
+    for iri, spec in (ontology.get("standalone_properties") or {}).items():
+        key = Xsd_QName(iri)
+        spec_with_iri = {"iri": iri} | spec
+        existing = model.get(key)
+        if existing is None:
+            model[key] = _build_property(con, project, spec_with_iri, lists)
+        elif isinstance(existing, PropertyClass):
+            _sync_property(existing, spec_with_iri, lists)
+
+    for iri, spec in (ontology.get("classes") or {}).items():
+        key = Xsd_QName(iri)
+        desired = _build_resource_class(con, project, iri, spec, lists)
+        existing = model.get(key)
+        if existing is None:
+            model[key] = desired
+        elif isinstance(existing, ResourceClass):
+            _sync_resource(existing, spec, desired, lists)
+    model.update()
+
+
+def _connect(
+    graphdb_base: str,
+    repo: str,
+    user: str,
+    password: str,
+    graphdb_user: str | None,
+    graphdb_password: str | None,
+) -> Connection:
+    return Connection(
+        server=graphdb_base,
+        repo=repo,
+        dbuser=graphdb_user,
+        dbpassword=graphdb_password,
+        userId=user,
+        credentials=password,
+        context_name="DEFAULT",
+    )
+
+
+def _backup_path(project_id: str) -> Path:
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    return Path(f"{project_id}-model-backup-{stamp}.trig.gz")
+
+
+def load_ontology(
+    *,
+    graphdb_base: str,
+    repo: str,
+    inf: Path,
+    user: str,
+    password: str,
+    mode: str,
+    backup: bool,
+    backup_out: Path | None,
+    graphdb_user: str | None = None,
+    graphdb_password: str | None = None,
+) -> None:
+    ontology = _read_yaml(inf)
+    con = _connect(graphdb_base, repo, user, password, graphdb_user, graphdb_password)
+    try:
+        project = _read_or_create_project(con, ontology["project"])
+        if backup:
+            out = backup_out or _backup_path(str(project.projectShortName))
+            dump_project(
+                project_id=str(project.projectShortName),
+                graphdb_base=graphdb_base,
+                repo=repo,
+                out=out,
+                include_data=False,
+                include_model=True,
+                include_admin=False,
+                include_lists=True,
+                user=user,
+                password=password,
+                graphdb_user=graphdb_user,
+                graphdb_password=graphdb_password,
+            )
+            typer.echo(f"Backup written to {out}")
+
+        lists = _load_lists(con, project, inf.parent, ontology.get("lists"))
+        if mode == "replace":
+            try:
+                DataModel.read(con, project, ignore_cache=True).delete()
+            except OldapErrorNotFound:
+                pass
+            model = _build_datamodel(con, project, ontology, lists)
+            model.create()
+        elif mode == "update":
+            _apply_update(con, project, ontology, lists)
+        else:
+            raise ValueError(f'Unknown mode "{mode}"')
+        CacheSingletonRedis().clear()
+    except (OldapError, ValueError) as err:
+        log.error(f"ERROR: Failed to load ontology: {err}")
+        raise typer.Exit(code=1)
+
+
+def _plain(value: Any) -> Any:
+    if value is None:
+        return None
+    if isinstance(value, LangString):
+        return {lang.name.lower(): str(text) for lang, text in value.items()}
+    if isinstance(value, (Xsd_QName, Xsd_NCName, NamespaceIRI, XsdDatatypes, Editor)):
+        return str(value)
+    if isinstance(value, (Xsd_integer, Xsd_decimal)):
+        return int(value) if isinstance(value, Xsd_integer) else float(value)
+    if isinstance(value, set):
+        return sorted(_plain(x) for x in value)
+    if hasattr(value, "toRdf"):
+        return str(value)
+    if isinstance(value, dict):
+        return {str(_plain(k)): _plain(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_plain(x) for x in value]
+    return value
+
+
+def _dump_property(prop: PropertyClass) -> dict[str, Any]:
+    result = {"iri": str(prop.property_class_iri)}
+    for attr, value in prop._attributes.items():
+        if attr == PropClassAttr.TYPE:
+            continue
+        key = ATTR_TO_YAML.get(attr.value.fragment, attr.value.fragment)
+        result[key] = _plain(value)
+    return result
+
+
+def _dump_resource(res: ResourceClass) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for attr, value in res.attributes_items():
+        if attr == ResClassAttribute.SUPERCLASS:
+            vals = [str(x) for x in value.keys() if str(x) != "oldap:Thing"]
+            if vals:
+                result["superclass"] = vals
+        else:
+            result[attr.value.fragment] = _plain(value)
+    props = [_dump_property(prop) for _iri, prop in res.properties_items()]
+    if props:
+        result["properties"] = props
+    return result
+
+
+def dump_ontology(
+    *,
+    graphdb_base: str,
+    repo: str,
+    project_id: str,
+    out: Path,
+    fmt: str,
+    user: str,
+    password: str,
+    graphdb_user: str | None = None,
+    graphdb_password: str | None = None,
+) -> None:
+    if fmt not in {"yaml", "trig"}:
+        log.error("ERROR: Output format must be 'yaml' or 'trig'.")
+        raise typer.Exit(code=1)
+    if fmt == "trig":
+        dump_project(
+            project_id=project_id,
+            graphdb_base=graphdb_base,
+            repo=repo,
+            out=out,
+            include_data=False,
+            include_model=True,
+            include_admin=False,
+            include_lists=True,
+            user=user,
+            password=password,
+            graphdb_user=graphdb_user,
+            graphdb_password=graphdb_password,
+        )
+        return
+
+    con = _connect(graphdb_base, repo, user, password, graphdb_user, graphdb_password)
+    try:
+        project = Project.read(con, project_id)
+        model = DataModel.read(con, project, ignore_cache=True)
+    except OldapError as err:
+        log.error(f"ERROR: Failed to dump ontology: {err}")
+        raise typer.Exit(code=1)
+
+    doc: dict[str, Any] = {
+        "ontology": {
+            "project": {
+                "shortname": str(project.projectShortName),
+                "iri": str(project.projectIri),
+                "namespace": str(project.namespaceIri),
+            },
+            "classes": {},
+        }
+    }
+    for qname in model.get_resclasses():
+        doc["ontology"]["classes"][str(qname)] = _dump_resource(model[qname])
+    if out.suffix == ".gz":
+        with gzip.open(out, "wt", encoding="utf-8") as f:
+            yaml.safe_dump(doc, f, allow_unicode=True, sort_keys=False)
+    else:
+        with out.open("w", encoding="utf-8") as f:
+            yaml.safe_dump(doc, f, allow_unicode=True, sort_keys=False)

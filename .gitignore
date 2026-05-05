@@ -10,3 +10,6 @@ build/
 /.DS_Store
 *.gz
 *.yaml
+!fasnacht-onto.yaml
+!src/oldap_tools/schemas/
+!src/oldap_tools/schemas/*.yaml
