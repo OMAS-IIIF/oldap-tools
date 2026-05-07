@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import typer
-from importlib.metadata import version
 
 from oldap_tools.dump_list import dump_list
 from oldap_tools.config import AppConfig
@@ -10,8 +9,15 @@ from oldap_tools.load_list import load_list
 from oldap_tools.load_project import load_project
 from oldap_tools.load_sysgraph import load_sysgraph, restore_sysgraph, purge_sysgraph, SystemGraphs
 from oldap_tools.ontology import dump_ontology, load_ontology, validate_ontology_yaml
+from oldap_tools import __version__
 
 from oldap_tools.logging import setup_logging
+
+
+def version_callback(value: bool) -> None:
+    if value:
+        typer.echo(__version__)
+        raise typer.Exit()
 
 
 app = typer.Typer(
@@ -22,6 +28,14 @@ app = typer.Typer(
 @app.callback()
 def app_callback(ctx: typer.Context,
                  verbose: bool = typer.Option(False, "--verbose", "-v", help="Enable verbose (debug) logging"),
+                 version: bool = typer.Option(
+                     False,
+                     "--version",
+                     "--show-version",
+                     help="Show version information and exit",
+                     callback=version_callback,
+                     is_eager=True,
+                 ),
                  graphdb_base: str = typer.Option("http://localhost:7200", "--graphdb", "-g", help="GraphDB base URL"),
                  repo: str = typer.Option("oldap", "--repo", "-r", help="GraphDB repository"),
                  user: str = typer.Option(..., "--user", "-u", help="OLDAP user"),
@@ -38,11 +52,6 @@ def app_callback(ctx: typer.Context,
         graphdb_user=graphdb_user,
         graphdb_password=graphdb_password
     )
-
-@app.command()
-def show_version():
-    """Show version information."""
-    typer.echo(version("oldap-tools"))
 
 project = typer.Typer(help="Project-related commands")
 app.add_typer(project, name="project")

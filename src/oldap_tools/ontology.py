@@ -444,6 +444,106 @@ def _create_lucene_connector(con: Connection, connector_name: str, payload: dict
     con.update_query(sparql)
 
 
+def _read_lucene_connector_payload(con: Connection, connector_name: str) -> dict[str, Any] | None:
+    if not _lucene_connector_exists(con, connector_name):
+        return None
+    sparql = f"""
+    PREFIX luc: <http://www.ontotext.com/connectors/lucene#>
+    PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
+    SELECT ?options
+    WHERE {{
+        inst:{connector_name} luc:listOptionValues ?options .
+    }}
+    """
+    result = con.query(sparql)
+    bindings = result.get("results", {}).get("bindings", [])
+    if not bindings:
+        return None
+    value = bindings[0].get("options", {}).get("value")
+    if not value:
+        return None
+    return json.loads(value)
+
+
+def _iri_to_yaml_ref(context: Context, value: str) -> str:
+    qname = context.iri2qname(value, validate=False)
+    return str(qname) if qname is not None else value
+
+
+def _lucene_field_yaml(field: dict[str, Any], context: Context) -> tuple[str | None, Any]:
+    field_name = field["fieldName"]
+    chain = [_iri_to_yaml_ref(context, item) for item in field.get("propertyChain", [])]
+    if not chain:
+        raise ValueError(f'Lucene field "{field_name}" has no propertyChain.')
+
+    defaults = {
+        "indexed": True,
+        "stored": True,
+        "analyzed": True,
+        "multivalued": True,
+        "ignoreInvalidValues": False,
+        "facet": False,
+    }
+    extras = {key: field[key] for key, value in defaults.items() if key in field and field[key] != value}
+
+    if len(chain) == 1:
+        auto_name = _lucene_field_name_from_property(chain[0])
+        if field_name == auto_name and not extras:
+            return None, chain[0]
+        if not extras:
+            return field_name, chain[0]
+        return field_name, {"chain": chain[0], **extras}
+
+    return field_name, {"chain": chain, **extras}
+
+
+def _dump_lucene_connector(con: Connection, project: Project) -> dict[str, Any] | None:
+    connector_name = str(project.projectShortName)
+    payload = _read_lucene_connector_payload(con, connector_name)
+    if not payload:
+        return None
+
+    context = Context(name="OLDAP_TOOLS_ONTOLOGY_DUMP")
+    context[project.projectShortName] = project.namespaceIri
+
+    spec: dict[str, Any] = {
+        "types": [_iri_to_yaml_ref(context, item) for item in payload.get("types", [])],
+    }
+    defaults = {
+        "languages": ["en", "de", "fr", "it"],
+        "readonly": False,
+        "detectFields": False,
+        "importGraph": False,
+        "skipInitialIndexing": False,
+        "boostProperties": [],
+        "stripMarkup": False,
+    }
+    for key, default in defaults.items():
+        if key in payload and payload[key] != default:
+            spec[key] = payload[key]
+
+    field_list: list[Any] = []
+    field_map: dict[str, Any] = {}
+    use_field_map = False
+    for field in payload.get("fields", []):
+        field_name, field_spec = _lucene_field_yaml(field, context)
+        if field_name is None:
+            field_list.append(field_spec)
+            if use_field_map:
+                field_map[_lucene_field_name_from_property(field_spec)] = field_spec
+        else:
+            if not use_field_map:
+                field_map.update({_lucene_field_name_from_property(item): item for item in field_list})
+                use_field_map = True
+            field_map[field_name] = field_spec
+    if use_field_map:
+        spec["fields"] = field_map
+    else:
+        spec["fields"] = field_list
+
+    return {connector_name: spec}
+
+
 def _apply_lucene_connectors(con: Connection, project: Project, ontology: dict[str, Any], mode: str) -> None:
     if mode == "skip":
         return
@@ -770,6 +870,9 @@ def dump_ontology(
     }
     for qname in model.get_resclasses():
         doc["ontology"]["classes"][str(qname)] = _dump_resource(model[qname])
+    lucene_connectors = _dump_lucene_connector(con, project)
+    if lucene_connectors:
+        doc["ontology"]["lucene_connectors"] = lucene_connectors
     if out.suffix == ".gz":
         with gzip.open(out, "wt", encoding="utf-8") as f:
             yaml.safe_dump(doc, f, allow_unicode=True, sort_keys=False)
