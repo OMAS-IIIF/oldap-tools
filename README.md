@@ -128,7 +128,8 @@ a list node class with `to_class: list:<ListId>`.
 
 Lucene connectors can be declared in the same YAML file. They are skipped by default and only applied
 when `--connectors create` or `--connectors replace` is passed. Single-property fields can use a QName
-directly; multi-step fields use `chain`.
+directly and get their Lucene field name from the property fragment. Multi-step chains must be given an
+explicit Lucene field name.
 
 Example:
 
@@ -174,8 +175,8 @@ ontology:
       types:
         - fasnacht:Story
       fields:
-        content: fasnacht:storyContent
-        abstract: schema:abstract
+        - fasnacht:storyContent
+        - schema:abstract
 
     fasnacht_archive:
       types:

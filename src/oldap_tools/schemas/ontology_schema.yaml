@@ -65,7 +65,7 @@ property:
 lucene_connector:
   types: list(str())
   languages: list(str(), required=False)
-  fields: map(str(), any(), required=False)
+  fields: any(map(str(), any()), list(any()), required=False)
   readonly: bool(required=False)
   detectFields: bool(required=False)
   importGraph: bool(required=False)

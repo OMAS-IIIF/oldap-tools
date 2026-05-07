@@ -273,6 +273,37 @@ def _qname_to_iri(context: Context, value: str) -> str:
     return str(context.qname2iri(Xsd_QName(value)))
 
 
+def _lucene_field_name_from_property(value: str | list[str] | dict[str, Any]) -> str:
+    if isinstance(value, str):
+        prop = value
+    elif isinstance(value, list) and value:
+        if len(value) > 1:
+            raise ValueError(
+                "Lucene field specifications with multi-step chains need an explicit field name."
+            )
+        prop = value[-1]
+    elif isinstance(value, dict):
+        if value.get("fieldName"):
+            return str(value["fieldName"])
+        chain = value.get("chain", value.get("propertyChain"))
+        if isinstance(chain, str):
+            prop = chain
+        elif isinstance(chain, list) and chain:
+            if len(chain) > 1:
+                raise ValueError(
+                    "Lucene field specifications with multi-step chains need an explicit field name."
+                )
+            prop = chain[-1]
+        else:
+            raise ValueError("Lucene field specification needs a chain/propertyChain.")
+    else:
+        raise ValueError(f'Invalid Lucene field specification "{value}"')
+
+    if prop.startswith(("http://", "https://", "urn:")):
+        return prop.rstrip("/#").rsplit("/", 1)[-1].rsplit("#", 1)[-1].rsplit(":", 1)[-1]
+    return Xsd_QName(prop).fragment
+
+
 def _lucene_field_defaults(field_name: str, spec: str | list[str] | dict[str, Any], context: Context) -> dict[str, Any]:
     if isinstance(spec, str):
         field_spec: dict[str, Any] = {"chain": [spec]}
@@ -307,10 +338,14 @@ def _lucene_field_defaults(field_name: str, spec: str | list[str] | dict[str, An
 
 def _build_lucene_payload(name: str, spec: dict[str, Any], context: Context) -> dict[str, Any]:
     fields = spec.get("fields") or {}
-    if not isinstance(fields, dict):
-        raise ValueError(f'Lucene connector "{name}" fields must be a mapping.')
+    if isinstance(fields, dict):
+        field_items = fields.items()
+    elif isinstance(fields, list):
+        field_items = ((_lucene_field_name_from_property(field_spec), field_spec) for field_spec in fields)
+    else:
+        raise ValueError(f'Lucene connector "{name}" fields must be a mapping or list.')
     payload = {
-        "fields": [_lucene_field_defaults(field_name, field_spec, context) for field_name, field_spec in fields.items()],
+        "fields": [_lucene_field_defaults(field_name, field_spec, context) for field_name, field_spec in field_items],
         "languages": spec.get("languages", ["en", "de", "fr", "it"]),
         "types": [_qname_to_iri(context, item) for item in spec.get("types", [])],
         "readonly": False,
