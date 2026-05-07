@@ -171,23 +171,26 @@ ontology:
           editor: TEXT_FIELD
 
   lucene_connectors:
-    fasnacht_story:
+    fasnacht:
       types:
         - fasnacht:Story
-      fields:
-        - fasnacht:storyContent
-        - schema:abstract
-
-    fasnacht_archive:
-      types:
         - fasnacht:ArchiveObject
         - fasnacht:ArchiveMediaObject
       fields:
-        representedArchiveObjectTitle:
+        - fasnacht:storyContent
+        - schema:abstract
+        - fasnacht:archiveObjectTitle
+        - schema:description
+        - fieldName: representedArchiveObjectTitle
           chain:
             - fasnacht:archiveMediaObjectOf
             - fasnacht:archiveObjectTitle
 ```
+
+`oldap-tools` creates one GraphDB Lucene connector per project. The connector
+name is always the project short name. Multiple entries below
+`lucene_connectors` are treated as YAML grouping/specification blocks and are
+merged into that project connector.
 
 ## Ontology dump
 

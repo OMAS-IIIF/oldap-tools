@@ -363,6 +363,53 @@ def _build_lucene_payload(name: str, spec: dict[str, Any], context: Context) -> 
     return payload
 
 
+def _merge_lucene_payloads(connector_name: str, payloads: list[dict[str, Any]]) -> dict[str, Any]:
+    if not payloads:
+        raise ValueError(f'Lucene connector "{connector_name}" needs at least one specification.')
+
+    merged = {
+        "fields": [],
+        "languages": [],
+        "types": [],
+        "readonly": False,
+        "detectFields": False,
+        "importGraph": False,
+        "skipInitialIndexing": False,
+        "boostProperties": [],
+        "stripMarkup": False,
+    }
+    fields_by_name: dict[str, dict[str, Any]] = {}
+    for payload in payloads:
+        for item in payload["types"]:
+            if item not in merged["types"]:
+                merged["types"].append(item)
+        for item in payload["languages"]:
+            if item not in merged["languages"]:
+                merged["languages"].append(item)
+        for field in payload["fields"]:
+            field_name = field["fieldName"]
+            existing = fields_by_name.get(field_name)
+            if existing is not None:
+                if existing != field:
+                    raise ValueError(f'Lucene field "{field_name}" is defined more than once with different settings.')
+                continue
+            fields_by_name[field_name] = field
+            merged["fields"].append(field)
+        for key in ("readonly", "detectFields", "importGraph", "skipInitialIndexing", "stripMarkup"):
+            if payload[key] != merged[key] and merged[key] is not False:
+                raise ValueError(f'Lucene connector setting "{key}" has conflicting values.')
+            merged[key] = payload[key]
+        for item in payload["boostProperties"]:
+            if item not in merged["boostProperties"]:
+                merged["boostProperties"].append(item)
+
+    if not merged["types"]:
+        raise ValueError(f'Lucene connector "{connector_name}" needs at least one type.')
+    if not merged["fields"]:
+        raise ValueError(f'Lucene connector "{connector_name}" needs at least one field.')
+    return merged
+
+
 def _lucene_connector_exists(con: Connection, connector_name: str) -> bool:
     sparql = f"""
     PREFIX luc: <http://www.ontotext.com/connectors/lucene#>
@@ -393,6 +440,7 @@ def _create_lucene_connector(con: Connection, connector_name: str, payload: dict
         inst:{connector_name} luc:createConnector '''{payload_json}''' .
     }}
     """
+    print(sparql)
     con.update_query(sparql)
 
 
@@ -402,14 +450,25 @@ def _apply_lucene_connectors(con: Connection, project: Project, ontology: dict[s
     if mode not in {"replace", "create"}:
         raise ValueError('Connector mode must be "skip", "replace", or "create".')
     context = _ontology_context(project, ontology)
-    for connector_name, spec in (ontology.get("lucene_connectors") or {}).items():
-        exists = _lucene_connector_exists(con, connector_name)
-        if exists and mode == "create":
-            raise ValueError(f'Lucene connector "{connector_name}" already exists.')
-        if exists and mode == "replace":
+    connector_specs = ontology.get("lucene_connectors") or {}
+    if not connector_specs:
+        return
+    connector_name = str(project.projectShortName)
+    payload = _merge_lucene_payloads(
+        connector_name,
+        [_build_lucene_payload(name, spec, context) for name, spec in connector_specs.items()],
+    )
+    exists = _lucene_connector_exists(con, connector_name)
+    if exists and mode == "create":
+        raise ValueError(f'Lucene connector "{connector_name}" already exists.')
+    if mode == "replace":
+        for old_connector_name in connector_specs.keys():
+            if old_connector_name != connector_name and _lucene_connector_exists(con, old_connector_name):
+                _drop_lucene_connector(con, old_connector_name)
+        if exists:
             _drop_lucene_connector(con, connector_name)
-        if not exists or mode == "replace":
-            _create_lucene_connector(con, connector_name, _build_lucene_payload(connector_name, spec, context))
+    if not exists or mode == "replace":
+        _create_lucene_connector(con, connector_name, payload)
 
 
 def _build_resource_class(
