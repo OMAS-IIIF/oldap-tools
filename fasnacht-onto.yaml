@@ -1013,8 +1013,8 @@ ontology:
       - fr
       - it
       fields:
-        content: fasnacht:storyContent
-        abstract: schema:abstract
+        - fasnacht:storyContent
+        - schema:abstract
     fasnacht_archive:
       types:
       - fasnacht:ArchiveObject
