@@ -108,6 +108,13 @@ def _read_yaml(inf: Path) -> dict[str, Any]:
     return data["ontology"]
 
 
+def _resolve_relative_path(base_dir: Path, value: str) -> Path:
+    path = Path(value).expanduser()
+    if not path.is_absolute():
+        path = base_dir / path
+    return path.resolve()
+
+
 def _as_langstring(value: Any) -> LangString | None:
     if value is None:
         return None
@@ -202,7 +209,9 @@ def _load_lists(con: Connection, project: Project, base_dir: Path, lists_spec: d
             loaded[list_id] = OldapList.read(con=con, project=project, oldapListId=list_id)
             continue
         if isinstance(spec, str):
-            path = (base_dir / spec).resolve()
+            path = _resolve_relative_path(base_dir, spec)
+            if not path.exists():
+                raise ValueError(f'List file "{spec}" for "{list_id}" was not found relative to "{base_dir}".')
             load_list_from_yaml(con=con, project=project, filepath=path)
         elif isinstance(spec, dict):
             with tempfile.NamedTemporaryFile("w", suffix=".yaml", encoding="utf-8", delete=False) as f:
@@ -732,6 +741,7 @@ def load_ontology(
     graphdb_user: str | None = None,
     graphdb_password: str | None = None,
 ) -> None:
+    inf = inf.expanduser().resolve()
     ontology = _read_yaml(inf)
     con = _connect(graphdb_base, repo, user, password, graphdb_user, graphdb_password)
     try:
