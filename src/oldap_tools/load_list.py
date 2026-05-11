@@ -5,8 +5,9 @@ import typer
 from oldaplib.src.cachesingleton import CacheSingletonRedis
 from oldaplib.src.connection import Connection
 from oldaplib.src.helpers.oldaperror import OldapError
-from oldaplib.src.oldaplist_helpers import load_list_from_yaml
 from oldaplib.src.project import Project
+
+from oldap_tools.list_merge import load_or_merge_lists_from_yaml
 
 log = logging.getLogger(__name__)
 
@@ -29,11 +30,12 @@ def load_list(project_id: str,
                                 context_name="DEFAULT")
         project = Project.read(connection, project_id)
         CacheSingletonRedis().clear()
-        listnodes = load_list_from_yaml(con=connection,
-                                        project=project_id,
-                                        filepath=filepath)
+        load_or_merge_lists_from_yaml(con=connection, project=project, filepath=filepath)
     except OldapError as error:
         log.error(f"ERROR: Failed to connect to GraphDB database at '{graphdb_base}': {error}")
+        raise typer.Exit(code=1)
+    except ValueError as error:
+        log.error(f"ERROR: Failed to load list YAML '{filepath}': {error}")
         raise typer.Exit(code=1)
     except FileNotFoundError as error:
         log.error(f"ERROR: File {filepath} not found': {error}")

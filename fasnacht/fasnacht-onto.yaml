@@ -253,8 +253,8 @@ ontology:
         max_count: 1
         editor: TEXT_FIELD
         order: 2
-      - subproperty_of: schema:description
-        iri: fasnacht:organisationDescription
+      - iri: fasnacht:organisationDescription
+        subproperty_of: schema:description
         datatype: rdf:langString
         name:
           en: Description of the organisation
@@ -280,6 +280,14 @@ ontology:
           it: Categoria usata per classificare l'organizzazione nell'archivio del Carnevale.
         min_count: 1
         order: 3
+      - iri: fasnacht:organisationLocatedAtPlace
+        to_class: fasnacht:Place
+        name:
+          en: Location of the organisation
+          de: Standort der Organisation
+          fr: Lieu de l'organisation
+          it: Luogo dell'organizzazione
+        order: 4
 
     schema:NewsArticle:
       label:
@@ -659,6 +667,19 @@ ontology:
         max_count: 1
         order: 3
         editor: TEXT_AREA_WITH_LANG
+      - iri: fasnacht:ofOrganisation
+        to_class: fasnacht:Organisation
+        name:
+          en: Place of organisation/institution
+          de: Ort der Institution/Organisation
+          fr: Lieu d'institution/organisation
+          it: Luogo dell'istituzione/organizzazione
+        description:
+          en: The institution/organisation that is responsible for the place, or where the institution is located.
+          de: Die Institution/Organisation, die für den Ort verantwortlich ist oder an diesem Ort angesiedelt ist.
+          fr: L’institution/organisation responsable du lieu ou qui est située à cet endroit.
+          it: L’istituzione/organizzazione responsabile del luogo oppure situata in questo luogo.
+          order: 4
       - iri: dcterms:type
         to_class: list:LocationTaxonomy
         name:
@@ -673,7 +694,7 @@ ontology:
           it: Categoria controllata che descrive il tipo di luogo nell'archivio del Carnevale.
         min_count: 1
         max_count: 1
-        order: 4
+        order: 5
       - iri: geo:asWKT
         datatype: geo:wktLiteral
         name:
@@ -687,7 +708,7 @@ ontology:
           fr: Géométrie géographique du lieu au format Well-Known Text.
           it: Geometria geografica del luogo in formato Well-Known Text.
         max_count: 1
-        order: 5
+        order: 6
         editor: TEXT_FIELD
       - iri: dcterms:isPartOf
         to_class: fasnacht:Place
@@ -703,7 +724,7 @@ ontology:
           fr: Lieu ou unité spatiale plus vaste dont ce lieu fait partie.
           it: Luogo o unità spaziale più ampia di cui questo luogo fa parte.
         max_count: 1
-        order: 6
+        order: 7
       - iri: dcterms:hasPart
         to_class: fasnacht:Place
         inverse_of: dcterms:isPartOf
@@ -717,7 +738,7 @@ ontology:
           de: Untergeordnete Orte oder räumliche Einheiten, die in diesem Ort enthalten sind.
           fr: Lieux ou unités spatiales plus petits contenus dans ce lieu.
           it: Luoghi o unità spaziali più piccoli contenuti in questo luogo.
-        order: 7
+        order: 8
       - iri: rdfs:comment
         datatype: rdf:langString
         name:
@@ -731,7 +752,7 @@ ontology:
           fr: Note historique ou commentaire éditorial supplémentaire sur le lieu.
           it: Nota storica o commento editoriale aggiuntivo sul luogo.
         max_count: 1
-        order: 8
+        order: 9
         editor: TEXT_AREA_WITH_LANG
 
     fasnacht:ArchiveObject:
@@ -1002,7 +1023,14 @@ ontology:
         min_count: 1
         max_count: 1
         order: 6
-
+      - iri: schema:position
+        datatype: xsd:integer
+        name:
+          en: Position/sequence number
+          de: Position/Sequenznummer/Seite
+          fr: Position
+          it: Posizione
+        order: 7
   lucene_connectors:
     fasnacht_story:
       types:

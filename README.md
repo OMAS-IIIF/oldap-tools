@@ -13,14 +13,25 @@ OLDAP tools is a CLI tool for managing parts of the OLDAP framework. It allows t
 
 The installation is done using pip: `pip install oldap-tools`
 
+# Documentation
+
+Structured documentation is available in [`docs/`](docs/index.md):
+
+- [Installation and Connection](docs/installation.md)
+- [Command Reference](docs/commands.md)
+- [Ontology YAML](docs/ontology-yaml.md)
+- [Hierarchical Lists](docs/lists.md)
+- [Update Semantics](docs/update-semantics.md)
+- [Operations and Backups](docs/operations.md)
+
 # Usage
 
 The CLI tool provides the following commands:
 
 - `oldap-tools project dump`: Dump all the data of a given project to a gzipped TriG file
 - `oldap-tools project load`: Load a project from a gzipped TriG file created by oldap-tools
-- `oldap-tools list dump`: Dump a hierarchical list to a YAML file
-- `oldap-tools list load`: Load a hierarchical list from a YAML file
+- `oldap-tools lists dump`: Dump a hierarchical list to a YAML file
+- `oldap-tools lists load`: Load a hierarchical list from a YAML file
 - `oldap-tools ontology validate`: Validate an ontology datamodel YAML file
 - `oldap-tools ontology load`: Load or update an ontology datamodel from YAML
 - `oldap-tools ontology dump`: Dump an ontology datamodel to YAML or TriG
@@ -82,7 +93,7 @@ If a user does not exist, then the user is created. If the User is already exist
 This command dumps a hierarchical list to a YAML file. This file can be edited to add/remove or change list items.
 The command has the following syntax (in addition to the common options):
 
-```oldap-tools [common_options] list dump [-out <filename>] <project_id> <list_id>```
+```oldap-tools [common_options] lists dump [-out <filename>] <project_id> <list_id>```
 
 This command generates a YAML file which can be edited and contains the list and all it nodes
 
@@ -97,7 +108,11 @@ The options are as follows:
 This command loads a hierarchical list from a YAML file into the given project. The command has the following syntax
 (in addition to the common options):
 
-```oldap-tools [common_options] list load --inf <filename> <project_id>```
+```oldap-tools [common_options] lists load --inf <filename> <project_id>```
+
+If a list already exists, loading is additive: nodes that are present in YAML but missing in the
+store are inserted, including their subtrees. Existing nodes are never deleted or moved; if the YAML
+would place an existing node below a different parent, the load aborts with an error.
 
 The options are as follows:
 
@@ -124,7 +139,8 @@ Set an attribute to `null` in update mode to delete it, for example `label`, `co
 `description`, `min_count`, or `max_count`.
 
 Hierarchical lists can be referenced as external YAML files or defined inline. A property can point to
-a list node class with `to_class: list:<ListId>`.
+a list node class with `to_class: list:<ListId>`. Existing lists are extended additively from YAML:
+missing nodes are inserted, while existing nodes are not deleted or moved.
 
 Lucene connectors can be declared in the same YAML file. They are skipped by default and only applied
 when `--connectors create` or `--connectors replace` is passed. Single-property fields can use a QName
@@ -197,4 +213,7 @@ merged into that project connector.
 This command dumps an ontology datamodel either as YAML or as a TriG gzip file containing the
 `<project>:shacl`, `<project>:onto`, and `<project>:lists` graphs:
 
-```oldap-tools [common_options] ontology dump [-out <filename>] [--format yaml|trig] <project_id>```
+```oldap-tools [common_options] ontology dump [-out <filename>] [--format yaml|trig] [--include-taxonomies] <project_id>```
+
+When dumping YAML, `--include-taxonomies` writes all project lists as separate `<ListId>.yaml`
+files next to the ontology YAML file and adds an `ontology.lists` block that references them.

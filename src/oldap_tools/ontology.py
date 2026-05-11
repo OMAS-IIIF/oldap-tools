@@ -1,7 +1,6 @@
 import gzip
 import json
 import logging
-import tempfile
 from datetime import datetime
 from importlib import resources
 from pathlib import Path
@@ -24,8 +23,9 @@ from oldaplib.src.externalontology import ExternalOntology
 from oldaplib.src.helpers.context import Context
 from oldaplib.src.helpers.langstring import LangString
 from oldaplib.src.helpers.oldaperror import OldapError, OldapErrorNotFound
+from oldaplib.src.helpers.query_processor import QueryProcessor
 from oldaplib.src.oldaplist import OldapList
-from oldaplib.src.oldaplist_helpers import load_list_from_yaml
+from oldaplib.src.oldaplist_helpers import ListFormat, dump_list_to
 from oldaplib.src.project import Project
 from oldaplib.src.propertyclass import PropertyClass
 from oldaplib.src.resourceclass import ResourceClass
@@ -36,6 +36,11 @@ from oldaplib.src.xsd.xsd_ncname import Xsd_NCName
 from oldaplib.src.xsd.xsd_qname import Xsd_QName
 
 from oldap_tools.dump_project import dump_project
+from oldap_tools.list_merge import (
+    list_exists_in_store,
+    load_or_merge_list_from_spec,
+    load_or_merge_lists_from_yaml,
+)
 
 log = logging.getLogger(__name__)
 
@@ -197,27 +202,9 @@ def _build_property(con: Connection, project: Project, spec: dict[str, Any], lis
     )
 
 
-def _list_exists_in_store(con: Connection, project: Project, list_id: str) -> bool:
-    context = Context(name=con.context_name)
-    context[project.projectShortName] = project.namespaceIri
-    list_iri = f"{project.projectShortName}:{list_id}"
-    sparql = context.sparql_context
-    sparql += f"""
-    ASK {{
-        GRAPH {project.projectShortName}:lists {{
-            {list_iri} a oldap:OldapList .
-        }}
-    }}
-    """
-    return con.query(sparql)["boolean"]
-
-
 def _load_lists(con: Connection, project: Project, base_dir: Path, lists_spec: dict[str, Any] | None) -> dict[str, OldapList]:
     loaded: dict[str, OldapList] = {}
     for list_id, spec in (lists_spec or {}).items():
-        if _list_exists_in_store(con, project, list_id):
-            loaded[list_id] = OldapList.read(con=con, project=project, oldapListId=list_id)
-            continue
         if isinstance(spec, str):
             path = _resolve_list_path(base_dir, spec)
             if not path.exists():
@@ -225,17 +212,20 @@ def _load_lists(con: Connection, project: Project, base_dir: Path, lists_spec: d
                     f'List file "{spec}" for "{list_id}" was not found relative to "{base_dir}" '
                     f'or as "{Path(spec).name}" in that directory.'
                 )
-            load_list_from_yaml(con=con, project=project, filepath=path)
+            yaml_lists = load_or_merge_lists_from_yaml(con=con, project=project, filepath=path)
+            loaded_list = next((item for item in yaml_lists if str(item.oldapListId) == list_id), None)
+            if loaded_list is None:
+                if list_exists_in_store(con, project, list_id):
+                    loaded_list = OldapList.read(con=con, project=project, oldapListId=list_id)
+                else:
+                    raise ValueError(f'List file "{spec}" does not contain list "{list_id}".')
+            loaded[list_id] = loaded_list
         elif isinstance(spec, dict):
-            with tempfile.NamedTemporaryFile("w", suffix=".yaml", encoding="utf-8", delete=False) as f:
-                yaml.safe_dump({list_id: spec}, f, allow_unicode=True, sort_keys=False)
-                path = Path(f.name)
-            load_list_from_yaml(con=con, project=project, filepath=path)
+            loaded[list_id] = load_or_merge_list_from_spec(con=con, project=project, list_id=list_id, spec=spec)
         else:
             raise ValueError(f'Invalid list specification for "{list_id}"')
-        if not _list_exists_in_store(con, project, list_id):
+        if not list_exists_in_store(con, project, list_id):
             raise ValueError(f'List "{list_id}" was loaded, but no triples were found in {project.projectShortName}:lists.')
-        loaded[list_id] = OldapList.read(con=con, project=project, oldapListId=list_id)
     return loaded
 
 
@@ -841,6 +831,47 @@ def _dump_resource(res: ResourceClass) -> dict[str, Any]:
     return result
 
 
+def _list_ids(con: Connection, project: Project) -> list[str]:
+    context = Context(name=con.context_name)
+    context[project.projectShortName] = project.namespaceIri
+    sparql = context.sparql_context
+    sparql += f"""
+    SELECT ?list
+    FROM {project.projectShortName}:lists
+    WHERE {{
+        ?list a oldap:OldapList .
+    }}
+    ORDER BY ?list
+    """
+    res = QueryProcessor(context, con.query(sparql))
+    list_ids: list[str] = []
+    for row in res:
+        list_iri = str(row["list"])
+        qname = context.iri2qname(list_iri, validate=False)
+        if qname is not None:
+            list_iri = str(qname)
+        list_ids.append(list_iri.split(":", 1)[1] if ":" in list_iri else list_iri)
+    return list_ids
+
+
+def _dump_taxonomies(con: Connection, project: Project, out: Path) -> dict[str, str]:
+    out_dir = out.parent
+    out_dir.mkdir(parents=True, exist_ok=True)
+    result: dict[str, str] = {}
+    for list_id in _list_ids(con, project):
+        filename = f"{list_id}.yaml"
+        yaml_text = dump_list_to(
+            con=con,
+            project=project,
+            oldapListId=list_id,
+            listformat=ListFormat.YAML,
+            ignore_cache=True,
+        )
+        (out_dir / filename).write_text(yaml_text, encoding="utf-8")
+        result[list_id] = filename
+    return result
+
+
 def dump_ontology(
     *,
     graphdb_base: str,
@@ -850,6 +881,7 @@ def dump_ontology(
     fmt: str,
     user: str,
     password: str,
+    include_taxonomies: bool = False,
     graphdb_user: str | None = None,
     graphdb_password: str | None = None,
 ) -> None:
@@ -888,9 +920,13 @@ def dump_ontology(
                 "iri": str(project.projectIri),
                 "namespace": str(project.namespaceIri),
             },
-            "classes": {},
         }
     }
+    if include_taxonomies:
+        lists = _dump_taxonomies(con, project, out)
+        if lists:
+            doc["ontology"]["lists"] = lists
+    doc["ontology"]["classes"] = {}
     for qname in model.get_resclasses():
         doc["ontology"]["classes"][str(qname)] = _dump_resource(model[qname])
     lucene_connectors = _dump_lucene_connector(con, project)

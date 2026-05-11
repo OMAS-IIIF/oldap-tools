@@ -209,7 +209,12 @@ def ontology_dump(
         ctx: typer.Context,
         project_id: str = typer.Argument(..., help="Project ID (e.g. fasnacht, hyha, ...)"),
         out: Path = typer.Option(Path("ontology.yaml"), "--out", "-o", help="Output file"),
-        fmt: str = typer.Option("yaml", "--format", "-f", help="Output format: 'yaml' or 'trig'")):
+        fmt: str = typer.Option("yaml", "--format", "-f", help="Output format: 'yaml' or 'trig'"),
+        include_taxonomies: bool = typer.Option(
+            False,
+            "--include-taxonomies",
+            help="When dumping YAML, also write all project taxonomies as <ListId>.yaml and reference them from ontology.lists.",
+        )):
     cfg = ctx.obj
     dump_ontology(graphdb_base=cfg.graphdb_base,
                   repo=cfg.repo,
@@ -218,6 +223,7 @@ def ontology_dump(
                   fmt=fmt,
                   user=cfg.user,
                   password=cfg.password,
+                  include_taxonomies=include_taxonomies,
                   graphdb_user=cfg.graphdb_user,
                   graphdb_password=cfg.graphdb_password)
 
