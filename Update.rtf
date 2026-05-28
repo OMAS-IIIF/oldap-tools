@@ -1,0 +1,158 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2869
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;\f1\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red11\green13\blue19;\red255\green255\blue255;}
+{\*\expandedcolortbl;;\cssrgb\c4314\c5882\c9804;\cssrgb\c100000\c100000\c100000;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww22000\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs28 \cf0 Server-Update:\
+\
+- cd /opt/oldap/compose: docker compose down ; docker image prune -a\
+- cd /opt/oldap/graphdb-init: sudo rm *\
+- cd /srv/storage/graphdb: sudo rm conf/* ; sudo rm -rf data/*\
+\
+- scp fasnacht-NEW-full-2026-05-11.trig.gz api.oldap.org:\
+\
+Deploy!!!!\
+\
+- cd /opt/oldap/compose/\
+- docker compose run --rm oldap-tools -u rosenth -p RioGrande -g http://graphdb:7200 project load --inf /backups/fasnacht-NEW-full-2026-05-11.trig.gz\
+\
+Create Lucene connector in SPARQL console (ACHTUNG: Original SPARQL nehmen!)\
+\
+\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f1\fs28\fsmilli14400 \cf2 \cb3 \expnd0\expndtw0\kerning0
+PREFIX :<http://www.ontotext.com/connectors/lucene#>\
+PREFIX inst:<http://www.ontotext.com/connectors/lucene/instance#>\
+INSERT DATA \{\
+	inst:fasnacht :createConnector '''\
+\{\
+  "fields": [\
+    \{\
+      "fieldName": "storyContent",\
+      "propertyChain": [\
+        "http://fasnacht.digital/ns/storyContent"\
+      ],\
+      "indexed": true,\
+      "stored": true,\
+      "analyzed": true,\
+      "multivalued": true,\
+      "ignoreInvalidValues": false,\
+      "facet": false\
+    \},\
+    \{\
+      "fieldName": "abstract",\
+      "propertyChain": [\
+        "https://schema.org/abstract"\
+      ],\
+      "indexed": true,\
+      "stored": true,\
+      "analyzed": true,\
+      "multivalued": true,\
+      "ignoreInvalidValues": false,\
+      "facet": false\
+    \},\
+    \{\
+      "fieldName": "archiveObjectTitle",\
+      "propertyChain": [\
+        "http://fasnacht.digital/ns/archiveObjectTitle"\
+      ],\
+      "indexed": true,\
+      "stored": true,\
+      "analyzed": true,\
+      "multivalued": true,\
+      "ignoreInvalidValues": false,\
+      "facet": false\
+    \},\
+    \{\
+      "fieldName": "archiveObjectDescription",\
+      "propertyChain": [\
+        "https://schema.org/description"\
+      ],\
+      "indexed": true,\
+      "stored": true,\
+      "analyzed": true,\
+      "multivalued": true,\
+      "ignoreInvalidValues": false,\
+      "facet": false\
+    \},\
+    \{\
+      "fieldName": "archiveMediaObjectTitle",\
+      "propertyChain": [\
+        "https://schema.org/name"\
+      ],\
+      "indexed": true,\
+      "stored": true,\
+      "analyzed": true,\
+      "multivalued": true,\
+      "ignoreInvalidValues": false,\
+      "facet": false\
+    \},\
+    \{\
+      "fieldName": "archiveMediaObjectDescription",\
+      "propertyChain": [\
+        "https://schema.org/description"\
+      ],\
+      "indexed": true,\
+      "stored": true,\
+      "analyzed": true,\
+      "multivalued": true,\
+      "ignoreInvalidValues": false,\
+      "facet": false\
+    \},\
+    \{\
+      "fieldName": "representedArchiveObjectTitle",\
+      "propertyChain": [\
+        "http://fasnacht.digital/ns/archiveMediaObjectOf",\
+        "http://fasnacht.digital/ns/archiveObjectTitle"\
+      ],\
+      "indexed": true,\
+      "stored": true,\
+      "analyzed": true,\
+      "multivalued": true,\
+      "ignoreInvalidValues": false,\
+      "facet": false\
+    \},\
+    \{\
+      "fieldName": "representedArchiveObjectDescription",\
+      "propertyChain": [\
+        "http://fasnacht.digital/ns/archiveMediaObjectOf",\
+        "https://schema.org/description"\
+      ],\
+      "indexed": true,\
+      "stored": true,\
+      "analyzed": true,\
+      "multivalued": true,\
+      "ignoreInvalidValues": false,\
+      "facet": false\
+    \}\
+  ],\
+  "languages": [\
+    "en",\
+    "de",\
+    "fr",\
+    "it"\
+  ],\
+  "types": [\
+    "http://fasnacht.digital/ns/Story",\
+    "http://fasnacht.digital/ns/ArchiveObject",\
+    "http://fasnacht.digital/ns/ArchiveMediaObject"\
+  ],\
+  "readonly": false,\
+  "detectFields": false,\
+  "importGraph": false,\
+  "skipInitialIndexing": false,\
+  "boostProperties": [],\
+  "stripMarkup": false\
+\}\
+''' .\
+\}
+\f0\fs28 \cf0 \cb1 \kerning1\expnd0\expndtw0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+\
+\
+Dann m\'fcsste es nach einiger Zeit laufen\'85}

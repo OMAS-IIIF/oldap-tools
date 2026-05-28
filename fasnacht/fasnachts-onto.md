@@ -10,6 +10,7 @@ Quellen:
 - `LocationTaxonomy.yaml`: Orts-Taxonomie
 - `StoryKeywords.yaml`: Schlagwort-Taxonomie für Stories
 - `OrganisationTaxonomy.yaml`: Organisations-Taxonomie
+- `CarnivalEventTaxonomy.yaml`: Taxonomie für Fasnachtsanlässe und Ereignistypen
 
 ## Zweck und fachlicher Rahmen
 
@@ -26,6 +27,35 @@ Das Projekt trägt den OLDAP-Shortname:
 ```text
 fasnacht
 ```
+
+## Laienfreundliche Einzeldokumentation
+
+Für die fachliche Erfassung gibt es zusätzlich eine verlinkte, laienfreundliche Dokumentation pro Objekt. Sie erklärt die Klassen und Felder in Alltagssprache für Personen, die die Fasnacht gut kennen, aber nicht mit Datenmodellierung arbeiten.
+
+Einstieg:
+
+- [`objekte/README.md`](#sec:objekte): Überblick und wichtigste Modellentscheidung
+- [`fasnacht:ArchiveObject`](#sec:archive-object): Archivgut selbst, zum Beispiel Laterne, Maske, Plakette, Helg oder Marsch
+- [`fasnacht:ArchiveMediaObject`](#sec:archive-media-object): digitale Darstellung eines Archivobjekts, zum Beispiel Foto, Scan, Audio oder Video
+- [`fasnacht:MediaLibraryObject`](#sec:media-library-object): allgemeines Medienmaterial für Stories und redaktionelle Inhalte
+- [`fasnacht:Person`](#sec:person): Personen im Archivkontext
+- [`fasnacht:Organisation`](#sec:organisation): Cliquen, Vereine, Institutionen, Archive und Museen
+- [`fasnacht:Place`](#sec:place): Orte mit Fasnachts- oder Archivbezug
+- [`fasnacht:CarnivalThing`](#sec:carnival-thing): gemeinsamer Oberbegriff für Fasnachtsobjekte und Fasnachtsereignisse
+- [`fasnacht:CarnivalEvent`](#sec:carnival-event): Fasnachtsanlässe und Ereignisse
+- [`fasnacht:Story`](#sec:story): redaktionelle Geschichten
+- [`fasnacht:NewsItem`](#sec:news-item): aktuelle Meldungen
+- [`schema:NewsArticle`](#sec:news-article): technische Grundlage für News-Einträge
+- [`fasnacht:FasnachtUser`](#sec:fasnacht-user): Benutzerkonto mit Organisationsbezug
+- [`fasnacht:Agent`](#sec:agent): gemeinsamer Oberbegriff für Personen und Organisationen
+
+### Zentrale Modellentscheidung: Fasnachtsding, Archivobjekt und Archivmedium
+
+Die Trennung zwischen `fasnacht:CarnivalThing`, `fasnacht:ArchiveObject` und `fasnacht:ArchiveMediaObject` ist fachlich zentral. `fasnacht:CarnivalThing` bündelt gemeinsame Angaben zu Fasnachtsdingen: Name, Beschreibung, Datierung, organisatorische Bezüge, Teil-Ganzes-Beziehungen und Ort. Darunter fallen sowohl Archivobjekte als auch Ereignisse.
+
+Ein Archivobjekt beschreibt ein Kulturgut oder Archivgut selbst: zum Beispiel eine Laterne, ein Kostüm, ein Plakettenentwurf, ein Marsch oder ein Helg. Ein Archivmedienobjekt beschreibt dagegen eine konkrete digitale Darstellung eines solchen Fasnachtsdings: Foto, Scan, Audio, Video oder Seitenbild.
+
+Diese Aufteilung ist notwendig, weil ein Fasnachtsding mehrere digitale Darstellungen haben kann und jede dieser Darstellungen eigene Angaben braucht: Rechte, Urheber der Aufnahme, Erstellungsdatum, beitragende Stelle, Reihenfolge oder Seitenposition. Ohne Trennung würden Objektangaben und Medienangaben vermischt. Das wäre für Suche, Rechteklärung, Provenienz und langfristige Pflege unklar und fehleranfällig.
 
 ## Grundprinzipien
 
@@ -159,6 +189,7 @@ Properties:
 - `fasnacht:isPublished`: Publikationsstatus, Pflichtfeld, genau ein Wert.
 - `fasnacht:leadImageRegion`: optionale Crop-/Regionsangabe für das Lead Image, maximal ein Wert.
 - `fasnacht:storyKeywords`: Schlagworte über `StoryKeywords`.
+- `fasnacht:relatedCarnivalThing`: Verknüpfung zu einem `fasnacht:CarnivalThing`, also zu einem Archivobjekt oder Ereignis, das in der Story behandelt wird.
 
 ### `fasnacht:Place`
 
@@ -180,28 +211,59 @@ Properties:
 - `dcterms:hasPart`: untergeordnete Orte.
 - `rdfs:comment`: historische Bemerkung oder redaktioneller Kommentar, maximal ein Wert.
 
+### `fasnacht:CarnivalThing`
+
+Gemeinsamer Oberbegriff für fachliche Fasnachtsdinge. Die Klasse bündelt Eigenschaften, die sowohl für Archivobjekte als auch für Fasnachtsereignisse relevant sind.
+
+Properties:
+
+- `schema:name`: mehrsprachiger Name, Pflichtfeld.
+- `schema:description`: mehrsprachige Beschreibung.
+- `fasnacht:dating`: Datierung, zum Beispiel Erstellungsdatum oder Ereignisdatum, als `oldap:Dating`.
+- `fasnacht:associatedOrganisation`: Verbindung zu einer Person, Organisation oder Institution als `fasnacht:Agent`.
+- `fasnacht:connectedToOrganisationTaxonomy`: Verknüpfung mit einer Organisationseinheit aus `OrganisationTaxonomy`.
+- `dcterms:isPartOf`: übergeordnetes Fasnachtsding.
+- `dcterms:hasPart`: untergeordnetes Fasnachtsding.
+- `fasnacht:location`: Ort als `fasnacht:Place`.
+
+### `fasnacht:CarnivalEvent`
+
+Fasnachtsanlass oder Ereignis, zum Beispiel ein Morgenstreich, Cortège, Guggenkonzert, Vorfasnachtsanlass, interner Anlass oder historischer Anlass.
+
+Oberklassen:
+
+- `fasnacht:CarnivalThing`
+- `schema:Event`
+
+Properties:
+
+- `dcterms:type`: Ereignistyp über `CarnivalEventTaxonomy`.
+- `fasnacht:eventLocation`: Ort des Ereignisses als `fasnacht:Place`.
+
 ### `fasnacht:ArchiveObject`
 
 Archivisches Objekt aus Fasnachtsbeständen. Dazu gehören physische und konzeptuelle Objekte wie Laternen, Masken, Kostüme, Plaketten, Märsche oder Helgen.
 
+Oberklassen:
+
+- `fasnacht:CarnivalThing`
+- `schema:CreativeWork`
+
 Properties:
 
-- `fasnacht:archiveObjectTitle`: mehrsprachiger Titel, Pflichtfeld.
 - `dcterms:type`: Objekttyp über `ObjectTaxonomy`, Pflichtfeld, genau ein Wert.
-- `schema:description`: mehrsprachige archivische Beschreibung.
 - `dcterms:creator`: Urheberin oder Urheber als `fasnacht:Person`.
-- `fasnacht:hasCreationDating`: Erstellungsdatum oder Datierung als `oldap:Dating`.
-- `schema:provider`: bereitstellende Person oder Organisation als `fasnacht:Agent`, Pflichtfeld, genau ein Wert.
+- `fasnacht:currentCustodian`: aktuelle Verwahrerin oder aktueller Verwahrer als `fasnacht:Agent`, maximal ein Wert.
 - `dcterms:provenance`: mehrsprachige Provenienzangabe.
-- `dcterms:hasPart`: enthaltene Archivobjekte.
-- `dcterms:isPartOf`: übergeordnetes Archivobjekt oder Sammlung.
 - `fasnacht:usedAt`: Datierung der Verwendung als `oldap:Dating`.
 - `fasnacht:currentLocation`: aktueller Ort als `fasnacht:Place`, maximal ein Wert.
 - `schema:identifier`: Signatur oder Identifikator, maximal ein Wert.
 
+Name, Beschreibung, Datierung, Organisationsbezug, Teil-Ganzes-Beziehungen und Ort kommen über die Oberklasse `fasnacht:CarnivalThing` hinzu.
+
 ### `fasnacht:ArchiveMediaObject`
 
-Medienobjekt, das ein oder mehrere Archivobjekte repräsentiert, zum Beispiel Foto, Scan, Video, Audiodatei oder Digitalisat.
+Medienobjekt, das ein oder mehrere Fasnachtsdinge repräsentiert, zum Beispiel Foto, Scan, Video, Audiodatei oder Digitalisat eines Archivobjekts oder Ereignisses.
 
 Oberklasse:
 
@@ -211,9 +273,10 @@ Properties:
 
 - `schema:name`: mehrsprachiger Titel, Pflichtfeld.
 - `schema:description`: mehrsprachige Beschreibung, maximal ein Wert.
-- `fasnacht:archiveMediaObjectOf`: repräsentiertes `fasnacht:ArchiveObject`, Pflichtfeld.
+- `fasnacht:archiveMediaObjectOf`: repräsentiertes `fasnacht:CarnivalThing`, Pflichtfeld.
+- `fasnacht:contributingAgent`: Person oder Organisation, die das Medium zur Verfügung stellt, Pflichtfeld, genau ein Wert.
 - `dcterms:creator`: Urheberin oder Urheber als `fasnacht:Agent`.
-- `schema:dateCreated`: Erstellungsdatum.
+- `fasnacht:creationDating`: Erstellungsdatum oder Datierung als `oldap:Dating`.
 - `dcterms:rights`: Lizenz oder Rechteangabe über `CreativeCommons`, Pflichtfeld, genau ein Wert.
 - `schema:position`: Position, Sequenznummer oder Seitenangabe.
 
@@ -224,9 +287,10 @@ Die Ontologie modelliert mehrere zentrale Beziehungstypen:
 - Personen und Organisationen sind beide `fasnacht:Agent`.
 - Organisationen können über eine Taxonomie klassifiziert und mit Orten verbunden werden.
 - Medienobjekte können allgemein in der Medienbibliothek liegen oder konkret Archivobjekte repräsentieren.
-- Archivobjekte können Teil-Ganzes-Beziehungen bilden.
+- `fasnacht:CarnivalThing` bildet den gemeinsamen fachlichen Oberbegriff für Archivobjekte und Ereignisse.
+- Archivobjekte und Fasnachtsereignisse können Teil-Ganzes-Beziehungen bilden.
 - Orte können hierarchisch miteinander verbunden werden.
-- Stories verknüpfen Text, Lead Image, Autorenschaft, Datum, Publikationsstatus und Schlagworte.
+- Stories verknüpfen Text, Lead Image, Autorenschaft, Datum, Publikationsstatus, Schlagworte und optional konkrete Fasnachtsdinge.
 - Lizenzen und kontrollierte Kategorien werden über Taxonomien modelliert.
 
 ## Taxonomien
@@ -266,6 +330,55 @@ Knoten:
 Verwendet in:
 
 - `fasnacht:ArchiveObject` über `dcterms:type`
+
+### `CarnivalEventTaxonomy`
+
+Kontrollierte Ereignistypen für Fasnachtsanlässe.
+
+Struktur:
+
+- `Fasnacht`
+  - `Morgenstreich`
+  - `Cortege`
+  - `Guggenkonzert`
+  - `Kinderfasnacht`
+  - `Schnitzelbank`
+  - `Gaessle`
+  - `Endstreich`
+  - `Laternenausstellung`
+  - `Wagenausstellung`
+  - `Bummelausflug`
+  - `FasnachtAnderes`
+- `Vorfasnacht`
+  - `Drummeli`
+  - `Pfyfferli`
+  - `Charivari`
+  - `GlaibaslerCharivari`
+  - `Mimoesli`
+  - `Raeppliserenade`
+  - `Binge`
+  - `VorfasnachtAnderes`
+- `Intern`
+  - `Cliquenabend`
+  - `Stammabend`
+  - `Marschuebung`
+  - `Sujetbekanngabe`
+  - `Larvenausgabe`
+  - `Laterneneinpfeiffen`
+  - `InternAnderes`
+- `Historisch`
+  - `Monster`
+  - `Fasnachtsball`
+  - `Preismasken`
+  - `Volksfasnacht`
+  - `HistorischAnderes`
+- `Wettbewerb`
+  - `Bryysdrummle`
+- `Musikanlass`
+
+Verwendet in:
+
+- `fasnacht:CarnivalEvent` über `dcterms:type`
 
 ### `LocationTaxonomy`
 
@@ -359,10 +472,9 @@ Indexiert `fasnacht:Story` über:
 
 Indexiert `fasnacht:ArchiveObject` und `fasnacht:ArchiveMediaObject` über:
 
-- `fasnacht:archiveObjectTitle`
-- `schema:description`
 - `schema:name`
-- zusammengesetzte Property Chains von `fasnacht:ArchiveMediaObject` zum repräsentierten `fasnacht:ArchiveObject`
+- `schema:description`
+- zusammengesetzte Property Chains von `fasnacht:ArchiveMediaObject` zum repräsentierten `fasnacht:CarnivalThing`
 
 ## Pflegehinweise
 
@@ -386,4 +498,3 @@ Vor produktiven Änderungen sollte geprüft werden:
 - Werden Pflichtfelder verschärft?
 - Werden Properties aus einer bestehenden Klasse entfernt?
 - Werden Taxonomieknoten nur additiv ergänzt?
-

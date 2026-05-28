@@ -32,6 +32,12 @@ def dump_project(project_id: str,
                  password: str,
                  graphdb_user: str | None = None,
                  graphdb_password: str | None = None):
+    """Export project admin, model, list, and data graphs to a gzipped TriG dump.
+
+    The dump path deliberately bypasses the Redis object cache for OLDAP admin
+    objects. Export commands should represent the current GraphDB state, and
+    cached serialized objects may come from an older oldaplib object layout.
+    """
     try:
         con = Connection(server=graphdb_base,
                          repo = repo,
@@ -44,7 +50,7 @@ def dump_project(project_id: str,
         raise typer.Exit(code=1)
 
     try:
-        project = Project.read(con=con, projectIri_SName=project_id)
+        project = Project.read(con=con, projectIri_SName=project_id, ignore_cache=True)
     except OldapError as e:
         log.error(f"ERROR: Failed to connect to read project '{project_id}': {e}")
         raise typer.Exit(code=1)
@@ -59,7 +65,7 @@ def dump_project(project_id: str,
         trig += "\n#\n# User info\n#\n"
         userIris = User.search(con=con, inProject=project.projectIri)
         for userIri in userIris:
-            user = User.read(con=con, userId=str(userIri))
+            user = User.read(con=con, userId=str(userIri), ignore_cache=True)
             user_json = json.dumps(user, default=serializer.encoder_default)
             trig += "#>> " + user_json + "\n"
         trig += "#<<\n\n"
@@ -75,7 +81,7 @@ def dump_project(project_id: str,
         trig += "\n#\n# Roles info\n#\n"
         roleQNames = Role.search(con=con, definedByProject=project.projectIri)
         for roleQName in roleQNames:
-            role = Role.read(con=con, qname=roleQName)
+            role = Role.read(con=con, qname=roleQName, ignore_cache=True)
             trig += role.trig_to_str(created=role.created, modified=role.modified, indent=1)
             trig += " .\n\n"
 
@@ -101,5 +107,4 @@ def dump_project(project_id: str,
 
     with gzip.open(out, "wt", encoding="utf-8", newline="") as f:
         f.write(trig)
-
 

@@ -15,11 +15,12 @@ ontology:
       fr: Le carnaval de Bale est inscrit au patrimoine culturel immateriel de l'UNESCO depuis 2017. La plateforme fasnacht.digital est un portail d'information destine aux associations, aux institutions et aux particuliers qui souhaitent contribuer, parcourir et trouver des informations.
       it: Il Carnevale di Basilea e patrimonio culturale immateriale dell'umanita dell'UNESCO dal 2017. La piattaforma fasnacht.digital e un portale informativo rivolto ad associazioni, istituzioni e privati che desiderano contribuire, curiosare e trovare informazioni.
   lists:
-    CreativeCommons: ../fasnachts-onto/CreativeCommons.yaml
-    ObjectTaxonomy: ../fasnachts-onto/ObjectTaxonomy.yaml
-    LocationTaxonomy: ../fasnachts-onto/LocationTaxonomy.yaml
-    StoryKeywords: ../fasnachts-onto/StoryKeywords.yaml
-    OrganisationTaxonomy: ../fasnachts-onto/OrganisationTaxonomy.yaml
+    CreativeCommons: ./CreativeCommons.yaml
+    ObjectTaxonomy: ./ObjectTaxonomy.yaml
+    LocationTaxonomy: ./LocationTaxonomy.yaml
+    StoryKeywords: ./StoryKeywords.yaml
+    OrganisationTaxonomy: ./OrganisationTaxonomy.yaml
+    CarnivalEventTaxonomy: ./CarnivalEventTaxonomy.yaml
   external_ontologies:
     dcterms:
       namespace: http://purl.org/dc/terms/
@@ -613,6 +614,19 @@ ontology:
           fr: Mot-clé ou catégorie servant à organiser l'histoire dans l'archive du carnaval.
           it: Parola chiave o categoria usata per organizzare la storia nell'archivio del Carnevale.
         order: 8
+      - iri: fasnacht:relatedCarnivalThing
+        to_class: fasnacht:CarnivalThing
+        name:
+          en: Related Carnival Thing
+          de: Verknüpftes Fasnachtsobjekt
+          fr: Objet de carnaval lié
+          it: Oggetto di Carnevale correlato
+        description:
+          en: A Fasnacht object, event, organisation, or story related to this place.
+          de: Ein Fasnachtsobjekt, Ereignis, Organisation oder Geschichte, das mit diesem Ort verbunden ist.
+          fr: Un objet de carnaval, un événement, une organisation ou une histoire liés à cet endroit.
+          it: Un oggetto di Carnevale, un evento, un'organizzazione o una storia correlati a questo luogo.
+        order: 9
 
     fasnacht:Place:
       superclass:
@@ -755,26 +769,151 @@ ontology:
         order: 9
         editor: TEXT_AREA_WITH_LANG
 
+
+    fasnacht:CarnivalThing:
+      label:
+        en: Carnival Thing (an object or an event)
+        de: Fasnachts-Objekt / Fasnachts-Ereignis
+        fr: Objet ou évenement de carnaval
+        it: Oggetto/evento di Carnevale
+      properties:
+        - iri: schema:name
+          datatype: rdf:langString
+          name:
+            en: Name
+            de: Name
+            fr: Nom
+            it: Nome
+          description:
+            en: Name of the carnival thing, such as a festival, exhibition, or event.
+            de: Name des Fasnachts-Objekts oder -Ereignis, z.B. eine Laterne, ein Fasnachtsanlass etc.
+            fr: Nom de l'objet de carnaval, tel qu'un festival, une exposition ou un événement.
+            it: Nome dell'oggetto di Carnevale, come un festival, un'esposizione o un evento.
+          min_count: 1
+          editor: TEXT_FIELD_WITH_LANG
+          order: 1
+        - iri: schema:description
+          datatype: rdf:langString
+          name:
+            en: Description
+            de: Beschreibung
+            fr: Description
+            it: Descrizione
+          description:
+            en: Description or summary of the carnival thing, such as a festival, exhibition, or event.
+            de: Beschreibung oder Zusammenfassung des Fasnachts-Objekts oder -Ereignis, z.B. eine Laterne, ein Fasnachtsanlass etc.
+            fr: Description ou résumé de l'objet de carnaval, tel qu'un festival, une exposition ou un événement.
+            it: Descrizione o sintesi dell'oggetto di Carnevale, come un festival, un'esposizione o un evento.
+          editor: TEXT_AREA_WITH_LANG
+          order: 2
+        - iri: fasnacht:dating
+          to_class: oldap:Dating
+          name:
+            en: Date created / event date
+            de: Erstellungsdatum / Eventdateum
+            fr: Date de création / de l'événement
+            it: Data di creazione / data dell'evento'
+          description:
+            en: Dating information for the creation or production of the archival object.
+            de: Datierungsangaben zur Entstehung oder Herstellung des Fasnachtsding.
+            fr: Informations de datation sur la création ou la production de l'objet d'archive.
+            it: Informazioni di datazione sulla creazione o produzione dell'oggetto d'archivio.
+          order: 3
+        - iri: fasnacht:associatedOrganisation
+          to_class: fasnacht:Agent
+          name:
+            en: Associated organisation/institution
+            de: Mit Organisation/Einrichtung verbunden
+            fr: Lié à l'organisation/à l'établissement
+            it: Relativo all'organizzazione/all'allestimento
+          order: 4
+        - iri: fasnacht:connectedToOrganisationTaxonomy
+          to_class: list:OrganisationTaxonomy
+          name:
+            en: Connected to organisation taxonomy
+            de: Verknüpft mit Organisationseinheit
+            fr: Connecté à la taxonomie d'organisation
+            it: Connesso alla taxonomia di organizzazione
+          description:
+            en: Indicates the organisation taxonomy to which this media item is connected.
+            de: Gibt die Organisationseinheit an, mit der dieses Medienobjekt verbunden ist.
+            fr: Indique la taxonomie d'organisation à laquelle cet objet média est connecté.
+            it: Indica la taxonomia di organizzazione a cui questo oggetto multimediale è connesso.
+          order: 5
+        - iri: dcterms:isPartOf
+          to_class: fasnacht:CarnivalThing
+          inverse_of: dcterms:hasPart
+          name:
+            en: Part of
+            de: Teil von
+            fr: Fait partie de
+            it: Fa parte di
+          description:
+            en: Indicates that the archival object is part of a larger carnival thing, such as a festival, exhibition, or event.
+            de: Gibt an, dass das Fasnachtsding Teil eines größeren Fasnachtsding ist, z. B. eines Festivals, einer Ausstellung oder eines Ereignisses.
+            fr: Indique que l'objet d'archive fait partie d'un objet de carnaval plus grand, tel qu'un festival, une exposition ou un événement.
+            it: Indica che l'oggetto d'archivio fa parte di un oggetto di Carnevale più grande, come un festival, un'esposizione o un evento.
+          order: 6
+        - iri: dcterms:hasPart
+          to_class: fasnacht:CarnivalThing
+          inverse_of: dcterms:isPartOf
+          name:
+            en: Has part
+            de: Hat Teil
+            fr: A une partie
+            it: Ha parte
+          description:
+            en: Indicates that the archival object is part of a larger carnival thing, such as a festival, exhibition, or event.
+            de: Gibt an, dass das Fasnachtsding Teil eines größeren Fasnachtsding ist, z. B. eines Festivals, einer Ausstellung oder eines Ereignisses.
+            fr: Indique que l'objet d'archive fait partie d'un objet de carnaval plus grand, tel qu'un festival, une exposition ou un événement.
+            it: Indica che l'oggetto d'archivio fa parte di un oggetto di Carnevale più grande, come un festival, un'esposizione o un evento.
+          order: 7
+        - iri: fasnacht:location
+          to_class: fasnacht:Place
+          name:
+            en: Location
+            de: Ort
+            fr: Lieu
+            it: Luogo
+          description:
+            en: Indicates the location of the event or the current place of the archival object.
+            de: Gibt den Ort des Ereignisses oder den aktuellen Standort des Archivobjekts an.
+            fr: Indique le lieu de l'événement ou l'emplacement actuel de l'objet d'archivage.
+            it: Indica la località dell'oggetto d'archivio.
+          order: 8
+
+    fasnacht:CarnivalEvent:
+      superclass:
+      - fasnacht:CarnivalThing
+      - schema:Event
+      label:
+        en: Carnival event
+        de: Fasnachtsanlass
+        fr: Evenement de carnaval
+        it: Evento di Carnevale
+      properties:
+        - iri: dcterms:type
+          to_class: list:CarnivalEventTaxonomy
+          name:
+            en: Type
+            de: Typ
+            fr: Type
+            it: Tipo
+          description:
+            en: Indicates the type of the carnival event.
+            de: Gibt den Typ des Fasnachtsanlasses an.
+            fr: Indique le type de l'évenement de carnaval.
+            it: Indica il tipo dell'evento di Carnevale.
+          order: 1
+
     fasnacht:ArchiveObject:
+      superclass:
+        - fasnacht:CarnivalThing
+        - schema:CreativeWork
       label:
         en: Archival object
         de: ArchivObject
       properties:
-      - iri: fasnacht:archiveObjectTitle
-        datatype: rdf:langString
-        name:
-          en: Title
-          de: Titel
-          fr: Titre
-          it: Titolo
-        description:
-          en: Title or assigned name of an archival object from Fasnacht collections.
-          de: Titel oder vergebener Name eines Archivobjekts aus Fasnacht-Sammlungen.
-          fr: Titre ou nom attribué à un objet d'archive des collections du carnaval.
-          it: Titolo o nome attribuito a un oggetto d'archivio delle collezioni del Carnevale.
-        min_count: 1
-        editor: TEXT_FIELD_WITH_LANG
-        order: 1
       - iri: dcterms:type
         to_class: list:ObjectTaxonomy
         name:
@@ -789,21 +928,7 @@ ontology:
           it: Tipo di oggetto usato per classificare un oggetto d'archivio, per esempio costume, maschera, documento o accessorio.
         min_count: 1
         max_count: 1
-        order: 2
-      - iri: schema:description
-        datatype: rdf:langString
-        name:
-          en: Description
-          de: Beschreibung
-          fr: Description
-          it: Descrizione
-        description:
-          en: Archival description of the object's appearance, content, use, and Fasnacht context.
-          de: Archivalische Beschreibung von Aussehen, Inhalt, Verwendung und Fasnachtskontext des Objekts.
-          fr: Description archivistique de l'apparence, du contenu, de l'usage et du contexte carnavalesque de l'objet.
-          it: Descrizione archivistica dell'aspetto, del contenuto, dell'uso e del contesto carnevalesco dell'oggetto.
-        editor: TEXT_AREA_WITH_LANG
-        order: 3
+        order: 1
       - iri: dcterms:creator
         to_class: fasnacht:Person
         name:
@@ -816,35 +941,21 @@ ontology:
           de: Person, die das Archivobjekt entworfen, hergestellt, geschrieben oder anderweitig geschaffen hat.
           fr: Personne qui a conçu, fabriqué, écrit ou créé autrement l'objet d'archive.
           it: Persona che ha progettato, realizzato, scritto o creato in altro modo l'oggetto d'archivio.
-        order: 4
-      - iri: fasnacht:hasCreationDating
-        to_class: oldap:Dating
-        name:
-          en: Date created
-          de: Erstellungsdatum
-          fr: Date de création
-          it: Data di creazione
-        description:
-          en: Dating information for the creation or production of the archival object.
-          de: Datierungsangaben zur Entstehung oder Herstellung des Archivobjekts.
-          fr: Informations de datation sur la création ou la production de l'objet d'archive.
-          it: Informazioni di datazione sulla creazione o produzione dell'oggetto d'archivio.
-        order: 5
-      - iri: schema:provider
+        order: 2
+      - iri: fasnacht:currentCustodian
         to_class: fasnacht:Agent
         name:
-          en: Provider
-          de: Provider
-          fr: Provider
-          it: Provider
+          en: Current custodian
+          de: Aktuelle Verwahrerin / aktueller Verwahrer
+          fr: Détenteur actuel
+          it: Detentore attuale
         description:
-          en: Person or organisation that provided the archival object to the archive.
-          de: Person oder Organisation, die das Archivobjekt dem Archiv bereitgestellt hat.
-          fr: Personne ou organisation qui a fourni l'objet d'archive à l'archive.
-          it: Persona o organizzazione che ha fornito l'oggetto d'archivio all'archivio.
-        min_count: 1
+          en: Person or organisation currently holding or physically preserving the object.
+          de: Person oder Organisation, die das Objekt derzeit physisch verwahrt oder aufbewahrt.
+          fr: Personne ou organisation qui conserve ou détient actuellement l’objet physiquement.
+          it: Persona o organizzazione che conserva o detiene attualmente l’oggetto fisicamente.
         max_count: 1
-        order: 6
+        order: 3
       - iri: dcterms:provenance
         datatype: rdf:langString
         name:
@@ -858,35 +969,7 @@ ontology:
           fr: Provenance, historique de propriété ou contexte d'acquisition de l'objet d'archive.
           it: Provenienza, storia della proprietà o contesto di acquisizione dell'oggetto d'archivio.
         editor: TEXT_FIELD_WITH_LANG
-        order: 7
-      - iri: dcterms:hasPart
-        to_class: fasnacht:ArchiveObject
-        inverse_of: dcterms:isPartOf
-        name:
-          en: Contains
-          de: Enthält
-          fr: Contient
-          it: Contiene
-        description:
-          en: Links an archival object to objects that are physically or conceptually part of it.
-          de: Verknüpft ein Archivobjekt mit Objekten, die physisch oder inhaltlich zu ihm gehören.
-          fr: Relie un objet d'archive à des objets qui en font partie physiquement ou conceptuellement.
-          it: Collega un oggetto d'archivio a oggetti che ne fanno parte fisicamente o concettualmente.
-        order: 8
-      - iri: dcterms:isPartOf
-        to_class: fasnacht:ArchiveObject
-        inverse_of: dcterms:hasPart
-        name:
-          en: Part of
-          de: Teil von
-          fr: Fait partie de
-          it: Fa parte di
-        description:
-          en: Links an archival object to the larger object or collection it belongs to.
-          de: Verknüpft ein Archivobjekt mit dem übergeordneten Objekt oder Bestand, zu dem es gehört.
-          fr: Relie un objet d'archive à l'objet ou à la collection plus vaste dont il fait partie.
-          it: Collega un oggetto d'archivio all'oggetto o alla collezione più ampia di cui fa parte.
-        order: 9
+        order: 4
       - iri: fasnacht:usedAt
         to_class: oldap:Dating
         name:
@@ -899,21 +982,7 @@ ontology:
           de: Datum oder Zeitraum, in dem das Archivobjekt in der Fasnachtspraxis verwendet wurde.
           fr: Date ou période durant laquelle l'objet d'archive a été utilisé dans la pratique carnavalesque.
           it: Data o periodo in cui l'oggetto d'archivio è stato usato nella pratica del Carnevale.
-        order: 10
-      - iri: fasnacht:currentLocation
-        to_class: fasnacht:Place
-        name:
-          en: Place
-          de: Ort
-          fr: Lieu
-          it: Luogo
-        description:
-          en: Current physical location or repository of the archival object.
-          de: Aktueller physischer Standort oder Aufbewahrungsort des Archivobjekts.
-          fr: Lieu physique actuel ou dépôt de conservation de l'objet d'archive.
-          it: Luogo fisico attuale o deposito di conservazione dell'oggetto d'archivio.
-        max_count: 1
-        order: 11
+        order: 5
       - iri: schema:identifier
         datatype: xsd:string
         name:
@@ -927,7 +996,7 @@ ontology:
           fr: Identifiant d'archive, cote ou signature permettant de retrouver l'objet.
           it: Identificativo d'archivio, segnatura o collocazione per ritrovare l'oggetto.
         max_count: 1
-        order: 12
+        order: 6
 
     fasnacht:ArchiveMediaObject:
       superclass:
@@ -969,10 +1038,10 @@ ontology:
         order: 2
         editor: TEXT_AREA_WITH_LANG
       - iri: fasnacht:archiveMediaObjectOf
-        to_class: fasnacht:ArchiveObject
+        to_class: fasnacht:CarnivalThing
         name:
-          en: Represents archive object
-          de: Repräsentiert Archivobjekt
+          en: Represents archive object/event
+          de: Medium (Bild, Video, Ton etc.), das ein "Fasnachtsding" (Objekt, Anlass) darstellt
           fr: Représente l'objet d'archive
           it: Rappresenta oggetto d'archivio
         description:
@@ -982,6 +1051,49 @@ ontology:
           it: Oggetto d'archivio raffigurato, digitalizzato o altrimenti rappresentato da questo oggetto multimediale.
         min_count: 1
         order: 3
+      - iri: fasnacht:location
+        to_class: fasnacht:Place
+        name:
+          en: Location
+          de: Ort
+          fr: Lieu
+          it: Luogo
+        description:
+          en: Location where the media has been recorded.
+          de: Ort, an dem das Medium aufgenommen wurde.
+          fr: Lieu où le support a été enregistré.
+          it: Luogo in cui è stato registrato il materiale.
+        max_count: 1
+        order: 4
+      - iri: fasnacht:creationDating
+        to_class: oldap:Dating
+        name:
+          en: Date created
+          de: Erstellungsdatum
+          fr: Date de création
+          it: Data di creazione
+        description:
+          en: Date on which the archive media item was created or digitised.
+          de: Datum, an dem das Archivmedienobjekt erstellt oder digitalisiert wurde.
+          fr: Date à laquelle l'objet média d'archive a été créé ou numérisé.
+          it: Data in cui l'oggetto multimediale d'archivio è stato creato o digitalizzato.
+        order: 5
+      - iri:     fasnacht:contributingAgent
+        subproperty_of: schema:provider
+        to_class: fasnacht:Agent
+        name:
+          en: Provided by
+          de: Zur Verfügung gestellt von
+          fr: Mis à disposition par
+          it: Messo a disposizione da
+        description:
+          en: Organisation or person that provided the digital resource to the project. This refers to the source of the digital item or file and does not necessarily indicate authorship or ownership of the original object.
+          de: Organisation oder Person, die die digitale Ressource dem Projekt zur Verfügung gestellt hat. Dies bezeichnet die Herkunft des Digitalisats oder der digitalen Datei, nicht notwendigerweise die Urheberschaft oder das Eigentum am ursprünglichen Objekt.
+          fr: Organisation ou personne ayant mis la ressource numérique à disposition du projet. Cela désigne la provenance du document numérique ou du fichier numérique, sans indiquer nécessairement la paternité ou la propriété de l’objet original.
+          it: Organizzazione o persona che ha messo la risorsa digitale a disposizione del progetto. Questo indica la provenienza del documento o file digitale e non implica necessariamente la paternità o la proprietà dell’oggetto originale.
+        min_count: 1
+        max_count: 1
+        order: 6
       - iri: dcterms:creator
         to_class: fasnacht:Agent
         name:
@@ -994,20 +1106,7 @@ ontology:
           de: Person oder Organisation, die das Archivmedienobjekt erstellt hat.
           fr: Personne ou organisation qui a créé l'objet média d'archive.
           it: Persona o organizzazione che ha creato l'oggetto multimediale d'archivio.
-        order: 4
-      - iri: schema:dateCreated
-        datatype: xsd:date
-        name:
-          en: Date created
-          de: Erstellungsdatum
-          fr: Date de création
-          it: Data di creazione
-        description:
-          en: Date on which the archive media item was created or digitised.
-          de: Datum, an dem das Archivmedienobjekt erstellt oder digitalisiert wurde.
-          fr: Date à laquelle l'objet média d'archive a été créé ou numérisé.
-          it: Data in cui l'oggetto multimediale d'archivio è stato creato o digitalizzato.
-        order: 5
+        order: 7
       - iri: dcterms:rights
         to_class: list:CreativeCommons
         name:
@@ -1022,7 +1121,7 @@ ontology:
           it: Diritti o licenza che regolano il riuso dell'oggetto multimediale d'archivio.
         min_count: 1
         max_count: 1
-        order: 6
+        order: 8
       - iri: schema:position
         datatype: xsd:integer
         name:
@@ -1030,7 +1129,8 @@ ontology:
           de: Position/Sequenznummer/Seite
           fr: Position
           it: Posizione
-        order: 7
+        order: 9
+
   lucene_connectors:
     fasnacht_story:
       types:
@@ -1046,6 +1146,7 @@ ontology:
     fasnacht_archive:
       types:
       - fasnacht:ArchiveObject
+      - fasnacht:CarnivalEvent
       - fasnacht:ArchiveMediaObject
       languages:
       - en
@@ -1053,14 +1154,14 @@ ontology:
       - fr
       - it
       fields:
-        archiveObjectTitle: fasnacht:archiveObjectTitle
+        archiveObjectTitle: schema:name
         archiveObjectDescription: schema:description
         archiveMediaObjectTitle: schema:name
         archiveMediaObjectDescription: schema:description
         representedArchiveObjectTitle:
           chain:
           - fasnacht:archiveMediaObjectOf
-          - fasnacht:archiveObjectTitle
+          - schema:name
         representedArchiveObjectDescription:
           chain:
           - fasnacht:archiveMediaObjectOf
