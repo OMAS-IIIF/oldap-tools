@@ -1,5 +1,11 @@
 # CODEX_LOG
 
+### Update 2026-06-05 23:51
+- Decisions: Make ontology update attribute comparison tolerate missing OLDAP attributes instead of relying on oldaplib value-object comparison against `None`.
+- Implementation: Added `_values_equal()` and routed `_set_attr()` through it so `LangString` and similar values are only compared after explicit `None` handling.
+- Open: Rerun the live `ontology load` command against GraphDB to confirm the next update phase completes in the user's repository state.
+- Risks/Assumptions: Local verification covers the failing comparison path; the live update may expose further model-specific issues after this first crash is removed.
+
 ### Update 2026-05-26 22:21
 - Decisions: Include `fasnacht:CarnivalEvent` in the Fasnacht archive Lucene connector so public full-text search covers event descriptions and titles.
 - Implementation: Added `fasnacht:CarnivalEvent` to `fasnacht_archive.types` in `fasnacht/fasnacht-onto.yaml`; existing archive title fields already use `schema:name`.

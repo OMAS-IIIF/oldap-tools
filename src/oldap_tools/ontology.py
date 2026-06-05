@@ -618,9 +618,22 @@ def _build_datamodel(con: Connection, project: Project, ontology: dict[str, Any]
     return DataModel(con=con, project=project, extontos=extontos, propclasses=propclasses, resclasses=resclasses)
 
 
+def _values_equal(current: Any, desired: Any) -> bool:
+    """Return whether OLDAP attribute values are semantically unchanged.
+
+    Some oldaplib value objects, notably `LangString`, assume that comparison
+    operands have the same internal structure. Handling `None` before delegating
+    to those value objects keeps update mode stable for missing attributes.
+    """
+    if current is None or desired is None:
+        return current is desired
+    return current == desired
+
+
 def _set_attr(obj: Any, attr: Any, value: Any) -> None:
+    """Update an OLDAP model attribute only when its value changed."""
     current = obj.get(attr)
-    if current != value:
+    if not _values_equal(current, value):
         obj[attr] = value
 
 

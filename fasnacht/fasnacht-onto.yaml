@@ -21,6 +21,7 @@ ontology:
     StoryKeywords: ./StoryKeywords.yaml
     OrganisationTaxonomy: ./OrganisationTaxonomy.yaml
     CarnivalEventTaxonomy: ./CarnivalEventTaxonomy.yaml
+    StagingTaxonomy: ./StagingTaxonomy.yaml
   external_ontologies:
     dcterms:
       namespace: http://purl.org/dc/terms/
@@ -153,11 +154,21 @@ ontology:
     fasnacht:FasnachtUser:
       superclass:
       - oldap:User
+      label:
+        en: Fasnacht user
+        de: Fasnacht-Benutzer
+        fr: Utilisateur Fasnacht
+        it: Utente Fasnacht
       properties:
       - iri: fasnacht:memberOfOrganisation
         subproperty_of: schema:memberOf
-        to_class: list:OrganisationTaxonomy
-        max_count: 1
+        to_class: fasnacht:Organisation
+        name:
+          en: Member of organisation
+          de: Mitglied einer Organisation
+          fr: Membre d'une organisation
+          it: Membro di un'organizzazione
+        min_count: 1
 
     fasnacht:Agent:
       superclass:
@@ -289,6 +300,15 @@ ontology:
           fr: Lieu de l'organisation
           it: Luogo dell'organizzazione
         order: 4
+      - iri: fasnacht:stagingDefaultRole
+        to_class: fasnacht:Role
+        name:
+          en: Default role for staging
+          de: Standardrolle für Staging
+          fr: Rôle par défaut pour le staging
+          it: Ruolo predefinito per lo staging
+        max_count: 1
+        order: 5
 
     schema:NewsArticle:
       label:
@@ -769,7 +789,6 @@ ontology:
         order: 9
         editor: TEXT_AREA_WITH_LANG
 
-
     fasnacht:CarnivalThing:
       label:
         en: Carnival Thing (an object or an event)
@@ -1130,6 +1149,79 @@ ontology:
           fr: Position
           it: Posizione
         order: 9
+
+    fasnacht:StagingFolder:
+      properties:
+        - iri: schema:name
+          datatype: xsd:string
+          name:
+            en: Folder
+            de: Ordner
+            fr: Dossier
+            it: Cartella
+          min_count: 1
+          max_count: 1
+          order: 1
+        - iri: fasnacht:depositingOrganisation
+          to_class: fasnacht:Organisation
+          name:
+            en: Depositing organisation
+            de: Einreichende Organisation
+            fr: Organisation déposante
+            it: Ente depositante
+          min_count: 1
+          max_count: 1
+          order: 2
+        - iri: fasnacht:inStagingFolder
+          to_class: fasnacht:StagingFolder
+          name:
+            en: Subolder of
+            de: Unterordner von
+            fr: Sous-dossiers de
+            it: Sottocartelle di
+          max_count: 1
+          order: 3
+
+    fasnacht:StagingMediaObject:
+      superclass:
+      - shared:MediaObject
+      properties:
+        - iri: fasnacht:inStagingFolder
+          to_class: fasnacht:StagingFolder
+          name:
+            en: In folder
+            de: Im Ordner
+            fr: Dans le Dossier
+            it: Nella cartella
+          min_count: 1
+          max_count: 1
+          order: 1
+        - iri: fasnacht:depositingOrganisation
+          to_class: fasnacht:Organisation
+          name:
+            en: Depositing Organization
+            de: Einreichende Organisation
+            fr: Organisme déposante
+            it: Organizzazione che effettua il deposito
+          min_count: 1
+          max_count: 1
+          order: 1
+        - iri: schema:comment
+          datatype: xsd:string
+          name:
+            en: Comment
+            de: Kommentar
+            fr: Commentaire
+            it: Commento
+        - iri: fasnacht:stagingStatus
+          to_class: list:StagingTaxonomy
+          name:
+            en: Status
+            de: Status
+            fr: Statut
+            it: Stato
+          min_count: 1
+          max_count: 1
 
   lucene_connectors:
     fasnacht_story:
