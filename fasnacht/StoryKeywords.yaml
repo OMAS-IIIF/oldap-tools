@@ -1,0 +1,21 @@
+StoryKeywords:
+  label:
+    - Keywords for stories@en
+    - Stichworte für Geschichten@de
+  nodes:
+    ScienceBackground:
+      label:
+        - Science & Background@en
+        - Wissenschaft & Hintergrund@de
+    ObjectsCollections:
+      label:
+        - Objects & Collections@en
+        - Objekte & Sammlungen@de
+    RitualsCrafts:
+      label:
+        - Rituals & Crafts@en
+        - Rituale & Handwerk@de
+    Miscellanious:
+      label:
+        - Miscellanious@en
+        - Mümpfeli & Allergattigs@de

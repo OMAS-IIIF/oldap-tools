@@ -1,0 +1,118 @@
+CreativeCommons:
+  label:
+  - Creative Commons@en
+  - Creative Commons@de
+  nodes:
+    CC_BY:
+      definition:
+      - 'This license enables reusers to distribute, remix, adapt, and build upon
+        the material in any medium or format, so long as attribution is given to the
+        creator. The license allows for commercial use. CC BY includes the following
+        elements: BY: credit must be given to the creator.@en'
+      - 'Diese Lizenz ermöglicht es Wiederverwendern, das Material in jedem Medium
+        oder Format zu verbreiten, zu remixen, anzupassen und darauf aufzubauen, solange
+        der Urheber genannt wird. Die Lizenz erlaubt die kommerzielle Nutzung. CC
+        BY umfasst die folgenden Elemente: BY: Der Urheber muss genannt werden.@de'
+      label:
+      - CC BY@en
+      - CC BY@de
+    CC_BY-NC:
+      definition:
+      - 'This license enables reusers to distribute, remix, adapt, and build upon
+        the material in any medium or format for noncommercial purposes only, and
+        only so long as attribution is given to the creator. CC BY-NC includes the
+        following elements: BY: credit must be given to the creator. NC: Only noncommercial
+        uses of the work are permitted.@en'
+      - 'Diese Lizenz ermöglicht es Wiederverwendern, das Material in jedem Medium
+        oder Format ausschließlich für nichtkommerzielle Zwecke zu verbreiten, zu
+        remixen, anzupassen und darauf aufzubauen, sofern der Urheber genannt wird.
+        CC BY-NC umfasst die folgenden Elemente: BY: Der Urheber muss genannt werden.
+        NC: Das Werk darf nur für nichtkommerzielle Zwecke verwendet werden.@de'
+      label:
+      - CC BY-NC@en
+      - CC BY-NC@de
+    CC_BY-NC-ND:
+      definition:
+      - 'This license enables reusers to copy and distribute the material in any medium
+        or format in unadapted form only, for noncommercial purposes only, and only
+        so long as attribution is given to the creator. CC BY-NC-ND includes the following
+        elements: BY: credit must be given to the creator. NC: Only noncommercial
+        uses of the work are permitted. ND: No derivatives or adaptations of the work
+        are permitted.@en'
+      - 'Diese Lizenz ermöglicht es Wiederverwendern, das Material in jedem Medium
+        oder Format nur in unveränderter Form, nur für nichtkommerzielle Zwecke und
+        nur unter Angabe der Urheberschaft zu kopieren und zu verbreiten. CC BY-NC-ND
+        umfasst die folgenden Elemente: BY: Der Urheber muss genannt werden. NC: Nur
+        nichtkommerzielle Verwendungen des Werks sind zulässig. ND: Derivate oder
+        Bearbeitungen des Werks sind nicht zulässig.@de'
+      label:
+      - CC BY-NC-ND@en
+      - CC BY-NC-ND@de
+    CC_BY-NC-SA:
+      definition:
+      - 'This license enables reusers to distribute, remix, adapt, and build upon
+        the material in any medium or format for noncommercial purposes only, and
+        only so long as attribution is given to the creator. If you remix, adapt,
+        or build upon the material, you must license the modified material under identical
+        terms. CC BY-NC-SA includes the following elements: BY: credit must be given
+        to the creator. NC: Only noncommercial uses of the work are permitted. SA:
+        Adaptations must be shared under the same terms.@en'
+      - 'Diese Lizenz ermöglicht es Wiederverwendern, das Material in jedem Medium
+        oder Format ausschließlich für nichtkommerzielle Zwecke zu verbreiten, zu
+        remixen, anzupassen und darauf aufzubauen, sofern der Urheber genannt wird.
+        Wenn Sie das Material remixen, anpassen oder darauf aufbauen, müssen Sie das
+        veränderte Material unter identischen Bedingungen lizenzieren. CC BY-NC-SA
+        umfasst die folgenden Elemente: BY: Der Urheber muss genannt werden. NC: Das
+        Werk darf nur für nichtkommerzielle Zwecke genutzt werden. SA: Bearbeitungen
+        müssen unter denselben Bedingungen weitergegeben werden.@de'
+      label:
+      - CC BY-NC-SA@en
+      - CC BY-NC-SA@de
+    CC_BY-ND:
+      definition:
+      - 'This license enables reusers to copy and distribute the material in any medium
+        or format in unadapted form only, and only so long as attribution is given
+        to the creator. The license allows for commercial use. CC BY-ND includes the
+        following elements: BY: credit must be given to the creator. ND: No derivatives
+        or adaptations of the work are permitted.@en'
+      - 'Diese Lizenz ermöglicht es Wiederverwendern, das Material in jedem Medium
+        oder Format nur in unveränderter Form zu kopieren und zu verbreiten, sofern
+        der Urheber genannt wird. Die Lizenz erlaubt die kommerzielle Nutzung. CC
+        BY-ND umfasst die folgenden Elemente: BY: Der Urheber muss genannt werden.
+        ND: Derivate oder Bearbeitungen des Werks sind nicht zulässig.@de'
+      label:
+      - CC BY-ND@en
+      - CC BY-ND@de
+    CC_BY-SA:
+      definition:
+      - 'This license enables reusers to distribute, remix, adapt, and build upon
+        the material in any medium or format, so long as attribution is given to the
+        creator. The license allows for commercial use. If you remix, adapt, or build
+        upon the material, you must license the modified material under identical
+        terms. CC BY-SA includes the following elements: BY: credit must be given
+        to the creator. SA: Adaptations must be shared under the same terms.@en'
+      - 'Diese Lizenz ermöglicht es Wiederverwendern, das Material in jedem Medium
+        oder Format zu verbreiten, zu remixen, anzupassen und darauf aufzubauen, solange
+        der Urheber genannt wird. Die Lizenz erlaubt die kommerzielle Nutzung. Wenn
+        Sie das Material remixen, anpassen oder darauf aufbauen, müssen Sie das modifizierte
+        Material unter identischen Bedingungen lizenzieren. CC BY-SA umfasst die folgenden
+        Elemente: BY: Der Urheber muss genannt werden. SA: Adaptionen müssen unter
+        denselben Bedingungen geteilt werden.@de'
+      label:
+      - CC BY-SA@en
+      - CC BY-SA@de
+    CC0:
+      label:
+        - 'CC0: Public Domain@en'
+        - 'CC0: Public Domain@de'
+      definition:
+        - 'CC0 (aka CC Zero) is a public dedication tool, which enables creators to give
+          up their copyright and put their works into the worldwide public domain. CC0
+          enables reusers to distribute, remix, adapt, and build upon the material in
+          any medium or format, with no conditions.@en'
+        - 'CC0 (auch bekannt als CC Zero) ist ein öffentliches Widmungsinstrument, mit dem
+          Urheber ihr Urheberrecht aufgeben und ihre Werke weltweit gemeinfrei machen können.
+          CC0 ermöglicht es Wiederverwendern, das Material in jedem Medium und Format ohne
+          Auflagen zu verbreiten, zu remixen, anzupassen und darauf aufzubauen.@de'
+
+

@@ -1,0 +1,61 @@
+LocationTaxonomy:
+  label:
+  - Ortskategorien@de
+  nodes:
+    Land:
+      label:
+        - Land@de
+    StadtOrt:
+      label:
+        - Ort/Stadt@de
+    Archiv:
+      label:
+      - Archiv@de
+    Cliquenkeller:
+      label:
+      - Cliquenkeller@de
+    Depot:
+      label:
+      - Depot@de
+    Veranstaltungsort:
+      label:
+      - Veranstaltungsort@de
+    Privat:
+      label:
+      - Privatraum@de
+    Museum:
+      label:
+      - Museum@de
+    Werkstatt:
+      label:
+      - Werkstatt@de
+    Strasse:
+      label:
+      - Strasse@de
+    Platz:
+      label:
+      - Platz@de
+    Gebaeude:
+      label:
+      - Gebäude@de
+    Quartier:
+      label:
+      - Quartier@de
+    Bruecke:
+      label:
+      - Brücke@de
+    Route:
+      label:
+      - Route@de
+    Restaurant:
+      label:
+      - Restaurant@de
+    Treffpunkt:
+      label:
+      - Treffpunkt@de
+    Areal:
+      label:
+      - Areal@de
+    HistorischerOrt:
+      label:
+      - Historischer Ort@de

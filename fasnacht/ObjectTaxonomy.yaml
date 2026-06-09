@@ -1,0 +1,36 @@
+ObjectTaxonomy:
+  label:
+  - Object types@en
+  - Objektklassen@de
+  nodes:
+    Laterne:
+      label:
+      - Laterne (Ladärne)@de
+    Maske:
+      label:
+      - Maske (Larve)@de
+    Kostuem:
+      label:
+      - Kostüm (Goschdyym)@de
+    Plakette:
+      label:
+      - Plakette (Blagette)@de
+    Marsch:
+      label:
+      - Marsch@de
+    Helge:
+      label:
+      - Helge@de
+    Zeedel:
+      label:
+        - Zeedel@de
+    Dokument:
+      label:
+      - Dokument@de
+      nodes:
+        Protokoll:
+          label:
+          - Protokoll@de
+        Chronik:
+          label:
+          - Chronik@de

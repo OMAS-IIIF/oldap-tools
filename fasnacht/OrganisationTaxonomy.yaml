@@ -1,0 +1,143 @@
+OrganisationTaxonomy:
+  label:
+    - Organisation types@en
+    - Organisationskategorien@de
+  nodes:
+    Fasnachtsvereine:
+      label:
+        - Carnival organizations@en
+        - Fasnachtsvereine@de
+        - Associations carnavalesques@fr
+        - Associazioni carnevalesche@it
+      nodes:
+        Clique:
+          label:
+            - Carnival group@en
+            - Glygge@de
+            - Group de carnaval@fr
+            - compagnia di carnevale@it
+          nodes:
+            Stamm:
+              label:
+                - Main group@en
+                - Stamm@de
+                - Groupe principal@fr
+                - Gruppo principale@it
+            AlteGarde:
+              label:
+                - Old guard@en
+                - Alti Garde@de
+                - Vieille garde@fr
+                - Vecchia guardia@it
+            JungeGarde:
+              label:
+                - Youth group@en
+                - Jungi Garde@de
+                - Jeune garde@fr
+                - Giovane guardia@it
+              nodes:
+                Binggis:
+                  label:
+                    - Children’s group@en
+                    - Binggis@de
+                    - Groupe d’enfants@fr
+                    - Gruppo di bambini@it
+                Nachwuchs:
+                  label:
+                    - Junior group@en
+                    - Nochwuchsgruppe@de
+                    - Groupe de relève@fr
+                    - Gruppo giovanile@it
+        Wagenclique:
+          label:
+            - Float group@en
+            - Waageglygge@de
+            - Groupe de char@fr
+            - Gruppo di carro@it
+        Guggenmusik:
+          label:
+            - Guggen band@en
+            - Guggemuusig@de
+            - Guggenmusik@fr
+            - Guggenmusik@it
+        Chaise:
+          label:
+            - Chaise@en
+            - Chaise@de
+            - Chaise@fr
+            - Chaise@it
+        Schyssdraeggzuegli:
+          label:
+            - Schyssdräggziigli@en
+            - Schyssdräggziigli@de
+            - Schyssdräggziigli@fr
+            - Schyssdräggziigli@it
+        Fasnachtscomite:
+          label:
+            - Carnival committee@en
+            - Fasnachts-Comité@de
+            - Comité du carnaval@fr
+            - Comitato del carnevale@it
+    Gedaechtnisinstitutionen:
+      label:
+        - Memory institutions@en
+        - Gedächtnisinstitutionen@de
+        - Institutions de mémoire@fr
+        - Istituzioni della memoria@it
+      nodes:
+        Archiv:
+          label:
+            - Archive@en
+            - Archiv@de
+            - Archives@fr
+            - Archivio@it
+          nodes:
+            Bundesarchiv:
+              label:
+                - Federal archive@en
+                - Bundesarchiv@de
+                - Archives fédérales@fr
+                - Archivio federale@it
+            Staatsarchiv:
+              label:
+                - State/Cantonal archive@en
+                - Staats-/Kantonsarchiv@de
+                - Archives cantonales@fr
+                - Archivio cantonale@it
+            Cliqenarchiv:
+              label:
+                - Carnival group archive@en
+                - Cliquenarchiv@de
+                - Archives de clique@fr
+                - Archivio di clique@it
+            Institutionsarchiv:
+              label:
+                - Institutional archive@en
+                - Institutionelles Archiv@de
+                - Archives institutionnelles@fr
+                - Archivio istituzionale@it
+            Privatarchiv:
+              label:
+                - Private archive@en
+                - Privatarchiv@de
+                - Archives privées@fr
+                - Archivio privato@it
+        Museum:
+          label:
+            - Museum@en
+            - Museum@de
+            - Musée@fr
+            - Museo@it
+          nodes:
+            Staatsmuseum:
+              label:
+                - State/Cantonal museum@en
+                - Staatliches/Kantonales Museum@de
+                - Musée cantonal@fr
+                - Museo cantonale@it
+            Privatmuseum:
+              label:
+                - Private museum@en
+                - Privates Museum@de
+                - Musée privé@fr
+                - Museo privato@it
