@@ -1148,7 +1148,6 @@ ontology:
           it: Posizione
         order: 9
 
-
     fasnacht:StagingArea:
       superclass:
       - shared:StagingArea
