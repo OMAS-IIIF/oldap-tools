@@ -399,6 +399,136 @@ ontology:
         max_count: 1
         order: 4
 
+    fasnacht:EventAnnouncement:
+      label:
+        en: Event announcement
+        de: Veranstaltungsankündigung
+        fr: Annonce d'événement
+        it: Annuncio di evento
+      comment:
+        en: Editorial announcement used to promote a public event on fasnacht.digital.
+        de: Redaktionelle Ankündigung zur Bewerbung einer öffentlichen Veranstaltung auf fasnacht.digital.
+        fr: Annonce éditoriale utilisée pour promouvoir un événement public sur fasnacht.digital.
+        it: Annuncio editoriale utilizzato per promuovere un evento pubblico su fasnacht.digital.
+      properties:
+      - iri: schema:name
+        datatype: rdf:langString
+        name:
+          en: Title
+          de: Titel
+          fr: Titre
+          it: Titolo
+        description:
+          en: Public title of the announced event.
+          de: Öffentlicher Titel der angekündigten Veranstaltung.
+          fr: Titre public de l'événement annoncé.
+          it: Titolo pubblico dell'evento annunciato.
+        min_count: 1
+        order: 1
+        editor: TEXT_FIELD_WITH_LANG
+      - iri: schema:description
+        datatype: rdf:langString
+        name:
+          en: Description
+          de: Beschreibung
+          fr: Description
+          it: Descrizione
+        description:
+          en: Public description of the event and its relevant details.
+          de: Öffentliche Beschreibung der Veranstaltung und ihrer relevanten Angaben.
+          fr: Description publique de l'événement et de ses informations pertinentes.
+          it: Descrizione pubblica dell'evento e delle informazioni rilevanti.
+        min_count: 1
+        order: 2
+        editor: TEXT_AREA_WITH_LANG
+      - iri: fasnacht:eventAnnouncementImage
+        to_class: fasnacht:MediaLibraryObject
+        name:
+          en: Event image
+          de: Veranstaltungsbild
+          fr: Image de l'événement
+          it: Immagine dell'evento
+        description:
+          en: Optional poster or image used to present the event announcement.
+          de: Optionales Plakat oder Bild zur Darstellung der Veranstaltungsankündigung.
+          fr: Affiche ou image facultative utilisée pour présenter l'annonce de l'événement.
+          it: Manifesto o immagine facoltativa usata per presentare l'annuncio dell'evento.
+        max_count: 1
+        order: 3
+      - iri: fasnacht:isPublished
+        datatype: xsd:boolean
+        name:
+          en: Is published
+          de: Veröffentlicht
+          fr: Publié
+          it: Pubblicato
+        description:
+          en: Indicates whether the event announcement is published and visible to website visitors.
+          de: Gibt an, ob die Veranstaltungsankündigung veröffentlicht und für Website-Besucher sichtbar ist.
+          fr: Indique si l'annonce de l'événement est publiée et visible par les visiteurs du site.
+          it: Indica se l'annuncio dell'evento è pubblicato e visibile ai visitatori del sito.
+        min_count: 1
+        max_count: 1
+        order: 4
+      - iri: fasnacht:eventStartDate
+        datatype: xsd:date
+        name:
+          en: Event start date
+          de: Startdatum der Veranstaltung
+          fr: Date de début de l'événement
+          it: Data di inizio dell'evento
+        description:
+          en: Calendar date on which the announced event starts.
+          de: Kalendertag, an dem die angekündigte Veranstaltung beginnt.
+          fr: Date à laquelle commence l'événement annoncé.
+          it: Data in cui inizia l'evento annunciato.
+        min_count: 1
+        max_count: 1
+        order: 5
+      - iri: fasnacht:eventEndDate
+        datatype: xsd:date
+        name:
+          en: Event end date
+          de: Enddatum der Veranstaltung
+          fr: Date de fin de l'événement
+          it: Data di fine dell'evento
+        description:
+          en: Calendar date on which the announced event ends; for a single-day event, it is the same as the start date.
+          de: Kalendertag, an dem die angekündigte Veranstaltung endet; bei einer eintägigen Veranstaltung entspricht er dem Startdatum.
+          fr: Date à laquelle se termine l'événement annoncé; pour un événement d'une journée, elle correspond à la date de début.
+          it: Data in cui termina l'evento annunciato; per un evento di un solo giorno coincide con la data di inizio.
+        min_count: 1
+        max_count: 1
+        order: 6
+      - iri: fasnacht:eventStartTime
+        datatype: xsd:time
+        name:
+          en: Event start time
+          de: Startzeit der Veranstaltung
+          fr: Heure de début de l'événement
+          it: Ora di inizio dell'evento
+        description:
+          en: Optional local time at which the announced event starts.
+          de: Optionale lokale Uhrzeit, zu der die angekündigte Veranstaltung beginnt.
+          fr: Heure locale facultative à laquelle commence l'événement annoncé.
+          it: Ora locale facoltativa in cui inizia l'evento annunciato.
+        max_count: 1
+        order: 7
+      - iri: fasnacht:eventEndTime
+        datatype: xsd:time
+        name:
+          en: Event end time
+          de: Endzeit der Veranstaltung
+          fr: Heure de fin de l'événement
+          it: Ora di fine dell'evento
+        description:
+          en: Optional local time at which the announced event ends.
+          de: Optionale lokale Uhrzeit, zu der die angekündigte Veranstaltung endet.
+          fr: Heure locale facultative à laquelle se termine l'événement annoncé.
+          it: Ora locale facoltativa in cui termina l'evento annunciato.
+        max_count: 1
+        order: 8
+
     fasnacht:MediaLibraryObject:
       superclass:
       - shared:MediaObject
