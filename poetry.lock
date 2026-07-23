@@ -110,14 +110,14 @@ typecheck = ["mypy"]
 
 [[package]]
 name = "bracex"
-version = "3.0"
+version = "3.0.1"
 description = "Bash style brace expander."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "bracex-3.0-py3-none-any.whl", hash = "sha256:3833e61c2f092d5aa0468fa2e6c6e990a306185abf763b6d122f0158e59c58a5"},
-    {file = "bracex-3.0.tar.gz", hash = "sha256:b73f718d6bd98d8419e45df02426c86e9967c179949f779340d6c3a8c83b9111"},
+    {file = "bracex-3.0.1-py3-none-any.whl", hash = "sha256:6523ad83aeb5098a4ee597cff0f964442ff74e460bd3fafaffab6a013ff2288c"},
+    {file = "bracex-3.0.1.tar.gz", hash = "sha256:4e38e32392e4a4780fe15d644bfc7c8514057cfc3861e060b11814ce829c25e4"},
 ]
 
 [[package]]
@@ -145,14 +145,14 @@ wcmatch = ">=8.5.1"
 
 [[package]]
 name = "certifi"
-version = "2026.6.17"
+version = "2026.7.22"
 description = "Python package for providing Mozilla's CA Bundle."
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "certifi-2026.6.17-py3-none-any.whl", hash = "sha256:2227dcbaafe0d2f59279d1762ddddc37783ed4354594f194ffc31d20f41fc3db"},
-    {file = "certifi-2026.6.17.tar.gz", hash = "sha256:024c88eeec92ca068db80f02b8b07c9cef7b9fe261d1d535abfd5abd6f6af432"},
+    {file = "certifi-2026.7.22-py3-none-any.whl", hash = "sha256:62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775"},
+    {file = "certifi-2026.7.22.tar.gz", hash = "sha256:741e2c3b351ddf169a738da9f2c048608ff7f2c5cc02f1ebc6b118bb090d5d55"},
 ]
 
 [[package]]
@@ -360,14 +360,14 @@ files = [
 
 [[package]]
 name = "httpcore2"
-version = "2.7.0"
+version = "2.9.0"
 description = "A minimal low-level HTTP client."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "httpcore2-2.7.0-py3-none-any.whl", hash = "sha256:1452f589fe23f55b44546cd884294c41a29330af902bc0b71a761fd52d18f92b"},
-    {file = "httpcore2-2.7.0.tar.gz", hash = "sha256:6dc0fedf329a52a990930a5579edfebaea81118ea700ea0dd7de2b5e5be49efc"},
+    {file = "httpcore2-2.9.0-py3-none-any.whl", hash = "sha256:e51e54521809628d2014da8d67eecd4de738d54f556d646069fa9cb63fc9a9dc"},
+    {file = "httpcore2-2.9.0.tar.gz", hash = "sha256:03077a578e26d6166d831f68319326bf1d92cb851946292d2158a85e9da1896a"},
 ]
 
 [package.dependencies]
@@ -382,19 +382,19 @@ trio = ["trio (>=0.22.0,<1.0)"]
 
 [[package]]
 name = "httpx2"
-version = "2.7.0"
+version = "2.9.0"
 description = "The next generation HTTP client."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "httpx2-2.7.0-py3-none-any.whl", hash = "sha256:ed2a2719c696789e09493bd8e2bec3d8bd925cc6e26b68389ec25ade132f7bf4"},
-    {file = "httpx2-2.7.0.tar.gz", hash = "sha256:8b30709aed5c8465b0dd3b95c09ce301c8f79e7e7a2d00ab0af551e0d0375b07"},
+    {file = "httpx2-2.9.0-py3-none-any.whl", hash = "sha256:cc8e82fa3dc02fa91586dc6ccb3c9bd802a5a48adf4626d66553e793de67cbb4"},
+    {file = "httpx2-2.9.0.tar.gz", hash = "sha256:85e33a04e7b0ad24044a62affa916140f363f19ba38e15fbc7e6aba1f1fb2775"},
 ]
 
 [package.dependencies]
 anyio = ">=4.10"
-httpcore2 = "2.7.0"
+httpcore2 = "2.9.0"
 idna = ">=3.18"
 truststore = ">=0.10"
 typing-extensions = {version = ">=4.5.0", markers = "python_version < \"3.13\""}
@@ -526,14 +526,14 @@ files = [
 
 [[package]]
 name = "oldaplib"
-version = "0.7.1"
+version = "0.7.2"
 description = "Open Media Access Server Library (Linked Open Data middleware/RESTApi)"
 optional = false
 python-versions = "<4.0,>=3.12"
 groups = ["main"]
 files = [
-    {file = "oldaplib-0.7.1-py3-none-any.whl", hash = "sha256:af6468f8a5105fd31d7cfa2cdbec24563cd4fbf96e262caeab6fa7ba8f30356a"},
-    {file = "oldaplib-0.7.1.tar.gz", hash = "sha256:0f229952388111934f88c85d5876dfa42d370bda94b62092e9bb25ec380970cf"},
+    {file = "oldaplib-0.7.2-py3-none-any.whl", hash = "sha256:56ef45316d3cc2c719cda51091447d30b0e4885e9828d94e657fac2d5c0220b3"},
+    {file = "oldaplib-0.7.2.tar.gz", hash = "sha256:42f88adc84de213521dfeeb02d07f4611e76033f4454d7f14c58da09c772b359"},
 ]
 
 [package.dependencies]
@@ -1196,14 +1196,14 @@ files = [
 
 [[package]]
 name = "tomlkit"
-version = "0.15.0"
+version = "0.15.1"
 description = "Style preserving TOML library"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "tomlkit-0.15.0-py3-none-any.whl", hash = "sha256:4dbc8f0fc024412b57ced8757ac7461305126a648ff8c2c807fcb8e133a78738"},
-    {file = "tomlkit-0.15.0.tar.gz", hash = "sha256:7d1a9ecba3086638211b13814ea79c90dd54dd11993564376f3aa92271f5c7a3"},
+    {file = "tomlkit-0.15.1-py3-none-any.whl", hash = "sha256:177a05aece5a8ca5266fd3c448abb47b8d352f09d477d3ca8332db4d89b24304"},
+    {file = "tomlkit-0.15.1.tar.gz", hash = "sha256:e25bbf38843005246210a12982776f27f99cb9be67160e14434d0c0d21ee1e97"},
 ]
 
 [[package]]
