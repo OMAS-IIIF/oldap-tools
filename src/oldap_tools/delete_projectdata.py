@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 
 import typer
-from oldaplib.src.connection import Connection
+from oldap_tools.connection import create_connection
 from oldaplib.src.helpers.context import Context
 from oldaplib.src.helpers.oldaperror import OldapError
 from oldaplib.src.project import Project
@@ -20,12 +20,14 @@ def delete_projectdata(project_id: str,
                        graphdb_user: str | None = None,
                        graphdb_password: str | None = None) -> None:
     try:
-        con = Connection(server=graphdb_base,
-                         repo = repo,
-                         dbuser=graphdb_user,
-                         dbpassword=graphdb_password,
-                         userId=user,
-                         credentials=password)
+        con = create_connection(
+            graphdb_base=graphdb_base,
+            repo=repo,
+            graphdb_user=graphdb_user,
+            graphdb_password=graphdb_password,
+            user=user,
+            password=password,
+        )
     except OldapError as e:
         log.error(f"ERROR: Failed to connect to GraphDB database at '{graphdb_base}': {e}")
         raise typer.Exit(code=1)
@@ -38,5 +40,4 @@ def delete_projectdata(project_id: str,
         raise typer.Exit(code=1)
 
     con.clear_graph(Xsd_QName(project.projectShortName, "data"))
-
 

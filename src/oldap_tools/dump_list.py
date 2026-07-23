@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 
 import typer
-from oldaplib.src.connection import Connection
+from oldap_tools.connection import create_connection
 from oldaplib.src.helpers.oldaperror import OldapError
 from oldaplib.src.oldaplist_helpers import ListFormat, dump_list_to
 from oldaplib.src.project import Project
@@ -20,13 +20,15 @@ def dump_list(project_id: str,
               graphdb_password: str | None = None
               ):
     try:
-        con = Connection(server=graphdb_base,
-                         repo=repo,
-                         dbuser=graphdb_user,
-                         dbpassword=graphdb_password,
-                         userId=user,
-                         credentials=password,
-                         context_name="DEFAULT")
+        con = create_connection(
+            graphdb_base=graphdb_base,
+            repo=repo,
+            graphdb_user=graphdb_user,
+            graphdb_password=graphdb_password,
+            user=user,
+            password=password,
+            context_name="DEFAULT",
+        )
         yamlfile = dump_list_to(con=con,
                                 project=project_id,
                                 oldapListId=list_id,

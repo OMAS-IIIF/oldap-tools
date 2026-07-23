@@ -4,11 +4,11 @@ from pathlib import Path
 from typing import Literal
 
 import typer
-from oldaplib.src.connection import Connection
 from oldaplib.src.helpers.oldaperror import OldapError
 from oldaplib.src.xsd.xsd_qname import Xsd_QName
 
 from oldap_tools.load_project import import_trig, import_trig_gz
+from oldap_tools.connection import create_connection
 
 class SystemGraphs(str, Enum):
     oldap = "oldap"
@@ -29,12 +29,14 @@ def load_sysgraph(
         graphdb_password: str | None = None) -> None:
 
     try:
-        con = Connection(server=graphdb_base,
-                         repo=repo,
-                         dbuser=graphdb_user,
-                         dbpassword=graphdb_password,
-                         userId=user,
-                         credentials=password)
+        con = create_connection(
+            graphdb_base=graphdb_base,
+            repo=repo,
+            graphdb_user=graphdb_user,
+            graphdb_password=graphdb_password,
+            user=user,
+            password=password,
+        )
     except OldapError as e:
         log.error(f"ERROR: Failed to connect to GraphDB database at '{graphdb_base}': {e}")
         raise typer.Exit(code=1)
@@ -97,12 +99,14 @@ def restore_sysgraph(
         graphdb_password: str | None = None) -> None:
 
     try:
-        con = Connection(server=graphdb_base,
-                         repo=repo,
-                         dbuser=graphdb_user,
-                         dbpassword=graphdb_password,
-                         userId=user,
-                         credentials=password)
+        con = create_connection(
+            graphdb_base=graphdb_base,
+            repo=repo,
+            graphdb_user=graphdb_user,
+            graphdb_password=graphdb_password,
+            user=user,
+            password=password,
+        )
     except OldapError as e:
         log.error(f"ERROR: Failed to connect to GraphDB database at '{graphdb_base}': {e}")
         raise typer.Exit(code=1)
@@ -129,12 +133,14 @@ def purge_sysgraph(graph: SystemGraphs,
                    graphdb_user: str | None = None,
                    graphdb_password: str | None = None) -> None:
     try:
-        con = Connection(server=graphdb_base,
-                         repo=repo,
-                         dbuser=graphdb_user,
-                         dbpassword=graphdb_password,
-                         userId=user,
-                         credentials=password)
+        con = create_connection(
+            graphdb_base=graphdb_base,
+            repo=repo,
+            graphdb_user=graphdb_user,
+            graphdb_password=graphdb_password,
+            user=user,
+            password=password,
+        )
     except OldapError as e:
         log.error(f"Failed to connect to GraphDB database at '{graphdb_base}': {e}")
         raise typer.Exit(code=1)

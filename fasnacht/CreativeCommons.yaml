@@ -114,5 +114,16 @@ CreativeCommons:
           Urheber ihr Urheberrecht aufgeben und ihre Werke weltweit gemeinfrei machen können.
           CC0 ermöglicht es Wiederverwendern, das Material in jedem Medium und Format ohne
           Auflagen zu verbreiten, zu remixen, anzupassen und darauf aufzubauen.@de'
+    OtherRightsStatement:
+      label:
+        - Other Rights Statement@en
+        - Andere Rechteerklärung@de
+        - Autre Déclaration de droits@fr
+        - Altre dichiarazioni sui diritti@it
+      definition:
+        - 'Other licensing rights; a link to the license should be available at "fasnacht:rightsStatementUrl".@en'
+        - 'Andere Lizenzrechte, ein Link zur Lizenz sollte unter "fasnacht:rightsStatementUrl" zu finden sein.@de'
+        - 'Autres droits de licence ; un lien vers la licence devrait se trouver sous "fasnacht:rightsStatementUrl".@fr'
+        - 'Altri diritti di licenza; un link alla licenza dovrebbe essere disponibile alla voce "fasnacht:rightsStatementUrl".@it'
 
 

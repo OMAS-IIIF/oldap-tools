@@ -3,7 +3,7 @@ from pathlib import Path
 
 import typer
 from oldaplib.src.cachesingleton import CacheSingletonRedis
-from oldaplib.src.connection import Connection
+from oldap_tools.connection import create_connection
 from oldaplib.src.helpers.oldaperror import OldapError
 from oldaplib.src.project import Project
 
@@ -21,13 +21,15 @@ def load_list(project_id: str,
               graphdb_password: str | None = None):
 
     try:
-        connection = Connection(server=graphdb_base,
-                                repo=repo,
-                                dbuser=graphdb_user,
-                                dbpassword=graphdb_password,
-                                userId=user,
-                                credentials=password,
-                                context_name="DEFAULT")
+        connection = create_connection(
+            graphdb_base=graphdb_base,
+            repo=repo,
+            graphdb_user=graphdb_user,
+            graphdb_password=graphdb_password,
+            user=user,
+            password=password,
+            context_name="DEFAULT",
+        )
         project = Project.read(connection, project_id)
         CacheSingletonRedis().clear()
         load_or_merge_lists_from_yaml(con=connection, project=project, filepath=filepath)

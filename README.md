@@ -217,3 +217,5 @@ This command dumps an ontology datamodel either as YAML or as a TriG gzip file c
 
 When dumping YAML, `--include-taxonomies` writes all project lists as separate `<ListId>.yaml`
 files next to the ontology YAML file and adds an `ontology.lists` block that references them.
+External ontology references are always included with their namespace, labels, comments, and
+proposed resource, datatype-property, and object-property names.

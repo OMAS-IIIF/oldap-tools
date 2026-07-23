@@ -8,11 +8,13 @@
 - User documentation lives in `docs/`.
 - Example and active Fasnacht project definitions live in `fasnacht/`.
 - The package is managed with Poetry and exposes the `oldap-tools` console script.
+- Connection construction is centralized in `src/oldap_tools/connection.py`; the CLI uses `oldaplib`'s trusted direct mode without issuing access tokens or requiring JWT signing secrets.
 - The current worktree may contain user-created artifacts; do not reset or remove unrelated files.
 
 ## Architecture
 
 - `cli.py` defines the Typer command surface.
+- `connection.py` is the single boundary for authenticated direct GraphDB connections.
 - `load_project.py`, `dump_project.py`, and `delete_projectdata.py` handle project graph operations.
 - `load_list.py`, `dump_list.py`, and `list_merge.py` handle hierarchical OLDAP lists.
 - `ontology.py`, `graph_helpers.py`, and `schemas/ontology_schema.yaml` implement ontology YAML validation/loading/dumping support.

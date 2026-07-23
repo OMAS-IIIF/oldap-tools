@@ -36,6 +36,7 @@ from oldaplib.src.xsd.xsd_ncname import Xsd_NCName
 from oldaplib.src.xsd.xsd_qname import Xsd_QName
 
 from oldap_tools.dump_project import dump_project
+from oldap_tools.connection import create_connection
 from oldap_tools.list_merge import (
     list_exists_in_store,
     load_or_merge_list_from_spec,
@@ -727,13 +728,13 @@ def _connect(
     graphdb_user: str | None,
     graphdb_password: str | None,
 ) -> Connection:
-    return Connection(
-        server=graphdb_base,
+    return create_connection(
+        graphdb_base=graphdb_base,
         repo=repo,
-        dbuser=graphdb_user,
-        dbpassword=graphdb_password,
-        userId=user,
-        credentials=password,
+        graphdb_user=graphdb_user,
+        graphdb_password=graphdb_password,
+        user=user,
+        password=password,
         context_name="DEFAULT",
     )
 
@@ -826,6 +827,42 @@ def _dump_property(prop: PropertyClass) -> dict[str, Any]:
             continue
         key = ATTR_TO_YAML.get(attr.value.fragment, attr.value.fragment)
         result[key] = _plain(value)
+    return result
+
+
+def _dump_external_ontology(ontology: ExternalOntology) -> dict[str, Any]:
+    """Serialize an OLDAP external-ontology reference to canonical YAML.
+
+    The prefix is used as the key in the surrounding ``external_ontologies``
+    mapping. This function therefore emits the namespace and all mutable
+    metadata needed by :func:`_build_external_ontology` for a lossless YAML
+    export/import roundtrip.
+
+    Args:
+        ontology: External ontology loaded as part of a project data model.
+
+    Returns:
+        YAML-compatible external ontology metadata.
+    """
+    result: dict[str, Any] = {
+        "namespace": str(ontology.get(ExternalOntologyAttr.NAMESPACE_IRI)),
+    }
+    for attr, key in (
+        (ExternalOntologyAttr.LABEL, "label"),
+        (ExternalOntologyAttr.COMMENT, "comment"),
+    ):
+        value = ontology.get(attr)
+        if value:
+            result[key] = _plain(value)
+
+    for attr, key in (
+        (ExternalOntologyAttr.PROPOSED_RESOURCE_CLASS, "proposedResourceClass"),
+        (ExternalOntologyAttr.PROPOSED_DATATYPE_PROPERTY_CLASS, "proposedDatatypePropertyClass"),
+        (ExternalOntologyAttr.PROPOSED_OBJECT_PROPERTY_CLASS, "proposedObjectPropertyClass"),
+    ):
+        value = ontology.get(attr)
+        if value:
+            result[key] = sorted(str(item) for item in value)
     return result
 
 
@@ -935,6 +972,13 @@ def dump_ontology(
             },
         }
     }
+    external_ontologies: dict[str, Any] = {}
+    for qname in model.get_extontos():
+        external_ontology = model[qname]
+        prefix = str(external_ontology.get(ExternalOntologyAttr.PREFIX))
+        external_ontologies[prefix] = _dump_external_ontology(external_ontology)
+    if external_ontologies:
+        doc["ontology"]["external_ontologies"] = external_ontologies
     if include_taxonomies:
         lists = _dump_taxonomies(con, project, out)
         if lists:

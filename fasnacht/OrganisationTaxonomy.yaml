@@ -3,81 +3,60 @@ OrganisationTaxonomy:
     - Organisation types@en
     - Organisationskategorien@de
   nodes:
-    Fasnachtsvereine:
+    Clique:
       label:
-        - Carnival organizations@en
-        - Fasnachtsvereine@de
-        - Associations carnavalesques@fr
-        - Associazioni carnevalesche@it
-      nodes:
-        Clique:
-          label:
-            - Carnival group@en
-            - Glygge@de
-            - Group de carnaval@fr
-            - compagnia di carnevale@it
-          nodes:
-            Stamm:
-              label:
-                - Main group@en
-                - Stamm@de
-                - Groupe principal@fr
-                - Gruppo principale@it
-            AlteGarde:
-              label:
-                - Old guard@en
-                - Alti Garde@de
-                - Vieille garde@fr
-                - Vecchia guardia@it
-            JungeGarde:
-              label:
-                - Youth group@en
-                - Jungi Garde@de
-                - Jeune garde@fr
-                - Giovane guardia@it
-              nodes:
-                Binggis:
-                  label:
-                    - Children’s group@en
-                    - Binggis@de
-                    - Groupe d’enfants@fr
-                    - Gruppo di bambini@it
-                Nachwuchs:
-                  label:
-                    - Junior group@en
-                    - Nochwuchsgruppe@de
-                    - Groupe de relève@fr
-                    - Gruppo giovanile@it
-        Wagenclique:
-          label:
-            - Float group@en
-            - Waageglygge@de
-            - Groupe de char@fr
-            - Gruppo di carro@it
-        Guggenmusik:
-          label:
-            - Guggen band@en
-            - Guggemuusig@de
-            - Guggenmusik@fr
-            - Guggenmusik@it
-        Chaise:
-          label:
-            - Chaise@en
-            - Chaise@de
-            - Chaise@fr
-            - Chaise@it
-        Schyssdraeggzuegli:
-          label:
-            - Schyssdräggziigli@en
-            - Schyssdräggziigli@de
-            - Schyssdräggziigli@fr
-            - Schyssdräggziigli@it
-        Fasnachtscomite:
-          label:
-            - Carnival committee@en
-            - Fasnachts-Comité@de
-            - Comité du carnaval@fr
-            - Comitato del carnevale@it
+        - Carnival group@en
+        - Glygge@de
+        - Group de carnaval@fr
+        - compagnia di carnevale@it
+    Wagenclique:
+      label:
+        - Float group@en
+        - Waage@de
+        - Groupe de char@fr
+        - Gruppo di carro@it
+    Guggenmusik:
+      label:
+        - Guggen band@en
+        - Guggemuusig@de
+        - Guggenmusik@fr
+        - Guggenmusik@it
+    Chaise:
+      label:
+        - Chaise@en
+        - Chaise@de
+        - Chaise@fr
+        - Chaise@it
+    Schyssdraeggzuegli:
+      label:
+        - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@en
+        - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@de
+        - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@fr
+        - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@it
+    Schnitzelbangg:
+      label:
+        - Schnitzelbangg@en
+        - Schnitzelbangg@de
+        - Schnitzelbangg@fr
+        - Schnitzelbangg@it
+    Wilde:
+      label:
+        - Wilde / Pfeiffer und Trommelgruppen@en
+        - Wilde / Pfeiffer und Trommelgruppen@de
+        - Wilde / Pfeiffer und Trommelgruppen@fr
+        - Wilde / Pfeiffer und Trommelgruppen@it
+    Fasnachtscomite:
+      label:
+        - Carnival committee@en
+        - Fasnachts-Comité@de
+        - Comité du carnaval@fr
+        - Comitato del carnevale@it
+    Artist:
+      label:
+        - Artist / Business@en
+        - Künstler*in / Gewerbe@de
+        - Artiste / Entreprise@fr
+        - Artista / Attività commerciale@it
     Gedaechtnisinstitutionen:
       label:
         - Memory institutions@en

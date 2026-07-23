@@ -1,0 +1,553 @@
+CarnivalTopicsTaxonomy:
+  label:
+    - Carnival themes and domains@en
+    - Themen und Bereiche der Fasnacht@de
+    - Thèmes et domaines du carnaval@fr
+    - Temi e ambiti del carnevale@it
+  definition:
+    - Themes, practices, and cultural expressions used to describe what a carnival object or event is about. Organisation types, object types, event types, and media formats are classified separately.@en
+    - Themen, Praktiken und kulturelle Ausdrucksformen, mit denen beschrieben wird, worum es bei einem Fasnachtsobjekt oder -anlass inhaltlich geht. Organisationsarten, Objektarten, Anlasstypen und Medienformate werden separat klassifiziert.@de
+    - Thèmes, pratiques et formes d'expression culturelle décrivant le contenu d'un objet ou d'un événement carnavalesque. Les types d'organisations, d'objets, d'événements et de médias sont classés séparément.@fr
+    - Temi, pratiche e forme di espressione culturale che descrivono il contenuto di un oggetto o di un evento carnevalesco. I tipi di organizzazioni, oggetti, eventi e media sono classificati separatamente.@it
+  nodes:
+    MusicAndSound:
+      label:
+        - Music and sound@en
+        - Musik und Klang@de
+        - Musique et son@fr
+        - Musica e suono@it
+      definition:
+        - Musical practices, sounds, instruments, and compositions of Basel Carnival.@en
+        - Musikalische Praktiken, Klänge, Instrumente und Kompositionen der Basler Fasnacht.@de
+        - Pratiques musicales, sons, instruments et compositions du Carnaval de Bâle.@fr
+        - Pratiche musicali, suoni, strumenti e composizioni del Carnevale di Basilea.@it
+      nodes:
+        Pipes:
+          label:
+            - Pipes@en
+            - Pfeifen@de
+            - Fifres@fr
+            - Pifferi@it
+          definition:
+            - Playing, teaching, repertoire, and culture of the Basel piccolo and other carnival pipes.@en
+            - Spiel, Unterricht, Repertoire und Kultur des Basler Piccolos und weiterer Fasnachtspfeifen.@de
+            - Jeu, enseignement, répertoire et culture du piccolo bâlois et des autres fifres de carnaval.@fr
+            - Esecuzione, insegnamento, repertorio e cultura dell'ottavino basilese e degli altri pifferi di carnevale.@it
+        Drums:
+          label:
+            - Drums@en
+            - Trommeln@de
+            - Tambours@fr
+            - Tamburi@it
+          definition:
+            - Drumming, teaching, repertoire, and drum culture of Basel Carnival.@en
+            - Trommelspiel, Unterricht, Repertoire und Trommelkultur der Basler Fasnacht.@de
+            - Pratique du tambour, enseignement, répertoire et culture du tambour du Carnaval de Bâle.@fr
+            - Pratica del tamburo, insegnamento, repertorio e cultura del tamburo del Carnevale di Basilea.@it
+        MarchesAndCompositions:
+          label:
+            - Marches and compositions@en
+            - Märsche und Kompositionen@de
+            - Marches et compositions@fr
+            - Marce e composizioni@it
+          definition:
+            - Carnival marches, musical compositions, arrangements, scores, and their performance history.@en
+            - Fasnachtsmärsche, musikalische Kompositionen, Arrangements, Noten und ihre Aufführungsgeschichte.@de
+            - Marches de carnaval, compositions musicales, arrangements, partitions et histoire de leur interprétation.@fr
+            - Marce carnevalesche, composizioni musicali, arrangiamenti, spartiti e storia della loro esecuzione.@it
+        GuggenMusic:
+          label:
+            - Guggen music@en
+            - Guggenmusik@de
+            - Guggenmusik@fr
+            - Guggenmusik@it
+          definition:
+            - Musical style, performance practice, repertoire, and sound culture of Guggenmusik.@en
+            - Musikstil, Aufführungspraxis, Repertoire und Klangkultur der Guggenmusik.@de
+            - Style musical, pratique d'interprétation, répertoire et culture sonore de la Guggenmusik.@fr
+            - Stile musicale, pratica esecutiva, repertorio e cultura sonora della Guggenmusik.@it
+
+    WordSatireAndStage:
+      label:
+        - Word, satire, and stage@en
+        - Wort, Satire und Bühne@de
+        - Parole, satire et scène@fr
+        - Parola, satira e palcoscenico@it
+      definition:
+        - Spoken, written, satirical, literary, and theatrical expressions of Basel Carnival.@en
+        - Gesprochene, geschriebene, satirische, literarische und theatralische Ausdrucksformen der Basler Fasnacht.@de
+        - Formes d'expression orales, écrites, satiriques, littéraires et théâtrales du Carnaval de Bâle.@fr
+        - Forme di espressione orali, scritte, satiriche, letterarie e teatrali del Carnevale di Basilea.@it
+      nodes:
+        Schnitzelbank:
+          label:
+            - Schnitzelbank@en
+            - Schnitzelbank@de
+            - Schnitzelbank@fr
+            - Schnitzelbank@it
+          definition:
+            - The Schnitzelbank art form, including verses, performances, illustrations, and presentation traditions.@en
+            - Die Kunstform Schnitzelbank mit Versen, Auftritten, Helgen und Präsentationstraditionen.@de
+            - L'art du Schnitzelbank, y compris les vers, les représentations, les illustrations et les traditions de présentation.@fr
+            - L'arte dello Schnitzelbank, compresi versi, esibizioni, illustrazioni e tradizioni di presentazione.@it
+        CarnivalVersesAndTexts:
+          label:
+            - Carnival verses and texts@en
+            - Zeedel, Verse und Texte@de
+            - Textes et vers de carnaval@fr
+            - Testi e versi di carnevale@it
+          definition:
+            - Zeedel, verses, lyrics, speeches, scripts, and other literary carnival texts.@en
+            - Zeedel, Verse, Liedtexte, Reden, Manuskripte und weitere literarische Fasnachtstexte.@de
+            - Zeedel, vers, paroles de chansons, discours, manuscrits et autres textes littéraires de carnaval.@fr
+            - Zeedel, versi, testi di canzoni, discorsi, copioni e altri testi letterari carnevaleschi.@it
+        SatireAndHumour:
+          label:
+            - Satire and humour@en
+            - Satire und Humor@de
+            - Satire et humour@fr
+            - Satira e umorismo@it
+          definition:
+            - Satirical and humorous treatment of political, social, or everyday subjects during carnival.@en
+            - Satirische und humoristische Bearbeitung politischer, gesellschaftlicher oder alltäglicher Themen an der Fasnacht.@de
+            - Traitement satirique et humoristique de sujets politiques, sociaux ou quotidiens pendant le carnaval.@fr
+            - Trattazione satirica e umoristica di temi politici, sociali o quotidiani durante il carnevale.@it
+        PreCarnivalStageAndTheatre:
+          label:
+            - Pre-carnival stage and theatre@en
+            - Vorfasnachtsbühne und Theater@de
+            - Scène de précarnaval et théâtre@fr
+            - Palcoscenico pre-carnevalesco e teatro@it
+          definition:
+            - Stage productions, theatre, cabaret, and performance forms associated with pre-carnival events.@en
+            - Bühnenproduktionen, Theater, Cabaret und Darstellungsformen der Vorfasnachtsveranstaltungen.@de
+            - Productions scéniques, théâtre, cabaret et formes de représentation des événements de précarnaval.@fr
+            - Produzioni sceniche, teatro, cabaret e forme di spettacolo degli eventi pre-carnevaleschi.@it
+
+    SujetAndVisualDesign:
+      label:
+        - Sujet and visual design@en
+        - Sujet und visuelle Gestaltung@de
+        - Sujet et création visuelle@fr
+        - Sujet e creazione visiva@it
+      definition:
+        - Subjects, imagery, and visual design expressed through lanterns, masks, costumes, floats, badges, and graphic works.@en
+        - Sujets, Bildwelten und visuelle Gestaltung in Laternen, Larven, Kostümen, Wagen, Plaketten und grafischen Arbeiten.@de
+        - Sujets, univers visuels et création graphique exprimés par les lanternes, masques, costumes, chars, insignes et œuvres graphiques.@fr
+        - Sujet, immaginari visivi e creazione grafica espressi attraverso lanterne, maschere, costumi, carri, distintivi e opere grafiche.@it
+      nodes:
+        Sujet:
+          label:
+            - Sujet@en
+            - Sujet@de
+            - Sujet@fr
+            - Sujet@it
+          definition:
+            - The thematic idea and its interpretation by a carnival group, formation, or artist.@en
+            - Die thematische Idee und ihre Interpretation durch eine Fasnachtsgruppe, Formation oder künstlerisch tätige Person.@de
+            - L'idée thématique et son interprétation par un groupe, une formation ou une personne artiste du carnaval.@fr
+            - L'idea tematica e la sua interpretazione da parte di un gruppo, una formazione o una persona artista del carnevale.@it
+        LanternArt:
+          label:
+            - Lantern art@en
+            - Laternenkunst@de
+            - Art des lanternes@fr
+            - Arte delle lanterne@it
+          definition:
+            - Artistic design, painting, imagery, and narrative of carnival lanterns.@en
+            - Künstlerische Gestaltung, Bemalung, Bildsprache und Erzählung der Fasnachtslaternen.@de
+            - Création artistique, peinture, langage visuel et narration des lanternes de carnaval.@fr
+            - Creazione artistica, pittura, linguaggio visivo e narrazione delle lanterne di carnevale.@it
+        Masks:
+          label:
+            - Masks@en
+            - Larven@de
+            - Masques@fr
+            - Maschere@it
+          definition:
+            - Carnival masks as visual expressions, including their forms, characters, and design.@en
+            - Fasnachtslarven als visuelle Ausdrucksform mit ihren Formen, Figuren und Gestaltungen.@de
+            - Masques de carnaval comme forme d'expression visuelle, avec leurs formes, personnages et créations.@fr
+            - Maschere carnevalesche come forma di espressione visiva, con le loro forme, personaggi e creazioni.@it
+        Costumes:
+          label:
+            - Costumes@en
+            - Kostüme@de
+            - Costumes@fr
+            - Costumi@it
+          definition:
+            - Carnival costumes, their visual concepts, characters, and use in performances or processions.@en
+            - Fasnachtskostüme, ihre Gestaltungskonzepte, Figuren und Verwendung bei Auftritten oder Umzügen.@de
+            - Costumes de carnaval, leurs concepts visuels, personnages et utilisation lors de représentations ou de cortèges.@fr
+            - Costumi di carnevale, i loro concetti visivi, personaggi e utilizzo durante spettacoli o cortei.@it
+        FloatsAndChaises:
+          label:
+            - Floats and chaises@en
+            - Wagen und Chaisen@de
+            - Chars et chaises@fr
+            - Carri e chaises@it
+          definition:
+            - Visual and thematic design of carnival floats and chaises, not the classification of the participating organisation.@en
+            - Visuelle und thematische Gestaltung von Fasnachtswagen und Chaisen, nicht die Klassifikation der teilnehmenden Organisation.@de
+            - Création visuelle et thématique des chars et chaises de carnaval, et non classification de l'organisation participante.@fr
+            - Creazione visiva e tematica dei carri e delle chaises di carnevale, non classificazione dell'organizzazione partecipante.@it
+        CarnivalBadges:
+          label:
+            - Carnival badges@en
+            - Fasnachtsplaketten@de
+            - Insignes du carnaval@fr
+            - Distintivi del carnevale@it
+          definition:
+            - Artistic design, motifs, and cultural significance of carnival badges.@en
+            - Künstlerische Gestaltung, Motive und kulturelle Bedeutung der Fasnachtsplaketten.@de
+            - Création artistique, motifs et signification culturelle des insignes du carnaval.@fr
+            - Creazione artistica, motivi e significato culturale dei distintivi del carnevale.@it
+        GraphicArtAndIllustration:
+          label:
+            - Graphic art and illustration@en
+            - Grafik und Illustration@de
+            - Graphisme et illustration@fr
+            - Grafica e illustrazione@it
+          definition:
+            - Drawings, prints, posters, illustrations, and other graphic expressions related to carnival.@en
+            - Zeichnungen, Drucke, Plakate, Illustrationen und weitere grafische Ausdrucksformen zur Fasnacht.@de
+            - Dessins, estampes, affiches, illustrations et autres formes d'expression graphique liées au carnaval.@fr
+            - Disegni, stampe, manifesti, illustrazioni e altre forme di espressione grafica legate al carnevale.@it
+
+    CarnivalCustomsAndCalendar:
+      label:
+        - Carnival customs and calendar@en
+        - Fasnachtsablauf und Brauchtum@de
+        - Déroulement et coutumes du carnaval@fr
+        - Svolgimento e usanze del carnevale@it
+      definition:
+        - Recurring periods, rituals, and practices within the annual cycle of Basel Carnival.@en
+        - Wiederkehrende Zeitabschnitte, Rituale und Praktiken im Jahreslauf der Basler Fasnacht.@de
+        - Périodes, rituels et pratiques récurrents du cycle annuel du Carnaval de Bâle.@fr
+        - Periodi, rituali e pratiche ricorrenti nel ciclo annuale del Carnevale di Basilea.@it
+      nodes:
+        PreCarnival:
+          label:
+            - Pre-carnival@en
+            - Vorfasnacht@de
+            - Précarnaval@fr
+            - Pre-carnevale@it
+          definition:
+            - The period and customs of organised events before the three main carnival days.@en
+            - Zeitraum und Bräuche der organisierten Veranstaltungen vor den drei Fasnachtstagen.@de
+            - Période et coutumes des événements organisés avant les trois jours principaux du carnaval.@fr
+            - Periodo e usanze degli eventi organizzati prima dei tre giorni principali del carnevale.@it
+        Morgenstreich:
+          label:
+            - Morgenstreich@en
+            - Morgenstreich@de
+            - Morgenstreich@fr
+            - Morgenstreich@it
+          definition:
+            - The opening ritual of Basel Carnival on Monday at four o'clock in the morning.@en
+            - Das Eröffnungsritual der Basler Fasnacht am Montagmorgen um vier Uhr.@de
+            - Le rituel d'ouverture du Carnaval de Bâle, le lundi matin à quatre heures.@fr
+            - Il rito di apertura del Carnevale di Basilea, il lunedì mattina alle quattro.@it
+        Cortege:
+          label:
+            - Cortège@en
+            - Cortège@de
+            - Cortège@fr
+            - Cortège@it
+          definition:
+            - The organised carnival processions held on Monday and Wednesday.@en
+            - Die organisierten Fasnachtsumzüge am Montag und Mittwoch.@de
+            - Les cortèges organisés du carnaval, le lundi et le mercredi.@fr
+            - I cortei organizzati del carnevale, il lunedì e il mercoledì.@it
+        CarnivalTuesdayAndChildren:
+          label:
+            - Carnival Tuesday and children's carnival@en
+            - Dienstag und Kinderfasnacht@de
+            - Mardi du carnaval et carnaval des enfants@fr
+            - Martedì di carnevale e carnevale dei bambini@it
+          definition:
+            - Customs, activities, and participation associated with Carnival Tuesday and children's carnival.@en
+            - Bräuche, Aktivitäten und Teilnahmeformen des Fasnachtsdienstags und der Kinderfasnacht.@de
+            - Coutumes, activités et formes de participation du mardi du carnaval et du carnaval des enfants.@fr
+            - Usi, attività e forme di partecipazione del martedì di carnevale e del carnevale dei bambini.@it
+        Gaessle:
+          label:
+            - Gässle@en
+            - Gässle@de
+            - Gässle@fr
+            - Gässle@it
+          definition:
+            - Informal movement and music-making by small formations through Basel's streets and lanes.@en
+            - Informelles Ziehen und Musizieren kleiner Formationen durch Basels Strassen und Gassen.@de
+            - Déambulation et pratique musicale informelles de petites formations dans les rues et ruelles de Bâle.@fr
+            - Movimento e pratica musicale informali di piccole formazioni nelle strade e nei vicoli di Basilea.@it
+        LanternAndFloatExhibitions:
+          label:
+            - Lantern and float exhibitions@en
+            - Laternen- und Wagenausstellung@de
+            - Expositions de lanternes et de chars@fr
+            - Esposizioni di lanterne e carri@it
+          definition:
+            - Public presentation of carnival lanterns, floats, and related works during carnival.@en
+            - Öffentliche Präsentation von Fasnachtslaternen, Wagen und verwandten Arbeiten während der Fasnacht.@de
+            - Présentation publique de lanternes, chars et œuvres apparentées pendant le carnaval.@fr
+            - Presentazione pubblica di lanterne, carri e opere correlate durante il carnevale.@it
+        Endstreich:
+          label:
+            - Endstreich@en
+            - Endstreich@de
+            - Endstreich@fr
+            - Endstreich@it
+          definition:
+            - The closing ritual at the end of the three days of Basel Carnival.@en
+            - Das Abschlussritual am Ende der drei Basler Fasnachtstage.@de
+            - Le rituel de clôture à la fin des trois jours du Carnaval de Bâle.@fr
+            - Il rito conclusivo alla fine dei tre giorni del Carnevale di Basilea.@it
+        Bummel:
+          label:
+            - Bummel@en
+            - Bummel@de
+            - Bummel@fr
+            - Bummel@it
+          definition:
+            - The post-carnival excursion and associated customs of carnival groups.@en
+            - Der Ausflug nach der Fasnacht und die damit verbundenen Bräuche der Fasnachtsgruppen.@de
+            - L'excursion après le carnaval et les coutumes associées des groupes carnavalesques.@fr
+            - La gita dopo il carnevale e le usanze correlate dei gruppi carnevaleschi.@it
+        YearRoundClubCustoms:
+          label:
+            - Year-round club customs@en
+            - Vereinsbräuche unter dem Jahr@de
+            - Coutumes associatives au cours de l'année@fr
+            - Usanze associative durante l'anno@it
+          definition:
+            - Recurring customs and activities of carnival associations outside the main carnival period.@en
+            - Wiederkehrende Bräuche und Aktivitäten der Fasnachtsvereine ausserhalb der eigentlichen Fasnachtszeit.@de
+            - Coutumes et activités récurrentes des associations carnavalesques en dehors de la période principale du carnaval.@fr
+            - Usi e attività ricorrenti delle associazioni carnevalesche al di fuori del periodo principale del carnevale.@it
+
+    CommunityAndClubLife:
+      label:
+        - Community and club life@en
+        - Gemeinschaft und Vereinsleben@de
+        - Communauté et vie associative@fr
+        - Comunità e vita associativa@it
+      definition:
+        - Social life, generations, participation, and internal culture of carnival communities and associations.@en
+        - Soziales Leben, Generationen, Teilnahmeformen und interne Kultur von Fasnachtsgemeinschaften und -vereinen.@de
+        - Vie sociale, générations, formes de participation et culture interne des communautés et associations carnavalesques.@fr
+        - Vita sociale, generazioni, forme di partecipazione e cultura interna delle comunità e associazioni carnevalesche.@it
+      nodes:
+        CliqueCulture:
+          label:
+            - Clique culture@en
+            - Cliquenwesen@de
+            - Culture des cliques@fr
+            - Cultura delle cliques@it
+          definition:
+            - Culture, traditions, structures, and social life of carnival cliques as a subject, not as an organisation type.@en
+            - Kultur, Traditionen, Strukturen und soziales Leben der Cliquen als Thema, nicht als Organisationsart.@de
+            - Culture, traditions, structures et vie sociale des cliques comme sujet, et non comme type d'organisation.@fr
+            - Cultura, tradizioni, strutture e vita sociale delle cliques come tema, non come tipo di organizzazione.@it
+        ClubLife:
+          label:
+            - Club life@en
+            - Vereinsleben@de
+            - Vie associative@fr
+            - Vita associativa@it
+          definition:
+            - Internal activities, relationships, membership, and everyday life of carnival associations.@en
+            - Interne Aktivitäten, Beziehungen, Mitgliedschaft und Alltag von Fasnachtsvereinen.@de
+            - Activités internes, relations, adhésion et vie quotidienne des associations carnavalesques.@fr
+            - Attività interne, relazioni, appartenenza e vita quotidiana delle associazioni carnevalesche.@it
+        YouthAndYoungGuards:
+          label:
+            - Youth and young guards@en
+            - Nachwuchs und Junge Garden@de
+            - Relève et jeunes gardes@fr
+            - Giovani e giovani guardie@it
+          definition:
+            - Participation, education, and culture of children, young people, and young guards within carnival associations.@en
+            - Teilnahme, Ausbildung und Kultur von Kindern, Jugendlichen und Jungen Garden in Fasnachtsvereinen.@de
+            - Participation, formation et culture des enfants, des jeunes et des jeunes gardes dans les associations carnavalesques.@fr
+            - Partecipazione, formazione e cultura di bambini, giovani e giovani guardie nelle associazioni carnevalesche.@it
+        OldGuards:
+          label:
+            - Old guards@en
+            - Alte Garden@de
+            - Anciennes gardes@fr
+            - Vecchie guardie@it
+          definition:
+            - Culture, activities, and generational role of old guards within carnival associations.@en
+            - Kultur, Aktivitäten und generationelle Rolle der Alten Garden in Fasnachtsvereinen.@de
+            - Culture, activités et rôle générationnel des anciennes gardes dans les associations carnavalesques.@fr
+            - Cultura, attività e ruolo generazionale delle vecchie guardie nelle associazioni carnevalesche.@it
+        IndependentFormations:
+          label:
+            - Independent formations@en
+            - Freie Formationen@de
+            - Formations indépendantes@fr
+            - Formazioni indipendenti@it
+          definition:
+            - Informal or independent carnival formations outside established association structures.@en
+            - Informelle oder unabhängige Fasnachtsformationen ausserhalb etablierter Vereinsstrukturen.@de
+            - Formations carnavalesques informelles ou indépendantes en dehors des structures associatives établies.@fr
+            - Formazioni carnevalesche informali o indipendenti al di fuori delle strutture associative consolidate.@it
+        IndividualMasks:
+          label:
+            - Individual masks@en
+            - Einzelmasken@de
+            - Masques individuels@fr
+            - Maschere individuali@it
+          definition:
+            - Individual masked participation not primarily represented as part of an organised formation.@en
+            - Individuelle maskierte Teilnahme, die nicht primär als Teil einer organisierten Formation auftritt.@de
+            - Participation individuelle masquée qui ne se présente pas principalement comme membre d'une formation organisée.@fr
+            - Partecipazione individuale in maschera che non si presenta principalmente come parte di una formazione organizzata.@it
+
+    CraftAndProduction:
+      label:
+        - Craft and production@en
+        - Handwerk und Herstellung@de
+        - Artisanat et fabrication@fr
+        - Artigianato e produzione@it
+      definition:
+        - Materials, techniques, workshops, and production processes used to create carnival objects and performances.@en
+        - Materialien, Techniken, Werkstätten und Herstellungsprozesse für Fasnachtsobjekte und Aufführungen.@de
+        - Matériaux, techniques, ateliers et processus de fabrication des objets et représentations de carnaval.@fr
+        - Materiali, tecniche, laboratori e processi di produzione di oggetti e spettacoli carnevaleschi.@it
+      nodes:
+        LanternMaking:
+          label:
+            - Lantern making@en
+            - Laternenbau@de
+            - Construction de lanternes@fr
+            - Costruzione di lanterne@it
+          definition:
+            - Construction, materials, techniques, and workshop practices used to make carnival lanterns.@en
+            - Konstruktion, Materialien, Techniken und Werkstattpraxis beim Bau von Fasnachtslaternen.@de
+            - Construction, matériaux, techniques et pratiques d'atelier pour la fabrication des lanternes de carnaval.@fr
+            - Costruzione, materiali, tecniche e pratiche di laboratorio per la realizzazione delle lanterne di carnevale.@it
+        MaskMaking:
+          label:
+            - Mask making@en
+            - Larvenherstellung@de
+            - Fabrication de masques@fr
+            - Fabbricazione di maschere@it
+          definition:
+            - Design, modelling, production, and finishing of carnival masks.@en
+            - Entwurf, Modellierung, Herstellung und Ausarbeitung von Fasnachtslarven.@de
+            - Conception, modelage, fabrication et finition des masques de carnaval.@fr
+            - Progettazione, modellazione, produzione e finitura delle maschere carnevalesche.@it
+        CostumeMaking:
+          label:
+            - Costume making@en
+            - Kostümherstellung@de
+            - Confection de costumes@fr
+            - Realizzazione di costumi@it
+          definition:
+            - Design, sewing, production, and adaptation of carnival costumes.@en
+            - Entwurf, Schneiderei, Herstellung und Anpassung von Fasnachtskostümen.@de
+            - Conception, couture, fabrication et adaptation des costumes de carnaval.@fr
+            - Progettazione, sartoria, produzione e adattamento dei costumi di carnevale.@it
+        InstrumentMaking:
+          label:
+            - Instrument making@en
+            - Instrumentenbau@de
+            - Facture instrumentale@fr
+            - Costruzione di strumenti@it
+          definition:
+            - Construction, maintenance, and adaptation of instruments used during carnival.@en
+            - Bau, Unterhalt und Anpassung von Instrumenten, die an der Fasnacht verwendet werden.@de
+            - Construction, entretien et adaptation des instruments utilisés pendant le carnaval.@fr
+            - Costruzione, manutenzione e adattamento degli strumenti utilizzati durante il carnevale.@it
+        FloatAndStageConstruction:
+          label:
+            - Float and stage construction@en
+            - Wagen- und Bühnenbau@de
+            - Construction de chars et de scènes@fr
+            - Costruzione di carri e palcoscenici@it
+          definition:
+            - Technical and craft production of carnival floats, chaises, stage sets, and related structures.@en
+            - Technische und handwerkliche Herstellung von Fasnachtswagen, Chaisen, Bühnenbildern und verwandten Konstruktionen.@de
+            - Fabrication technique et artisanale de chars, chaises, décors de scène et structures apparentées du carnaval.@fr
+            - Produzione tecnica e artigianale di carri, chaises, scenografie e strutture correlate del carnevale.@it
+
+    HistoryOrganisationAndInterpretation:
+      label:
+        - History, organisation, and interpretation@en
+        - Geschichte, Organisation und Vermittlung@de
+        - Histoire, organisation et médiation@fr
+        - Storia, organizzazione e mediazione@it
+      definition:
+        - Historical development, institutional organisation, preservation, research, and public interpretation of Basel Carnival.@en
+        - Historische Entwicklung, institutionelle Organisation, Bewahrung, Forschung und öffentliche Vermittlung der Basler Fasnacht.@de
+        - Développement historique, organisation institutionnelle, conservation, recherche et médiation publique du Carnaval de Bâle.@fr
+        - Sviluppo storico, organizzazione istituzionale, conservazione, ricerca e mediazione pubblica del Carnevale di Basilea.@it
+      nodes:
+        CarnivalHistoryAndChange:
+          label:
+            - Carnival history and change@en
+            - Geschichte und Wandel der Fasnacht@de
+            - Histoire et évolution du carnaval@fr
+            - Storia ed evoluzione del carnevale@it
+          definition:
+            - Historical development and change as an explicit subject; not merely an item being old or historical.@en
+            - Historische Entwicklung und Wandel als ausdrückliches Thema; nicht bloss ein alter oder historischer Eintrag.@de
+            - Développement historique et évolution comme sujet explicite, et non simplement parce qu'un objet est ancien ou historique.@fr
+            - Sviluppo storico ed evoluzione come tema esplicito, non semplicemente perché un oggetto è antico o storico.@it
+        ClubHistory:
+          label:
+            - Club history@en
+            - Vereinsgeschichte@de
+            - Histoire associative@fr
+            - Storia associativa@it
+          definition:
+            - History and development of a specific carnival association or of carnival associations generally.@en
+            - Geschichte und Entwicklung eines bestimmten Fasnachtsvereins oder des Fasnachtsvereinswesens allgemein.@de
+            - Histoire et développement d'une association carnavalesque particulière ou des associations carnavalesques en général.@fr
+            - Storia e sviluppo di una specifica associazione carnevalesca o delle associazioni carnevalesche in generale.@it
+        CarnivalOrganisation:
+          label:
+            - Organisation of carnival@en
+            - Organisation der Fasnacht@de
+            - Organisation du carnaval@fr
+            - Organizzazione del carnevale@it
+          definition:
+            - Rules, coordination, administration, financing, and institutional organisation of carnival.@en
+            - Regeln, Koordination, Verwaltung, Finanzierung und institutionelle Organisation der Fasnacht.@de
+            - Règles, coordination, administration, financement et organisation institutionnelle du carnaval.@fr
+            - Regole, coordinamento, amministrazione, finanziamento e organizzazione istituzionale del carnevale.@it
+        CarnivalCommittee:
+          label:
+            - Carnival Committee@en
+            - Fasnachts-Comité@de
+            - Comité du Carnaval@fr
+            - Comitato del Carnevale@it
+          definition:
+            - History, tasks, publications, decisions, and activities of the Basel Carnival Committee as a subject.@en
+            - Geschichte, Aufgaben, Publikationen, Entscheidungen und Tätigkeiten des Basler Fasnachts-Comités als Thema.@de
+            - Histoire, tâches, publications, décisions et activités du Comité du Carnaval de Bâle comme sujet.@fr
+            - Storia, compiti, pubblicazioni, decisioni e attività del Comitato del Carnevale di Basilea come tema.@it
+        ArchivesMuseumsAndCollections:
+          label:
+            - Archives, museums, and collections@en
+            - Archive, Museen und Sammlungen@de
+            - Archives, musées et collections@fr
+            - Archivi, musei e collezioni@it
+          definition:
+            - Collection, preservation, documentation, and museum or archive treatment of carnival heritage.@en
+            - Sammlung, Bewahrung, Dokumentation und museale oder archivarische Behandlung des Fasnachtserbes.@de
+            - Collecte, conservation, documentation et traitement muséal ou archivistique du patrimoine carnavalesque.@fr
+            - Raccolta, conservazione, documentazione e trattamento museale o archivistico del patrimonio carnevalesco.@it
+        ExhibitionsAndEducation:
+          label:
+            - Exhibitions and education@en
+            - Ausstellungen und Vermittlung@de
+            - Expositions et médiation@fr
+            - Mostre e mediazione@it
+          definition:
+            - Exhibitions, educational activities, publications, and other forms of communicating knowledge about carnival.@en
+            - Ausstellungen, Bildungsangebote, Publikationen und weitere Formen der Wissensvermittlung über die Fasnacht.@de
+            - Expositions, activités éducatives, publications et autres formes de transmission des connaissances sur le carnaval.@fr
+            - Mostre, attività educative, pubblicazioni e altre forme di trasmissione delle conoscenze sul carnevale.@it

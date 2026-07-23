@@ -6,7 +6,7 @@ from pathlib import Path
 import typer
 import logging
 
-from oldaplib.src.connection import Connection
+from oldap_tools.connection import create_connection
 from oldaplib.src.helpers.context import Context
 from oldaplib.src.helpers.oldaperror import OldapError
 from oldaplib.src.helpers.serializer import serializer
@@ -39,12 +39,14 @@ def dump_project(project_id: str,
     cached serialized objects may come from an older oldaplib object layout.
     """
     try:
-        con = Connection(server=graphdb_base,
-                         repo = repo,
-                         dbuser=graphdb_user,
-                         dbpassword=graphdb_password,
-                         userId=user,
-                         credentials=password)
+        con = create_connection(
+            graphdb_base=graphdb_base,
+            repo=repo,
+            graphdb_user=graphdb_user,
+            graphdb_password=graphdb_password,
+            user=user,
+            password=password,
+        )
     except OldapError as e:
         log.error(f"ERROR: Failed to connect to GraphDB database at '{graphdb_base}': {e}")
         raise typer.Exit(code=1)
@@ -107,4 +109,3 @@ def dump_project(project_id: str,
 
     with gzip.open(out, "wt", encoding="utf-8", newline="") as f:
         f.write(trig)
-

@@ -1,5 +1,23 @@
 # CODEX_LOG
 
+### Update 2026-07-23 12:10
+- Decisions: Keep the existing `CarnivalTopicsTaxonomy` list identifier while drafting a replacement in a separate, inactive file; model shared archive facets as themes, practices, and cultural expressions instead of duplicating organisation, object, event, or media types.
+- Implementation: Added `fasnacht/CarnivalTopicsTaxonomyNew.yaml` with seven extensible top-level domains, 41 child topics, and English, German, French, and Italian labels and definitions throughout; left the current taxonomy and ontology reference unchanged.
+- Open: Review the vocabulary against representative photographs, agree stable node IDs and scope notes, then decide whether to point `fasnacht-onto.yaml` at the new file and migrate or remove test references.
+- Risks/Assumptions: The draft is syntactically valid and fully multilingual, but its cultural terminology and translations still require domain review before production use.
+
+### Update 2026-07-16 12:27
+- Decisions: Treat external ontology definitions as required YAML roundtrip metadata while leaving deprecated standalone-property behavior unchanged.
+- Implementation: Added canonical serialization of external ontology namespaces, labels, comments, and proposed class/property names to `ontology dump`; verified that `ontology load` consumes the emitted fields; added focused unit and integrated YAML-export tests and documented the behavior.
+- Open: Run a live dump/load roundtrip against GraphDB to confirm the exported Fasnacht `foaf` reference in the deployment environment.
+- Risks/Assumptions: Update mode remains patch-oriented and does not delete external ontologies omitted from YAML; replace mode recreates exactly those present in YAML.
+
+### Update 2026-07-15 21:54
+- Decisions: Keep the administrative CLI on direct GraphDB authentication and prevent JWT signing secrets from being distributed to CLI installations.
+- Implementation: Added a shared connection factory using `issue_access_token=False`, migrated all command connection sites, raised the `oldaplib` requirement to 0.7.1, added focused factory tests, and documented the authentication boundary and migration plan.
+- Open: Publish `oldaplib 0.7.1`, resolve the lockfile against that release, and run representative live read/write commands in the deployment environment.
+- Risks/Assumptions: The direct mode depends on the new `oldaplib.Connection` option and intentionally leaves `Connection.token` unset.
+
 ### Update 2026-06-05 23:51
 - Decisions: Make ontology update attribute comparison tolerate missing OLDAP attributes instead of relying on oldaplib value-object comparison against `None`.
 - Implementation: Added `_values_equal()` and routed `_set_attr()` through it so `LangString` and similar values are only compared after explicit `None` handling.

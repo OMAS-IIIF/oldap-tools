@@ -6,7 +6,7 @@ from pathlib import Path
 import requests
 import typer
 from oldaplib.src.cachesingleton import CacheSingletonRedis
-from oldaplib.src.connection import Connection
+from oldap_tools.connection import create_connection
 from oldaplib.src.helpers.oldaperror import OldapErrorAlreadyExists, OldapError, OldapErrorNotFound
 from oldaplib.src.helpers.serializer import serializer
 from oldaplib.src.user import User
@@ -75,12 +75,14 @@ def load_project(graphdb_base: str,
                        trig_gz=f.read())
 
     try:
-        con = Connection(server=graphdb_base,
-                         repo=repo,
-                         dbuser=graphdb_user,
-                         dbpassword=graphdb_password,
-                         userId=user,
-                         credentials=password)
+        con = create_connection(
+            graphdb_base=graphdb_base,
+            repo=repo,
+            graphdb_user=graphdb_user,
+            graphdb_password=graphdb_password,
+            user=user,
+            password=password,
+        )
     except OldapError as e:
         log.error(f"ERROR: Failed to connect to GraphDB database at '{graphdb_base}': {e}")
         raise typer.Exit(code=1)
@@ -107,6 +109,5 @@ def load_project(graphdb_base: str,
                 break
     cache = CacheSingletonRedis()
     cache.clear()
-
 
 

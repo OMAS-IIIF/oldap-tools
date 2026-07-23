@@ -2,13 +2,41 @@ CarnivalEventTaxonomy:
   label:
     - Veranstaltungsart@de
   nodes:
+    Vorfasnacht:
+      label:
+        - Vorfasnacht@de
+      nodes:
+        Drummeli:
+          label:
+            - Drummeli@de
+        Pfyfferli:
+          label:
+            - Pfyfferli@de
+        Charivari:
+          label:
+            - Charivary@de
+        GlaibaslerCharivari:
+          label:
+            - Glaibasler Charivari@de
+        Mimoesli:
+          label:
+            - Mimösli@de
+        Raeppliserenade:
+          label:
+            - Räppli-Serenade@de
+        VorfasnachtAnderes:
+          label:
+            - Anderes@de
     Fasnacht:
       label:
-        - Fasnacht@de
+        - Fasnachtstage@de
       nodes:
         Morgenstreich:
           label:
             - Morgenstreich@de
+        Dienstag:
+          label:
+            - Zyschdig@de
         Cortege:
           label:
             - Cortège@de
@@ -35,41 +63,16 @@ CarnivalEventTaxonomy:
             - Wagenaustellung@de
         Bummelausflug:
           label:
-            - Bummelausflug@de
+            - Bummelaus@de
         FasnachtAnderes:
           label:
             - Anderes@de
-    Vorfasnacht:
+    Brauchtum:
       label:
-        - Vorfasnacht@de
-      nodes:
-        Drummeli:
-          label:
-            - Drummeli@de
-        Pfyfferli:
-          label:
-            - Pfyfferli@de
-        Charivari:
-          label:
-            - Charivary@de
-        GlaibaslerCharivari:
-          label:
-            - Glaibasler Charivari@de
-        Mimoesli:
-          label:
-            - Mimösli@de
-        Raeppliserenade:
-          label:
-            - Räppli-Serenade@de
-        Binge:
-          label:
-            - Binge@de
-        VorfasnachtAnderes:
-          label:
-            - Anderes@de
+        - Brauchtum@de
     Intern:
       label:
-        - Interne Veranstaltung@de
+        - Vereinsaktivitäten / unter dem Jahr@de
       nodes:
         Cliquenabend:
           label:
@@ -89,9 +92,6 @@ CarnivalEventTaxonomy:
         Laterneneinpfeiffen:
           label:
             - Larven-Einpfeiffen@de
-        InternAnderes:
-          label:
-            - Anderes@de
     Historisch:
       label:
         - Historischer Anlass@de
@@ -108,9 +108,6 @@ CarnivalEventTaxonomy:
         Volksfasnacht:
           label:
             - Volksfasnacht / Gassenfasnacht@de
-        HistorischAnderes:
-          label:
-            - Anderes@de
     Wettbewerb:
       label:
         - Wettbewerb@de

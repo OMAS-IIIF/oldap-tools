@@ -21,6 +21,8 @@ ontology:
     StoryKeywords: ./StoryKeywords.yaml
     OrganisationTaxonomy: ./OrganisationTaxonomy.yaml
     CarnivalEventTaxonomy: ./CarnivalEventTaxonomy.yaml
+    PublicationStatus: ./PublicationStatus.yaml
+    CarnivalTopicsTaxonomy: ./CarnivalTopicsTaxonomy.yaml
   external_ontologies:
     dcterms:
       namespace: http://purl.org/dc/terms/
@@ -148,7 +150,12 @@ ontology:
       - participant
       - relatedTo
       - startDate
-
+    foaf:
+      namespace: http://xmlns.com/foaf/0.1/
+      label: Friend of a Friend
+      proposedDatatypePropertyClass:
+        - familyName
+        - givenName
   classes:
     fasnacht:FasnachtUser:
       superclass:
@@ -359,7 +366,7 @@ ontology:
         name:
           en: Content
           de: Inhalt
-          fr: Contenuto
+          fr: Contenu
           it: Contenuto
         description:
           en: Full multilingual body text of the news item.
@@ -954,6 +961,14 @@ ontology:
             it: Descrizione o sintesi dell'oggetto di Carnevale, come un festival, un'esposizione o un evento.
           editor: TEXT_AREA_WITH_LANG
           order: 2
+        - iri: dcterms:subject
+          to_class: list:CarnivalTopicsTaxonomy
+          name:
+            en: Carnival categories
+            de: Fasnachtssparten
+            fr: Catégories du carnaval
+            it: Categorie del carnevale
+          order: 3
         - iri: fasnacht:dating
           to_class: oldap:Dating
           name:
@@ -966,7 +981,7 @@ ontology:
             de: Datierungsangaben zur Entstehung oder Herstellung des Fasnachtsding.
             fr: Informations de datation sur la création ou la production de l'objet d'archive.
             it: Informazioni di datazione sulla creazione o produzione dell'oggetto d'archivio.
-          order: 3
+          order: 4
         - iri: fasnacht:associatedOrganisation
           to_class: fasnacht:Agent
           name:
@@ -974,19 +989,6 @@ ontology:
             de: Mit Organisation/Einrichtung verbunden
             fr: Lié à l'organisation/à l'établissement
             it: Relativo all'organizzazione/all'allestimento
-          order: 4
-        - iri: fasnacht:connectedToOrganisationTaxonomy
-          to_class: list:OrganisationTaxonomy
-          name:
-            en: Connected to organisation taxonomy
-            de: Verknüpft mit Organisationseinheit
-            fr: Connecté à la taxonomie d'organisation
-            it: Connesso alla taxonomia di organizzazione
-          description:
-            en: Indicates the organisation taxonomy to which this media item is connected.
-            de: Gibt die Organisationseinheit an, mit der dieses Medienobjekt verbunden ist.
-            fr: Indique la taxonomie d'organisation à laquelle cet objet média est connecté.
-            it: Indica la taxonomia di organizzazione a cui questo oggetto multimediale è connesso.
           order: 5
         - iri: dcterms:isPartOf
           to_class: fasnacht:CarnivalThing
@@ -1029,6 +1031,19 @@ ontology:
             fr: Indique le lieu de l'événement ou l'emplacement actuel de l'objet d'archivage.
             it: Indica la località dell'oggetto d'archivio.
           order: 8
+        - iri: fasnacht:publicationStatus
+          to_class: list:PublicationStatus
+          name:
+            en: Publication status
+            de: Publikationsstatus
+            fr: Statut de publication
+            it: Stato di pubblicazione
+          description:
+            en: Editorial workflow status controlling whether the archival resource is still being edited, ready for publication, or publicly published.
+            de: Redaktioneller Workflow-Status, der angibt, ob die Archivressource noch bearbeitet wird, zur Publikation bereit ist oder öffentlich publiziert ist.
+          min_count: 1
+          max_count: 1
+          order: 9
 
     fasnacht:CarnivalEvent:
       superclass:
@@ -1053,6 +1068,30 @@ ontology:
             fr: Indique le type de l'évenement de carnaval.
             it: Indica il tipo dell'evento di Carnevale.
           order: 1
+
+    fasnacht:ExternalSource:
+      label:
+        en: External data source
+        de: Externe Datenquelle
+        fr: Source de données externe
+        it: Fonte dati esterna
+      properties:
+        - iri: schema:name
+          datatype: rdf:langString
+          name:
+            en: Name of external data source
+            de: Name der externen Datenquelle
+            fr: Nom de la source de données externe
+            it: Nome della fonte di dati esterna
+          min_count: 1
+        - iri: fasnacht:lastHarvest
+          datatype: xsd:dateTime
+          name:
+            en: Last harvest date
+            de: Letzte Erhebung
+            fr: Date de dernière récolte
+            it: Ultima raccolta
+          max_count: 1
 
     fasnacht:ArchiveObject:
       superclass:
@@ -1145,6 +1184,34 @@ ontology:
           it: Identificativo d'archivio, segnatura o collocazione per ritrovare l'oggetto.
         max_count: 1
         order: 6
+      - iri: schema:url
+        datatype: xsd:anyURI
+        name:
+          en: URL of the object at the provider's website
+          de: URL des Objekts auf der Website des Anbieters
+          fr: URL de l'objet sur le site web du fournisseur
+          it: URL dell'oggetto sul sito web del fornitore
+        description:
+          en: URL of the object at the provider's website. Only for external archive objects.
+          de: URL des Objekts auf der Website des Anbieters. Nur bei externen Archivobjekten.
+          fr: URL de l'objet sur le site web du fournisseur. Uniquement pour les objets d'archivage externes.
+          it: URL dell'oggetto sul sito web del fornitore. Solo per gli oggetti di archivio esterni.
+        max_count: 1
+        order: 7
+      - iri: fasnacht:externalSource
+        to_class: fasnacht:ExternalSource
+        name:
+          en: External source
+          de: Externe Quelle
+          fr: Source externe
+          it: Fonte esterna
+        description:
+          en: External source of the object. Only for external archive objects.
+          de: Externe Quelle des Objekts. Nur bei externen Archivobjekten.
+          fr: Source externe de l'objet. Uniquement pour les objets d'archivage externes.
+          it: Fonte esterna dell'oggetto. Solo per gli oggetti di archivio esterni.
+        max_count: 1
+        order: 8
 
     fasnacht:ArchiveMediaObject:
       superclass:
@@ -1184,6 +1251,19 @@ ontology:
           it: Descrizione della rappresentazione multimediale e di ciò che mostra dell'oggetto d'archivio.
         order: 2
         editor: TEXT_AREA_WITH_LANG
+      - iri: fasnacht:publicationStatus
+        to_class: list:PublicationStatus
+        name:
+          en: Publication status
+          de: Publikationsstatus
+          fr: Statut de publication
+          it: Stato di pubblicazione
+        description:
+          en: Editorial workflow status controlling whether the archival resource is still being edited, ready for publication, or publicly published.
+          de: Redaktioneller Workflow-Status, der angibt, ob die Archivressource noch bearbeitet wird, zur Publikation bereit ist oder öffentlich publiziert ist.
+        min_count: 1
+        max_count: 1
+        order: 3
       - iri: fasnacht:archiveMediaObjectOf
         to_class: fasnacht:CarnivalThing
         name:
@@ -1197,7 +1277,7 @@ ontology:
           fr: Objet d'archive représenté, numérisé ou autrement documenté par cet objet média.
           it: Oggetto d'archivio raffigurato, digitalizzato o altrimenti rappresentato da questo oggetto multimediale.
         min_count: 1
-        order: 3
+        order: 4
       - iri: fasnacht:location
         to_class: fasnacht:Place
         name:
@@ -1211,7 +1291,7 @@ ontology:
           fr: Lieu où le support a été enregistré.
           it: Luogo in cui è stato registrato il materiale.
         max_count: 1
-        order: 4
+        order: 5
       - iri: fasnacht:creationDating
         to_class: oldap:Dating
         name:
@@ -1224,8 +1304,8 @@ ontology:
           de: Datum, an dem das Archivmedienobjekt erstellt oder digitalisiert wurde.
           fr: Date à laquelle l'objet média d'archive a été créé ou numérisé.
           it: Data in cui l'oggetto multimediale d'archivio è stato creato o digitalizzato.
-        order: 5
-      - iri:     fasnacht:contributingAgent
+        order: 6
+      - iri: fasnacht:contributingAgent
         subproperty_of: schema:provider
         to_class: fasnacht:Agent
         name:
@@ -1240,7 +1320,7 @@ ontology:
           it: Organizzazione o persona che ha messo la risorsa digitale a disposizione del progetto. Questo indica la provenienza del documento o file digitale e non implica necessariamente la paternità o la proprietà dell’oggetto originale.
         min_count: 1
         max_count: 1
-        order: 6
+        order: 7
       - iri: dcterms:creator
         to_class: fasnacht:Agent
         name:
@@ -1253,7 +1333,7 @@ ontology:
           de: Person oder Organisation, die das Archivmedienobjekt erstellt hat.
           fr: Personne ou organisation qui a créé l'objet média d'archive.
           it: Persona o organizzazione che ha creato l'oggetto multimediale d'archivio.
-        order: 7
+        order: 8
       - iri: dcterms:rights
         to_class: list:CreativeCommons
         name:
@@ -1268,7 +1348,16 @@ ontology:
           it: Diritti o licenza che regolano il riuso dell'oggetto multimediale d'archivio.
         min_count: 1
         max_count: 1
-        order: 8
+        order: 9
+      - iri: fasnacht:rightsStatementUrl
+        datatype: xsd:anyURI
+        name:
+          en: Other Rights Statement
+          de: Andere Rechteerklärung
+          fr: Autre Déclaration de droits
+          it: Altre dichiarazioni sui diritti
+        max_count: 1
+        order: 10
       - iri: schema:position
         datatype: xsd:integer
         name:
@@ -1276,7 +1365,7 @@ ontology:
           de: Position/Sequenznummer/Seite
           fr: Position
           it: Posizione
-        order: 9
+        order: 11
 
     fasnacht:StagingArea:
       superclass:

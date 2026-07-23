@@ -56,5 +56,9 @@ OLDAP credentials and GraphDB credentials are separate:
 - OLDAP credentials identify the actor inside OLDAP and are used for permission checks.
 - GraphDB credentials authenticate the HTTP connection to GraphDB when the repository is protected.
 
-If GraphDB runs without HTTP authentication, omit `--graphdb_user` and `--graphdb_password`.
+`oldap-tools` is a trusted direct GraphDB client. It authenticates the OLDAP
+user and constructs the required authorization context without issuing an
+access token. JWT signing secrets such as `OLDAP_ACCESS_JWT_SECRET` are neither
+required nor intended for CLI installations.
 
+If GraphDB runs without HTTP authentication, omit `--graphdb_user` and `--graphdb_password`.
