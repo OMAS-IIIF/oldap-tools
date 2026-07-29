@@ -1,5 +1,11 @@
 # CODEX_LOG
 
+### Update 2026-07-26 23:54
+- Decisions: Stabilize the Fasnacht wizard's ontology package around independent ArchiveMediaObjects, multi-valued direct topics and associated organisations, Agent-based creators, optional representation roles, original-content dating, and optional StagingArea default rights with CC BY-ND as the initial instance value.
+- Implementation: Activated the replacement ObjectTaxonomy wording, sharpened four topic labels without changing their IDs, added ArchiveMediaObject `dcterms:subject` and `fasnacht:associatedOrganisation`, clarified optional target links and creator/dating descriptions, and added optional `fasnacht:defaultRights` to StagingArea. Updated the ObjectTaxonomy migration document with verified IRI construction and the list-replacement constraint.
+- Open: Reload the revised ontology after this change, populate existing StagingAreas with `L-CreativeCommons:CC_BY-ND`, verify the replacement ObjectTaxonomy state and all object-type references in GraphDB, and decide the final Rädäbäng type.
+- Risks/Assumptions: The current loader cannot move existing list nodes during merge, and ontology `--mode replace` does not replace lists; the ObjectTaxonomy hierarchy therefore requires an explicit backed-up list replacement. No GraphDB data or deployment was changed in this step.
+
 ### Update 2026-07-23 12:10
 - Decisions: Keep the existing `CarnivalTopicsTaxonomy` list identifier while drafting a replacement in a separate, inactive file; model shared archive facets as themes, practices, and cultural expressions instead of duplicating organisation, object, event, or media types.
 - Implementation: Added `fasnacht/CarnivalTopicsTaxonomyNew.yaml` with seven extensible top-level domains, 41 child topics, and English, German, French, and Italian labels and definitions throughout; left the current taxonomy and ontology reference unchanged.

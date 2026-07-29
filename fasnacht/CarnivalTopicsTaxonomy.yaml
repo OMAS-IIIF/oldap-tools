@@ -24,10 +24,10 @@ CarnivalTopicsTaxonomy:
       nodes:
         Pipes:
           label:
-            - Pipes@en
-            - Pfeifen@de
-            - Fifres@fr
-            - Pifferi@it
+            - Piccolo playing and pipe culture@en
+            - Piccolospiel und Pfeiferkultur@de
+            - Jeu du piccolo et culture des fifres@fr
+            - Pratica del piccolo e cultura dei pifferi@it
           definition:
             - Playing, teaching, repertoire, and culture of the Basel piccolo and other carnival pipes.@en
             - Spiel, Unterricht, Repertoire und Kultur des Basler Piccolos und weiterer Fasnachtspfeifen.@de
@@ -35,10 +35,10 @@ CarnivalTopicsTaxonomy:
             - Esecuzione, insegnamento, repertorio e cultura dell'ottavino basilese e degli altri pifferi di carnevale.@it
         Drums:
           label:
-            - Drums@en
-            - Trommeln@de
-            - Tambours@fr
-            - Tamburi@it
+            - Drumming and drum culture@en
+            - Trommelspiel und Trommelkultur@de
+            - Pratique et culture du tambour@fr
+            - Pratica e cultura del tamburo@it
           definition:
             - Drumming, teaching, repertoire, and drum culture of Basel Carnival.@en
             - Trommelspiel, Unterricht, Repertoire und Trommelkultur der Basler Fasnacht.@de
@@ -160,10 +160,10 @@ CarnivalTopicsTaxonomy:
             - Creazione artistica, pittura, linguaggio visivo e narrazione delle lanterne di carnevale.@it
         Masks:
           label:
-            - Masks@en
-            - Larven@de
-            - Masques@fr
-            - Maschere@it
+            - Carnival mask culture and design@en
+            - Larvenwesen und Larvengestaltung@de
+            - Culture et création des masques de carnaval@fr
+            - Cultura e creazione delle maschere carnevalesche@it
           definition:
             - Carnival masks as visual expressions, including their forms, characters, and design.@en
             - Fasnachtslarven als visuelle Ausdrucksform mit ihren Formen, Figuren und Gestaltungen.@de
@@ -171,10 +171,10 @@ CarnivalTopicsTaxonomy:
             - Maschere carnevalesche come forma di espressione visiva, con le loro forme, personaggi e creazioni.@it
         Costumes:
           label:
-            - Costumes@en
-            - Kostüme@de
-            - Costumes@fr
-            - Costumi@it
+            - Costume design and costume culture@en
+            - Kostümgestaltung und Kostümkultur@de
+            - Création et culture du costume@fr
+            - Creazione e cultura del costume@it
           definition:
             - Carnival costumes, their visual concepts, characters, and use in performances or processions.@en
             - Fasnachtskostüme, ihre Gestaltungskonzepte, Figuren und Verwendung bei Auftritten oder Umzügen.@de

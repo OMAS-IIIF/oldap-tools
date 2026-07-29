@@ -19,6 +19,9 @@
 - `load_list.py`, `dump_list.py`, and `list_merge.py` handle hierarchical OLDAP lists.
 - `ontology.py`, `graph_helpers.py`, and `schemas/ontology_schema.yaml` implement ontology YAML validation/loading/dumping support.
 - The Fasnacht model is declared in `fasnacht/fasnacht-onto.yaml` with companion taxonomies in YAML files in the same folder.
+- Fasnacht archive metadata is media-first: `ArchiveMediaObject.archiveMediaObjectOf` is optional, direct media topics and associated organisations are supported, and `representationRole` uses `MediumRepresentationTaxonomy`. `dcterms:creator` targets `fasnacht:Agent` for both archive objects and media, while `contributingAgent` remains separate provenance metadata.
+- `fasnacht:StagingArea` has optional `fasnacht:defaultRights` pointing to `CreativeCommons`; the agreed initial data value is `L-CreativeCommons:CC_BY-ND` and must be populated on StagingArea instances separately from the ontology definition.
+- The replacement `fasnacht/ObjectTaxonomy.yaml` classifies archive material types and retains 21 legacy node IDs. The former hierarchy is preserved as `ObjectTaxonomy-OLD.yaml`; `ObjectTaxonomy-MigrationMapping.md` documents unresolved Rädäbäng records and the explicit list-replacement requirement because list merge does not move existing nodes.
 
 ## Development Style
 

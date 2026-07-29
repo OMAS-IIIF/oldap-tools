@@ -1,83 +1,413 @@
+# Active archive-material taxonomy referenced by fasnacht-onto.yaml.
+# Retained legacy node IDs preserve stable IRIs where old and new concepts correspond.
 ObjectTaxonomy:
   label:
-  - Object types@en
-  - Objektklassen@de
+    - Archive material types@en
+    - Archivgutarten@de
+    - Types de documents et objets d'archive@fr
+    - Tipi di materiali d'archivio@it
+  definition:
+    - Types of physical objects, records, publications, works, and analogue carriers preserved or described as independent archival units. Subject matter is classified separately with CarnivalTopicsTaxonomy.@en
+    - Arten von physischen Objekten, Unterlagen, Publikationen, Werken und analogen Datenträgern, die als eigenständige Archiveinheiten aufbewahrt oder beschrieben werden. Der inhaltliche Gegenstand wird separat mit der CarnivalTopicsTaxonomy klassifiziert.@de
+    - Types d'objets physiques, de documents, de publications, d'œuvres et de supports analogiques conservés ou décrits comme unités d'archive autonomes. Le sujet est classé séparément à l'aide de la CarnivalTopicsTaxonomy.@fr
+    - Tipi di oggetti fisici, documenti, pubblicazioni, opere e supporti analogici conservati o descritti come unità archivistiche autonome. Il contenuto tematico è classificato separatamente con la CarnivalTopicsTaxonomy.@it
   nodes:
-    Laterne:
+    CarnivalEquipmentAndMaterialObjects:
       label:
-      - Laterne (Ladärne)@de
-    Larve:
-      label:
-      - Larve@de
-    Kostuem:
-      label:
-      - Kostüm (Goschdyym)@de
-    Plakette:
-      label:
-      - Blaggedde (Blagette)@de
-    Requisite:
-      label:
-      - Requisite@de
-    Memorabilia:
-      label:
-      - Memorabilia@de
-    Musik:
-      label:
-      - Musik@de
+        - Carnival equipment and material objects@en
+        - Fasnachtsausstattung und materielle Objekte@de
+        - Équipement carnavalesque et objets matériels@fr
+        - Equipaggiamento carnevalesco e oggetti materiali@it
+      definition:
+        - Physical objects made, worn, carried, played, displayed, or otherwise used in carnival practice.@en
+        - Physische Objekte, die für die Fasnacht hergestellt, getragen, mitgeführt, gespielt, ausgestellt oder anderweitig verwendet werden.@de
+        - Objets physiques fabriqués, portés, transportés, joués, exposés ou autrement utilisés dans la pratique du carnaval.@fr
+        - Oggetti fisici fabbricati, indossati, trasportati, suonati, esposti o altrimenti utilizzati nella pratica carnevalesca.@it
       nodes:
+        Laterne:
+          label:
+            - Lantern@en
+            - Laterne@de
+            - Lanterne@fr
+            - Lanterna@it
+        LanternPanel:
+          label:
+            - Lantern panel@en
+            - Laternenbild@de
+            - Panneau de lanterne@fr
+            - Pannello di lanterna@it
+          definition:
+            - A separately preserved painted or illustrated panel that formed part of a carnival lantern.@en
+            - Ein separat erhaltenes bemaltes oder illustriertes Bildfeld, das Teil einer Fasnachtslaterne war.@de
+            - Un panneau peint ou illustré conservé séparément et ayant fait partie d'une lanterne de carnaval.@fr
+            - Un pannello dipinto o illustrato conservato separatamente e originariamente parte di una lanterna carnevalesca.@it
+        Larve:
+          label:
+            - Carnival mask@en
+            - Larve@de
+            - Masque de carnaval@fr
+            - Maschera carnevalesca@it
+        Kostuem:
+          label:
+            - Costume@en
+            - Kostüm@de
+            - Costume@fr
+            - Costume@it
+        Requisite:
+          label:
+            - Prop@en
+            - Requisite@de
+            - Accessoire@fr
+            - Oggetto di scena@it
+        Plakette:
+          label:
+            - Carnival badge@en
+            - Plakette@de
+            - Insigne de carnaval@fr
+            - Distintivo di carnevale@it
+        FloatOrChaise:
+          label:
+            - Float or chaise@en
+            - Wagen oder Chaise@de
+            - Char ou chaise@fr
+            - Carro o chaise@it
         Musikinstrument:
           label:
-          - Musikinstrument@de
+            - Musical instrument@en
+            - Musikinstrument@de
+            - Instrument de musique@fr
+            - Strumento musicale@it
           nodes:
             Trommel:
               label:
-              - Trommel@de
+                - Drum@en
+                - Trommel@de
+                - Tambour@fr
+                - Tamburo@it
             Piccolo:
               label:
-              - Piccolo@de
+                - Piccolo@en
+                - Piccolo@de
+                - Piccolo@fr
+                - Ottavino@it
             AnderesInstrument:
               label:
-              - Anderes Instrument@de
-        Musiktext:
-          label:
-          - Musiktext/Noten@de
-        Aufnahme:
-          label:
-          - Aufnahme / Recording@de
-    Marsch:
+                - Other musical instrument@en
+                - Anderes Musikinstrument@de
+                - Autre instrument de musique@fr
+                - Altro strumento musicale@it
+
+    Vereinsdokument:
       label:
-      - Marsch@de
-    Helge:
-      label:
-      - Helge@de
-    Zeedel:
-      label:
-        - Zeedel@de
-    Kunst:
-      label:
-        - Kunst@de
-    Dokument:
-      label:
-      - Dokument@de
+        - Written and administrative records@en
+        - Schrift- und Verwaltungsunterlagen@de
+        - Écrits et documents administratifs@fr
+        - Scritti e documenti amministrativi@it
+      definition:
+        - Unpublished records created through the administration, communication, membership, and financial activities of an organisation or person.@en
+        - Unveröffentlichte Unterlagen, die bei Verwaltung, Kommunikation, Mitgliedschaft und finanziellen Tätigkeiten einer Organisation oder Person entstehen.@de
+        - Documents non publiés produits dans le cadre de l'administration, de la communication, des adhésions et des activités financières d'une organisation ou d'une personne.@fr
+        - Documenti non pubblicati prodotti nell'ambito dell'amministrazione, della comunicazione, delle adesioni e delle attività finanziarie di un'organizzazione o di una persona.@it
       nodes:
-        Vereinsdokument:
-          label:
-          - Vereinsdokument@de
         Protokoll:
           label:
-          - Protokoll@de
+            - Minutes@en
+            - Protokoll@de
+            - Procès-verbal@fr
+            - Verbale@it
+        MembershipRegister:
+          label:
+            - Membership register@en
+            - Mitgliederverzeichnis@de
+            - Registre des membres@fr
+            - Registro dei membri@it
+        Correspondence:
+          label:
+            - Correspondence@en
+            - Korrespondenz@de
+            - Correspondance@fr
+            - Corrispondenza@it
+        FinancialRecords:
+          label:
+            - Financial records@en
+            - Finanzunterlagen@de
+            - Documents financiers@fr
+            - Documenti finanziari@it
+        StatutesAndRegulations:
+          label:
+            - Statutes and regulations@en
+            - Statuten und Reglemente@de
+            - Statuts et règlements@fr
+            - Statuti e regolamenti@it
+        OtherClubRecords:
+          label:
+            - Other club records@en
+            - Andere Vereinsunterlagen@de
+            - Autres documents associatifs@fr
+            - Altri documenti associativi@it
+
+    PublicationsAndPress:
+      label:
+        - Publications and press@en
+        - Publikationen und Presse@de
+        - Publications et presse@fr
+        - Pubblicazioni e stampa@it
+      definition:
+        - Published or publicly distributed printed works and press materials.@en
+        - Veröffentlichte oder öffentlich verbreitete Druckwerke und Pressematerialien.@de
+        - Ouvrages imprimés publiés ou diffusés publiquement et documents de presse.@fr
+        - Opere a stampa pubblicate o diffuse pubblicamente e materiali di stampa.@it
+      nodes:
         Buch:
           label:
-          - Buch@de
-        Magazin:
-          label:
-          - Magazin@de
+            - Book@en
+            - Buch@de
+            - Livre@fr
+            - Libro@it
         Chronik:
           label:
-          - Chronik@de
+            - Chronicle@en
+            - Chronik@de
+            - Chronique@fr
+            - Cronaca@it
+        Magazin:
+          label:
+            - Periodical or magazine@en
+            - Zeitschrift oder Magazin@de
+            - Périodique ou magazine@fr
+            - Periodico o rivista@it
+        ProgrammeAndEventGuide:
+          label:
+            - Programme and event guide@en
+            - Programm- und Veranstaltungsführer@de
+            - Programme et guide de manifestation@fr
+            - Programma e guida dell'evento@it
+          definition:
+            - An official or editorially responsible publication containing programme information, participants, themes, routes, schedules, and organisational guidance for an event.@en
+            - Eine offizielle oder redaktionell verantwortete Publikation mit Programminformationen, Teilnehmenden, Themen, Routen, Zeiten und organisatorischen Hinweisen zu einer Veranstaltung.@de
+            - Une publication officielle ou placée sous responsabilité éditoriale contenant le programme, les participants, les thèmes, les itinéraires, les horaires et des informations organisationnelles sur une manifestation.@fr
+            - Una pubblicazione ufficiale o sotto responsabilità editoriale contenente programma, partecipanti, temi, percorsi, orari e informazioni organizzative su un evento.@it
+        Brochure:
+          label:
+            - Brochure@en
+            - Broschüre@de
+            - Brochure@fr
+            - Opuscolo@it
+        Flyer:
+          label:
+            - Flyer@en
+            - Flyer@de
+            - Prospectus@fr
+            - Volantino@it
+        Poster:
+          label:
+            - Poster@en
+            - Plakat@de
+            - Affiche@fr
+            - Manifesto@it
+        NewspaperArticleOrClipping:
+          label:
+            - Newspaper article or clipping@en
+            - Zeitungsartikel oder Zeitungsausschnitt@de
+            - Article ou coupure de presse@fr
+            - Articolo o ritaglio di giornale@it
+
+    CarnivalTextsAndMusicNotation:
+      label:
+        - Carnival texts and music notation@en
+        - Fasnachtstexte und Musiknotation@de
+        - Textes carnavalesques et notation musicale@fr
+        - Testi carnevaleschi e notazione musicale@it
+      definition:
+        - Written creative source material and notation produced for carnival performance, presentation, or musical practice.@en
+        - Schriftliches kreatives Quellenmaterial und Notation für Aufführung, Präsentation oder musikalische Praxis der Fasnacht.@de
+        - Matériaux créatifs écrits et notations produits pour la représentation, la présentation ou la pratique musicale du carnaval.@fr
+        - Materiali creativi scritti e notazioni prodotti per l'esecuzione, la presentazione o la pratica musicale del carnevale.@it
+      nodes:
+        Zeedel:
+          label:
+            - Carnival leaflet (Zeedel)@en
+            - Zeedel@de
+            - Feuillet de carnaval (Zeedel)@fr
+            - Foglio carnevalesco (Zeedel)@it
+        SchnitzelbankText:
+          label:
+            - Schnitzelbank text@en
+            - Schnitzelbanktext@de
+            - Texte de Schnitzelbank@fr
+            - Testo di Schnitzelbank@it
+        SongLyrics:
+          label:
+            - Song lyrics@en
+            - Liedtext@de
+            - Paroles de chanson@fr
+            - Testo di canzone@it
+        Manuscript:
+          label:
+            - Manuscript@en
+            - Manuskript@de
+            - Manuscrit@fr
+            - Manoscritto@it
+        MusicalNotation:
+          label:
+            - Musical notation@en
+            - Noten@de
+            - Partition musicale@fr
+            - Spartito musicale@it
+
+    Kunst:
+      label:
+        - Visual and design works@en
+        - Bild- und Gestaltungswerke@de
+        - Œuvres visuelles et de conception@fr
+        - Opere visive e di progettazione@it
+      definition:
+        - Independent visual works and design sources, whether unique originals or separately preserved analogue photographic objects.@en
+        - Eigenständige Bildwerke und Gestaltungsquellen, sowohl einzigartige Originale als auch separat erhaltene analoge fotografische Objekte.@de
+        - Œuvres visuelles et sources de conception autonomes, qu'il s'agisse d'originaux uniques ou d'objets photographiques analogiques conservés séparément.@fr
+        - Opere visive e fonti progettuali autonome, siano esse originali unici o oggetti fotografici analogici conservati separatamente.@it
+      nodes:
+        Helge:
+          label:
+            - Schnitzelbank illustration board (Helge)@en
+            - Helge@de
+            - Planche illustrée de Schnitzelbank (Helge)@fr
+            - Tavola illustrata di Schnitzelbank (Helge)@it
+          definition:
+            - A physical illustrated board or sheet used to accompany a Schnitzelbank performance.@en
+            - Eine physische illustrierte Tafel oder ein Blatt zur Begleitung eines Schnitzelbankvortrags.@de
+            - Une planche ou feuille physique illustrée utilisée pour accompagner une représentation de Schnitzelbank.@fr
+            - Una tavola o un foglio fisico illustrato usato per accompagnare un'esibizione di Schnitzelbank.@it
+        DesignOrSketch:
+          label:
+            - Design or sketch@en
+            - Entwurf oder Skizze@de
+            - Projet ou esquisse@fr
+            - Progetto o schizzo@it
+        IllustrationOrGraphicWork:
+          label:
+            - Illustration or graphic work@en
+            - Illustration oder Grafik@de
+            - Illustration ou œuvre graphique@fr
+            - Illustrazione o opera grafica@it
+        Painting:
+          label:
+            - Painting@en
+            - Gemälde@de
+            - Peinture@fr
+            - Dipinto@it
+        AnalogPhotograph:
+          label:
+            - Analogue photograph@en
+            - Analoge Fotografie@de
+            - Photographie analogique@fr
+            - Fotografia analogica@it
+          definition:
+            - A physical photographic archival item such as a print, negative, or slide. A digital scan or digital photograph is described separately as an ArchiveMediaObject.@en
+            - Ein physischer fotografischer Archivgegenstand wie ein Abzug, Negativ oder Dia. Ein digitaler Scan oder eine digitale Fotografie wird separat als ArchiveMediaObject beschrieben.@de
+            - Un objet photographique physique tel qu'un tirage, un négatif ou une diapositive. Une numérisation ou une photographie numérique est décrite séparément comme ArchiveMediaObject.@fr
+            - Un oggetto fotografico fisico come una stampa, un negativo o una diapositiva. Una scansione o una fotografia digitale è descritta separatamente come ArchiveMediaObject.@it
+
+    MusicalWorks:
+      label:
+        - Musical works@en
+        - Musikalische Werke@de
+        - Œuvres musicales@fr
+        - Opere musicali@it
+      definition:
+        - Intellectually independent musical compositions, distinct from their notation, recordings, and physical sound carriers.@en
+        - Geistig eigenständige musikalische Kompositionen, unterschieden von ihrer Notation, ihren Aufnahmen und ihren physischen Tonträgern.@de
+        - Compositions musicales intellectuellement autonomes, distinctes de leur notation, de leurs enregistrements et de leurs supports sonores physiques.@fr
+        - Composizioni musicali intellettualmente autonome, distinte dalla loro notazione, dalle registrazioni e dai supporti sonori fisici.@it
+      nodes:
+        Marsch:
+          label:
+            - March or composition@en
+            - Marsch oder Komposition@de
+            - Marche ou composition@fr
+            - Marcia o composizione@it
+        OtherMusicalWork:
+          label:
+            - Other musical work@en
+            - Anderes musikalisches Werk@de
+            - Autre œuvre musicale@fr
+            - Altra opera musicale@it
+
+    AnalogMediaAndCarriers:
+      label:
+        - Analogue media and carriers@en
+        - Analoge Medien und Datenträger@de
+        - Médias et supports analogiques@fr
+        - Media e supporti analogici@it
+      definition:
+        - Physical analogue carriers on which sound, moving images, or other recorded information is stored. A digitisation of their content is an ArchiveMediaObject.@en
+        - Physische analoge Träger, auf denen Ton, Bewegtbild oder andere aufgezeichnete Informationen gespeichert sind. Ein Digitalisat ihres Inhalts ist ein ArchiveMediaObject.@de
+        - Supports analogiques physiques sur lesquels sont enregistrés du son, des images animées ou d'autres informations. Une numérisation de leur contenu est un ArchiveMediaObject.@fr
+        - Supporti analogici fisici sui quali sono registrati suoni, immagini in movimento o altre informazioni. Una digitalizzazione del loro contenuto è un ArchiveMediaObject.@it
+      nodes:
+        PhonographRecord:
+          label:
+            - Phonograph record@en
+            - Schallplatte@de
+            - Disque phonographique@fr
+            - Disco fonografico@it
+        MagneticTape:
+          label:
+            - Magnetic tape@en
+            - Tonband@de
+            - Bande magnétique@fr
+            - Nastro magnetico@it
+        AudioCassette:
+          label:
+            - Audio cassette@en
+            - Kassette@de
+            - Cassette audio@fr
+            - Audiocassetta@it
+        FilmCarrier:
+          label:
+            - Film carrier@en
+            - Filmträger@de
+            - Support filmique@fr
+            - Supporto filmico@it
+        OtherAnalogCarrier:
+          label:
+            - Other analogue carrier@en
+            - Anderer analoger Datenträger@de
+            - Autre support analogique@fr
+            - Altro supporto analogico@it
+
+    Memorabilia:
+      label:
+        - Memorabilia and collectibles@en
+        - Erinnerungs- und Sammlungsstücke@de
+        - Souvenirs et objets de collection@fr
+        - Cimeli e oggetti da collezione@it
+      definition:
+        - Keepsakes and collected objects whose archival significance primarily lies in their association with carnival history, people, or organisations.@en
+        - Erinnerungs- und Sammlungsstücke, deren archivische Bedeutung vor allem in ihrer Verbindung mit Fasnachtsgeschichte, Personen oder Organisationen liegt.@de
+        - Souvenirs et objets de collection dont l'importance archivistique réside principalement dans leur lien avec l'histoire, les personnes ou les organisations du carnaval.@fr
+        - Cimeli e oggetti da collezione la cui importanza archivistica risiede soprattutto nel legame con la storia, le persone o le organizzazioni del carnevale.@it
+
     Other:
       label:
-      - Anderes@de
+        - Other archive material type@en
+        - Andere Archivgutart@de
+        - Autre type de document ou objet d'archive@fr
+        - Altro tipo di materiale d'archivio@it
+      definition:
+        - The archive material type is known but is not covered by the available categories.@en
+        - Die Archivgutart ist bekannt, wird aber durch die vorhandenen Kategorien nicht abgedeckt.@de
+        - Le type de document ou d'objet d'archive est connu mais n'est pas couvert par les catégories disponibles.@fr
+        - Il tipo di materiale d'archivio è noto ma non è coperto dalle categorie disponibili.@it
+
     Undetermined:
       label:
-      - Nicht zugewiesen@de
+        - Archive material type not yet determined@en
+        - Archivgutart noch nicht bestimmt@de
+        - Type de document ou objet d'archive pas encore déterminé@fr
+        - Tipo di materiale d'archivio non ancora determinato@it
+      definition:
+        - The archive material type has not yet been identified. This is a temporary editorial classification, not a substitute for Other.@en
+        - Die Archivgutart wurde noch nicht bestimmt. Dies ist eine vorläufige redaktionelle Klassifikation und kein Ersatz für Andere Archivgutart.@de
+        - Le type de document ou d'objet d'archive n'a pas encore été identifié. Il s'agit d'une classification éditoriale provisoire et non d'un substitut à l'autre type d'archive.@fr
+        - Il tipo di materiale d'archivio non è ancora stato identificato. Si tratta di una classificazione editoriale provvisoria e non sostituisce l'altro tipo di materiale d'archivio.@it

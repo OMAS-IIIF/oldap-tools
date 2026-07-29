@@ -23,6 +23,7 @@ ontology:
     CarnivalEventTaxonomy: ./CarnivalEventTaxonomy.yaml
     PublicationStatus: ./PublicationStatus.yaml
     CarnivalTopicsTaxonomy: ./CarnivalTopicsTaxonomy.yaml
+    MediumRepresentationTaxonomy: ./MediumRepresentationTaxonomy.yaml
   external_ontologies:
     dcterms:
       namespace: http://purl.org/dc/terms/
@@ -1117,17 +1118,17 @@ ontology:
         max_count: 1
         order: 1
       - iri: dcterms:creator
-        to_class: fasnacht:Person
+        to_class: fasnacht:Agent
         name:
           en: Creator
           de: Urheber
           fr: Auteur
           it: Autore
         description:
-          en: Person who designed, made, wrote, or otherwise created the archival object.
-          de: Person, die das Archivobjekt entworfen, hergestellt, geschrieben oder anderweitig geschaffen hat.
-          fr: Personne qui a conçu, fabriqué, écrit ou créé autrement l'objet d'archive.
-          it: Persona che ha progettato, realizzato, scritto o creato in altro modo l'oggetto d'archivio.
+          en: Person or organisation that designed, made, wrote, published, or otherwise created the archival object.
+          de: Person oder Organisation, die das Archivobjekt entworfen, hergestellt, geschrieben, herausgegeben oder anderweitig geschaffen hat.
+          fr: Personne ou organisation qui a conçu, fabriqué, écrit, publié ou autrement créé l'objet d'archive.
+          it: Persona o organizzazione che ha progettato, realizzato, scritto, pubblicato o creato in altro modo l'oggetto d'archivio.
         order: 2
       - iri: fasnacht:currentCustodian
         to_class: fasnacht:Agent
@@ -1264,6 +1265,20 @@ ontology:
         min_count: 1
         max_count: 1
         order: 3
+      - iri: fasnacht:representationRole
+        to_class: list:MediumRepresentationTaxonomy
+        name:
+          en: Representation role
+          de: Rolle der Mediendarstellung
+          fr: Rôle de la représentation
+          it: Ruolo della rappresentazione
+        description:
+          en: Functional role of this archive media item within an archival entry or a group of related media, such as an independent representation, representative view, component, detail view, access copy, or supplementary material.
+          de: Funktionale Rolle dieses Archivmediums innerhalb eines Archiveintrags oder einer Gruppe zusammengehörender Medien, beispielsweise als selbständige Mediendarstellung, repräsentative Ansicht, Bestandteil, Detailansicht, Nutzungsfassung oder ergänzendes Material.
+          fr: Rôle fonctionnel de cet objet média d’archive au sein d’une notice d’archive ou d’un groupe de médias associés, par exemple comme représentation autonome, vue représentative, composant, vue de détail, copie de consultation ou matériel complémentaire.
+          it: Ruolo funzionale di questo oggetto multimediale d’archivio all’interno di una scheda d’archivio o di un gruppo di media correlati, per esempio come rappresentazione autonoma, vista rappresentativa, componente, vista di dettaglio, copia di consultazione o materiale supplementare.
+        max_count: 1
+        order: 4
       - iri: fasnacht:archiveMediaObjectOf
         to_class: fasnacht:CarnivalThing
         name:
@@ -1272,12 +1287,37 @@ ontology:
           fr: Représente l'objet d'archive
           it: Rappresenta oggetto d'archivio
         description:
-          en: Archival object depicted, digitised, or otherwise represented by this media item.
-          de: Archivobjekt, das durch dieses Medienobjekt abgebildet, digitalisiert oder anderweitig repräsentiert wird.
-          fr: Objet d'archive représenté, numérisé ou autrement documenté par cet objet média.
-          it: Oggetto d'archivio raffigurato, digitalizzato o altrimenti rappresentato da questo oggetto multimediale.
-        min_count: 1
-        order: 4
+          en: Optional archive objects or carnival events depicted, digitised, or otherwise represented by this media item.
+          de: Optionale Archivobjekte oder Fasnachtsanlässe, die durch dieses Medienobjekt abgebildet, digitalisiert oder anderweitig repräsentiert werden.
+          fr: Objets d'archive ou événements carnavalesques facultatifs représentés, numérisés ou autrement documentés par cet objet média.
+          it: Oggetti d'archivio o eventi carnevaleschi facoltativi raffigurati, digitalizzati o altrimenti rappresentati da questo oggetto multimediale.
+        order: 5
+      - iri: dcterms:subject
+        to_class: list:CarnivalTopicsTaxonomy
+        name:
+          en: Carnival topics
+          de: Fasnachtsthemen
+          fr: Thèmes du carnaval
+          it: Temi del carnevale
+        description:
+          en: Subjects, practices, or cultural expressions directly depicted or addressed by this archive media item.
+          de: Themen, Praktiken oder kulturelle Ausdrucksformen, die dieses Archivmedium direkt darstellt oder behandelt.
+          fr: Sujets, pratiques ou expressions culturelles directement représentés ou abordés par cet objet média d'archive.
+          it: Temi, pratiche o espressioni culturali direttamente rappresentati o trattati da questo oggetto multimediale d'archivio.
+        order: 6
+      - iri: fasnacht:associatedOrganisation
+        to_class: fasnacht:Agent
+        name:
+          en: Depicted or associated organisation
+          de: Dargestellte oder inhaltlich verbundene Organisation
+          fr: Organisation représentée ou associée
+          it: Organizzazione rappresentata o associata
+        description:
+          en: Organisations or institutions depicted by the media item or directly relevant to its content. This is distinct from the agent that provided the file.
+          de: Organisationen oder Institutionen, die im Medium dargestellt werden oder für dessen Inhalt unmittelbar relevant sind. Dies ist nicht die Angabe, wer die Datei bereitgestellt hat.
+          fr: Organisations ou institutions représentées dans le média ou directement concernées par son contenu. Cette propriété est distincte de l'agent ayant fourni le fichier.
+          it: Organizzazioni o istituzioni rappresentate nel media o direttamente rilevanti per il suo contenuto. Questa proprietà è distinta dall'agente che ha fornito il file.
+        order: 7
       - iri: fasnacht:location
         to_class: fasnacht:Place
         name:
@@ -1291,7 +1331,7 @@ ontology:
           fr: Lieu où le support a été enregistré.
           it: Luogo in cui è stato registrato il materiale.
         max_count: 1
-        order: 5
+        order: 8
       - iri: fasnacht:creationDating
         to_class: oldap:Dating
         name:
@@ -1300,11 +1340,11 @@ ontology:
           fr: Date de création
           it: Data di creazione
         description:
-          en: Date on which the archive media item was created or digitised.
-          de: Datum, an dem das Archivmedienobjekt erstellt oder digitalisiert wurde.
-          fr: Date à laquelle l'objet média d'archive a été créé ou numérisé.
-          it: Data in cui l'oggetto multimediale d'archivio è stato creato o digitalizzato.
-        order: 6
+          en: Date on which the original analogue or born-digital media content was created or recorded. A later digitisation date is not recorded here.
+          de: Datum, an dem der ursprüngliche analoge oder digital entstandene Medieninhalt geschaffen oder aufgenommen wurde. Ein späteres Digitalisierungsdatum wird hier nicht erfasst.
+          fr: Date à laquelle le contenu média analogique original ou né numérique a été créé ou enregistré. La date d'une numérisation ultérieure n'est pas enregistrée ici.
+          it: Data in cui il contenuto multimediale analogico originale o nativo digitale è stato creato o registrato. La data di una digitalizzazione successiva non viene registrata qui.
+        order: 9
       - iri: fasnacht:contributingAgent
         subproperty_of: schema:provider
         to_class: fasnacht:Agent
@@ -1320,7 +1360,7 @@ ontology:
           it: Organizzazione o persona che ha messo la risorsa digitale a disposizione del progetto. Questo indica la provenienza del documento o file digitale e non implica necessariamente la paternità o la proprietà dell’oggetto originale.
         min_count: 1
         max_count: 1
-        order: 7
+        order: 10
       - iri: dcterms:creator
         to_class: fasnacht:Agent
         name:
@@ -1333,7 +1373,7 @@ ontology:
           de: Person oder Organisation, die das Archivmedienobjekt erstellt hat.
           fr: Personne ou organisation qui a créé l'objet média d'archive.
           it: Persona o organizzazione che ha creato l'oggetto multimediale d'archivio.
-        order: 8
+        order: 11
       - iri: dcterms:rights
         to_class: list:CreativeCommons
         name:
@@ -1348,7 +1388,7 @@ ontology:
           it: Diritti o licenza che regolano il riuso dell'oggetto multimediale d'archivio.
         min_count: 1
         max_count: 1
-        order: 9
+        order: 12
       - iri: fasnacht:rightsStatementUrl
         datatype: xsd:anyURI
         name:
@@ -1357,7 +1397,7 @@ ontology:
           fr: Autre Déclaration de droits
           it: Altre dichiarazioni sui diritti
         max_count: 1
-        order: 10
+        order: 13
       - iri: schema:position
         datatype: xsd:integer
         name:
@@ -1365,7 +1405,7 @@ ontology:
           de: Position/Sequenznummer/Seite
           fr: Position
           it: Posizione
-        order: 11
+        order: 14
 
     fasnacht:StagingArea:
       superclass:
@@ -1381,6 +1421,20 @@ ontology:
           min_count: 1
           max_count: 1
           order: 4
+        - iri: fasnacht:defaultRights
+          to_class: list:CreativeCommons
+          name:
+            en: Default licence
+            de: Standardlizenz
+            fr: Licence par défaut
+            it: Licenza predefinita
+          description:
+            en: Creative Commons licence proposed for archive media created from this staging area. The initial configured value is CC BY-ND and may be reviewed before publication.
+            de: Creative-Commons-Lizenz, die für Archivmedien aus diesem Vorbereitungsbereich vorgeschlagen wird. Der anfänglich konfigurierte Wert ist CC BY-ND und kann vor der Publikation überprüft werden.
+            fr: Licence Creative Commons proposée pour les médias d'archive créés à partir de cette zone de préparation. La valeur initialement configurée est CC BY-ND et peut être vérifiée avant publication.
+            it: Licenza Creative Commons proposta per i media d'archivio creati da quest'area di preparazione. Il valore inizialmente configurato è CC BY-ND e può essere verificato prima della pubblicazione.
+          max_count: 1
+          order: 5
 
   lucene_connectors:
     fasnacht_story:

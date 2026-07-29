@@ -1,0 +1,83 @@
+MediumRepresentationTaxonomy:
+  label:
+    - Roles of media representations@en
+    - Rollen von Mediendarstellungen@de
+    - Rôles des représentations médiatiques@fr
+    - Ruoli delle rappresentazioni mediali@it
+  definition:
+    - Functional roles of archive media representations within an archival entry or a group of related media. The roles are independent of file format, media type, and depicted content.@en
+    - Funktionale Rollen von Archivmedien innerhalb eines Archiveintrags oder einer Gruppe zusammengehörender Medien. Die Rollen sind unabhängig von Dateiformat, Medientyp und dargestelltem Inhalt.@de
+    - Rôles fonctionnels des représentations médiatiques d'archive au sein d'une notice d'archive ou d'un groupe de médias associés. Les rôles sont indépendants du format de fichier, du type de média et du contenu représenté.@fr
+    - Ruoli funzionali delle rappresentazioni mediali d'archivio all'interno di una scheda d'archivio o di un gruppo di media correlati. I ruoli sono indipendenti dal formato del file, dal tipo di media e dal contenuto rappresentato.@it
+  nodes:
+    Independent:
+      label:
+        - Independent representation@en
+        - Selbständige Mediendarstellung@de
+        - Représentation médiatique autonome@fr
+        - Rappresentazione mediale autonoma@it
+      definition:
+        - A media item intended to be discovered and viewed as an independent representation. It may still be linked to one or more archive objects or events.@en
+        - Ein Medium, das als selbständige Darstellung gefunden und betrachtet werden soll. Es kann trotzdem mit einem oder mehreren Archivobjekten oder Anlässen verknüpft sein.@de
+        - Un média destiné à être découvert et consulté comme une représentation autonome. Il peut néanmoins être lié à un ou plusieurs objets d'archive ou événements.@fr
+        - Un media destinato a essere trovato e consultato come rappresentazione autonoma. Può comunque essere collegato a uno o più oggetti d'archivio o eventi.@it
+
+    Representative:
+      label:
+        - Representative view@en
+        - Repräsentative Ansicht@de
+        - Vue représentative@fr
+        - Vista rappresentativa@it
+      definition:
+        - A media item selected as the principal visual or audible representation, title image, or preview of an archive object, event, or group of related media.@en
+        - Ein Medium, das als wichtigste visuelle oder akustische Darstellung, Titelbild oder Vorschau eines Archivobjekts, Anlasses oder einer Gruppe zusammengehörender Medien ausgewählt wurde.@de
+        - Un média choisi comme représentation visuelle ou sonore principale, image de titre ou aperçu d'un objet d'archive, d'un événement ou d'un groupe de médias associés.@fr
+        - Un media scelto come principale rappresentazione visiva o sonora, immagine di copertina o anteprima di un oggetto d'archivio, di un evento o di un gruppo di media correlati.@it
+
+    Component:
+      label:
+        - Component of a compound resource@en
+        - Bestandteil einer zusammengesetzten Einheit@de
+        - Composant d'une ressource composée@fr
+        - Componente di una risorsa composta@it
+      definition:
+        - A non-independent part of a compound archive resource, such as a page of a book, one side of a document, or a segment of an ordered sequence. Its order should be recorded separately when known.@en
+        - Ein unselbständiger Bestandteil einer zusammengesetzten Archivressource, etwa eine Buchseite, eine Seite eines Dokuments oder ein Abschnitt einer geordneten Folge. Die Reihenfolge soll, soweit bekannt, separat festgehalten werden.@de
+        - Une partie non autonome d'une ressource d'archive composée, par exemple une page de livre, une face de document ou un segment d'une séquence ordonnée. Son ordre doit être enregistré séparément lorsqu'il est connu.@fr
+        - Una parte non autonoma di una risorsa d'archivio composta, per esempio una pagina di un libro, un lato di un documento o un segmento di una sequenza ordinata. L'ordine deve essere registrato separatamente quando è noto.@it
+
+    Detail:
+      label:
+        - Detail view@en
+        - Detailansicht@de
+        - Vue de détail@fr
+        - Vista di dettaglio@it
+      definition:
+        - A media item that primarily documents a specific detail or partial view of an archive object or event and is normally interpreted in that wider context.@en
+        - Ein Medium, das hauptsächlich ein bestimmtes Detail oder einen Ausschnitt eines Archivobjekts oder Anlasses dokumentiert und normalerweise in diesem grösseren Zusammenhang verstanden wird.@de
+        - Un média qui documente principalement un détail précis ou une vue partielle d'un objet d'archive ou d'un événement et qui est normalement interprété dans ce contexte plus large.@fr
+        - Un media che documenta principalmente un dettaglio specifico o una vista parziale di un oggetto d'archivio o di un evento e che viene normalmente interpretato in tale contesto più ampio.@it
+
+    AccessCopy:
+      label:
+        - Access copy@en
+        - Nutzungsfassung@de
+        - Copie de consultation@fr
+        - Copia di consultazione@it
+      definition:
+        - A complete or combined rendition prepared for convenient consultation, such as a PDF assembled from individual page images. The archival source media remain separately preserved when applicable.@en
+        - Eine vollständige oder zusammengefügte Fassung für die bequeme Nutzung, beispielsweise ein aus einzelnen Seitenbildern erzeugtes PDF. Die archivischen Ausgangsmedien bleiben, soweit zutreffend, separat erhalten.@de
+        - Une version complète ou assemblée préparée pour faciliter la consultation, par exemple un PDF créé à partir d'images de pages individuelles. Les médias sources d'archive restent conservés séparément lorsque cela s'applique.@fr
+        - Una versione completa o assemblata preparata per una consultazione agevole, per esempio un PDF creato da immagini di singole pagine. I media sorgente d'archivio restano conservati separatamente quando applicabile.@it
+
+    Supplementary:
+      label:
+        - Supplementary material@en
+        - Ergänzendes Material@de
+        - Matériel complémentaire@fr
+        - Materiale supplementare@it
+      definition:
+        - A media item that supplements another representation, such as a transcription, OCR text, translation, subtitle file, or other accompanying material.@en
+        - Ein Medium, das eine andere Darstellung ergänzt, beispielsweise eine Transkription, ein OCR-Text, eine Übersetzung, eine Untertiteldatei oder anderes Begleitmaterial.@de
+        - Un média qui complète une autre représentation, par exemple une transcription, un texte OCR, une traduction, un fichier de sous-titres ou un autre document d'accompagnement.@fr
+        - Un media che integra un'altra rappresentazione, per esempio una trascrizione, un testo OCR, una traduzione, un file di sottotitoli o altro materiale di accompagnamento.@it

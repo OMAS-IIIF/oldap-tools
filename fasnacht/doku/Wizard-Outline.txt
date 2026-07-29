@@ -1,0 +1,36 @@
+Der Assistent/Wizzard soll dazu dienen, die Datenerfassung für Mitglieder der Fasnachtsvereine so
+zu vereinfachen, dass sie durch den Prozess geführt werden und damit "gute" Metadaten erzeugen.
+
+grundsätzlich sind folgende 3 Fälle möglich:
+
+- es wird ein Objekt erfasst, das physisch in einem Archiv, im Cliquenkeller oder im Keller/Esterich
+  eines Mitglieds (oder sonst wo befindet). z:B. eine spezielle Larve, Trommel, Laternenbild, ein Buch
+  mit Vereinsprotokollen, Mitgliederlisten etc.
+  Es gibt (noch...?) kein Digitalisat davon. D.h., das Objekt soll quasi inventarisch aufgenommen werden.
+
+- Es gibt ein Digitalisat (fasnacht:ArchiveMediaObject). Dies kann ein Foto sein, ein MP3 (oder öhnlich), eine
+  Videodatei, ein PDF, etc.
+  Hier gibt es nun eine Grundsätzliche Entscheidung:
+  a) das Digitalisat zeigt hauptsächlich ein spezielles Objekt (Trommel, Piccolo, Kostüm, Skizze,
+     Beschreibung des Sujets etc.)
+     -> fasnacht:ArchiveObject
+  b) das Digitalisat zeigt hauptsächlich ein Ereignis, z.B. die Clique am Cortège 1955, ein Auftritt
+     der Tambouren am Monster 1926, den Vortrag eines Schnitzelbanggs etc.
+     -> fasnacht:CarnivalEvent
+  c) beides, z.B. der Cortège 1968, Durchzug des Stamms der BMG, wo auf dem Foto die Laterne
+     prominent vorkommt.
+
+Vom Datenmodell weisst Du ja, dass jedes Digitalisat mindestens einem CarnivalEvent oder einem
+ArchiveObject zugeordnet sein muss (aber nicht umgekehrt). Es kann aber auch mehreren Events/Objects
+(sogar gemischt) zugeordnet sein. Wenn ein z.B. ein Buch Seiten (digitalisiert) hat, ist das Buch das
+ArchiveObject und die Seiten werden als ArchiveMediaObject's dem Buch zugeordnet.
+
+Der Wizard sollte den Beutzer Schrittweise durch den Prozess lotsen, möglichst viele Felder sollten automatisch
+ausgefüllt werden und im Dialog gar nicht erscheinen (oder vielleicht schon vorausgefüllt, so dass sie korrigiert
+werden könnten, falls notwendig). Bei Fragen/eingaben sollten wir immer Beispiele erwähnen, die verdeutlichen, was
+bei einem Eingabefeld wirklich gemeint ist (da die Benutzer die üblichen archivarischen Begriffe vermutlich nicht
+kennen).
+
+Wir wissen, der Benutzer ist einer Organisation zugeordnet (z.B. als BMG-Archivist gehört er zur BMG und er/sie
+archiviert also "Dinge" der BMG. Falls notwendig können wir dem Benutzer auch noch mehr Angaben beifügen (in dem wir
+den CarnivalUser in der Ontologie entsprechend erweitern würden).
