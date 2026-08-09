@@ -8,6 +8,7 @@ OLDAP tools is a CLI tool for managing parts of the OLDAP framework. It allows t
 - load a project from a gzipped TriG file created by oldap-tools
 - load a hierarchical list from a YAML file
 - dump a hierarchical list to a YAML file
+- validate and add manually defined archive trees from YAML
 
 # Installation
 
@@ -20,6 +21,7 @@ Structured documentation is available in [`docs/`](docs/index.md):
 - [Installation and Connection](docs/installation.md)
 - [Command Reference](docs/commands.md)
 - [Ontology YAML](docs/ontology-yaml.md)
+- [Archive Structure YAML](docs/archive-yaml.md)
 - [Hierarchical Lists](docs/lists.md)
 - [Update Semantics](docs/update-semantics.md)
 - [Operations and Backups](docs/operations.md)
@@ -35,6 +37,9 @@ The CLI tool provides the following commands:
 - `oldap-tools ontology validate`: Validate an ontology datamodel YAML file
 - `oldap-tools ontology load`: Load or update an ontology datamodel from YAML
 - `oldap-tools ontology dump`: Dump an ontology datamodel to YAML or TriG
+- `oldap-tools archive validate`: Validate a manually defined archive structure YAML file
+- `oldap-tools archive load`: Add a YAML-defined archive structure to an existing project
+- `oldap-tools staging ensure-mobile-folder`: Add the application-managed Mobile folder to existing StagingAreas
 
 # Common options
 
@@ -219,3 +224,16 @@ When dumping YAML, `--include-taxonomies` writes all project lists as separate `
 files next to the ontology YAML file and adds an `ontology.lists` block that references them.
 External ontology references are always included with their namespace, labels, comments, and
 proposed resource, datatype-property, and object-property names.
+
+## Ensure the Staging Mobile folder
+
+This command validates an existing StagingArea and ensures that it contains one `Mobile` folder
+directly below its unique root folder named `top`. It is idempotent and defaults to a dry-run:
+
+```shell
+oldap-tools [common_options] staging ensure-mobile-folder --staging-area <staging-area-iri>
+```
+
+After checking the report, repeat the command with `--apply` to create the missing folder. Use
+`--staging-area` more than once for an explicit set or use `--all` to process every StagingArea in
+the project. The command aborts on ambiguous or misplaced system folders instead of guessing.

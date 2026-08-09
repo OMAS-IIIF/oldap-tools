@@ -7,6 +7,7 @@ OLDAP Tools is a command-line utility for managing selected parts of an OLDAP in
 - [Installation and Connection](installation.md): installation, credentials, GraphDB options, and common command syntax.
 - [Command Reference](commands.md): all CLI commands and their main options.
 - [Ontology YAML](ontology-yaml.md): the structure of ontology YAML files, including classes, properties, lists, external ontologies, and Lucene connectors.
+- [Archive Structure YAML](archive-yaml.md): manually define, validate, and add archive trees without changing existing units.
 - [Hierarchical Lists](lists.md): list YAML format and additive merge behavior.
 - [Update Semantics](update-semantics.md): what `update` and `replace` mean, including the important difference between taxonomy and resource-property updates.
 - [Operations and Backups](operations.md): backup behavior, project dumps, system graph restore/purge, and operational cautions.
@@ -29,4 +30,3 @@ Most project-level operations require an OLDAP user with sufficient OLDAP permis
 The ontology loader defaults to `--mode update` and creates a model/list backup before loading. This is the recommended default for normal schema evolution.
 
 Use `--mode replace` only when you intentionally want to recreate the project datamodel graphs. It deletes `<project>:shacl` and `<project>:onto` and then rebuilds them from YAML.
-

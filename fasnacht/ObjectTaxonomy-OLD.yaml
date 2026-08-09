@@ -1,0 +1,83 @@
+ObjectTaxonomy:
+  label:
+  - Object types@en
+  - Objektklassen@de
+  nodes:
+    Laterne:
+      label:
+      - Laterne (Ladärne)@de
+    Larve:
+      label:
+      - Larve@de
+    Kostuem:
+      label:
+      - Kostüm (Goschdyym)@de
+    Plakette:
+      label:
+      - Blaggedde (Blagette)@de
+    Requisite:
+      label:
+      - Requisite@de
+    Memorabilia:
+      label:
+      - Memorabilia@de
+    Musik:
+      label:
+      - Musik@de
+      nodes:
+        Musikinstrument:
+          label:
+          - Musikinstrument@de
+          nodes:
+            Trommel:
+              label:
+              - Trommel@de
+            Piccolo:
+              label:
+              - Piccolo@de
+            AnderesInstrument:
+              label:
+              - Anderes Instrument@de
+        Musiktext:
+          label:
+          - Musiktext/Noten@de
+        Aufnahme:
+          label:
+          - Aufnahme / Recording@de
+    Marsch:
+      label:
+      - Marsch@de
+    Helge:
+      label:
+      - Helge@de
+    Zeedel:
+      label:
+        - Zeedel@de
+    Kunst:
+      label:
+        - Kunst@de
+    Dokument:
+      label:
+      - Dokument@de
+      nodes:
+        Vereinsdokument:
+          label:
+          - Vereinsdokument@de
+        Protokoll:
+          label:
+          - Protokoll@de
+        Buch:
+          label:
+          - Buch@de
+        Magazin:
+          label:
+          - Magazin@de
+        Chronik:
+          label:
+          - Chronik@de
+    Other:
+      label:
+      - Anderes@de
+    Undetermined:
+      label:
+      - Nicht zugewiesen@de

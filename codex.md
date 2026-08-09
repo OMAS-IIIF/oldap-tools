@@ -1,6 +1,6 @@
 # oldap-tools Project Context
 
-`oldap-tools` is a Python CLI package for managing selected OLDAP project assets. It can dump and load project data, load and dump hierarchical lists, validate ontology YAML, and load or dump OLDAP ontology data models.
+`oldap-tools` is a Python CLI package for managing selected OLDAP project assets. It can dump and load project data, load and dump hierarchical lists, validate ontology YAML, load or dump OLDAP ontology data models, and create archive trees from validated YAML.
 
 ## Repository State
 
@@ -18,7 +18,9 @@
 - `load_project.py`, `dump_project.py`, and `delete_projectdata.py` handle project graph operations.
 - `load_list.py`, `dump_list.py`, and `list_merge.py` handle hierarchical OLDAP lists.
 - `ontology.py`, `graph_helpers.py`, and `schemas/ontology_schema.yaml` implement ontology YAML validation/loading/dumping support.
+- `archive.py` and `schemas/archive_schema.yaml` implement project-neutral recursive archive YAML validation, OLDAP preflight, and create-only loading. YAML IDs map deterministically to project IRIs; multiple roots are allowed, and a new root may attach below an explicit existing ArchiveUnit. Existing resources are never merged, updated, moved, or deleted.
 - The Fasnacht model is declared in `fasnacht/fasnacht-onto.yaml` with companion taxonomies in YAML files in the same folder.
+- Existing Fasnacht StagingAreas can be reconciled with the application-managed `Mobile` folder through `oldap-tools staging ensure-mobile-folder`. The command is idempotent, validates the `top` hierarchy, defaults to dry-run, and writes only when `--apply` is supplied.
 - Fasnacht archive metadata is media-first: `ArchiveMediaObject.archiveMediaObjectOf` is optional, direct media topics and associated organisations are supported, and `representationRole` uses `MediumRepresentationTaxonomy`. `dcterms:creator` targets `fasnacht:Agent` for both archive objects and media, while `contributingAgent` remains separate provenance metadata.
 - `fasnacht:StagingArea` has optional `fasnacht:defaultRights` pointing to `CreativeCommons`; the agreed initial data value is `L-CreativeCommons:CC_BY-ND` and must be populated on StagingArea instances separately from the ontology definition.
 - The replacement `fasnacht/ObjectTaxonomy.yaml` classifies archive material types and retains 21 legacy node IDs. The former hierarchy is preserved as `ObjectTaxonomy-OLD.yaml`; `ObjectTaxonomy-MigrationMapping.md` documents unresolved Rädäbäng records and the explicit list-replacement requirement because list merge does not move existing nodes.
@@ -33,5 +35,6 @@
 ## Current Roadmap
 
 - Keep the OLDAP ontology/list tooling stable and documented.
+- Exercise the archive YAML importer against a running development GraphDB, then add a Staging-tree generator that emits the same canonical YAML rather than creating a second import path.
 - Maintain `fasnacht/fasnachts-onto.md` as concise technical model documentation.
 - Maintain laienfreundliche Fasnacht object documentation in `fasnacht/objekte/` for domain experts who do not work with data modeling concepts.

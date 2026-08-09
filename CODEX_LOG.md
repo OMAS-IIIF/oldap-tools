@@ -1,5 +1,17 @@
 # CODEX_LOG
 
+### Update 2026-08-03 12:07
+- Decisions: Use recursive project-neutral YAML as the canonical manual archive-tree format; allow multiple roots and additive attachment below an explicit existing parent while keeping version 1 strictly create-only and dry-run by default.
+- Implementation: Added the bundled Yamale schema, semantic parser/normalizer, stable project-IRI mapping, collision and parent preflight, parent-first creation with best-effort rollback, `archive validate` and `archive load` commands, unit tests, a two-fonds example, and complete format/command documentation.
+- Open: Run `archive load --apply` against a running development GraphDB and inspect the created role assignments and tree in FasnachtsPage; design the Staging-to-YAML generator as a separate follow-up.
+- Risks/Assumptions: The local GraphDB dry-run could not complete because port 7200 was not running. Version 1 deliberately relies on the authenticated user's normal default OLDAP roles and does not update, merge, move, or delete any existing archive unit.
+
+### Update 2026-07-31 23:26
+- Decisions: Provide the existing-StagingArea backfill as an idempotent OLDAP CLI operation rather than raw SQL/SPARQL, and make dry-run the safe default.
+- Implementation: Added `staging ensure-mobile-folder` with explicit-area or all-area selection, hierarchy/duplicate validation, `DATA_VIEW` assignment for the StagingArea default role, focused plan tests, and concise CLI reporting.
+- Open: Run the command against the test GraphDB with its concrete StagingArea IRI, inspect the dry-run output, and rerun with `--apply`.
+- Risks/Assumptions: Live GraphDB execution was not performed because no credentials or target IRI were supplied; local unit tests and CLI help validation pass.
+
 ### Update 2026-07-26 23:54
 - Decisions: Stabilize the Fasnacht wizard's ontology package around independent ArchiveMediaObjects, multi-valued direct topics and associated organisations, Agent-based creators, optional representation roles, original-content dating, and optional StagingArea default rights with CC BY-ND as the initial instance value.
 - Implementation: Activated the replacement ObjectTaxonomy wording, sharpened four topic labels without changing their IDs, added ArchiveMediaObject `dcterms:subject` and `fasnacht:associatedOrganisation`, clarified optional target links and creator/dating descriptions, and added optional `fasnacht:defaultRights` to StagingArea. Updated the ObjectTaxonomy migration document with verified IRI construction and the list-replacement constraint.

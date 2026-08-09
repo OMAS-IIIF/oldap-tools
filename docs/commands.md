@@ -112,6 +112,64 @@ Options:
 
 The TriG format includes `<project>:shacl`, `<project>:onto`, and `<project>:lists`, but not `<project>:data`.
 
+## Archive Commands
+
+### `archive validate`
+
+Validate a recursive archive structure YAML file against the bundled Yamale schema without connecting
+to OLDAP.
+
+```shell
+oldap-tools [common_options] archive validate --inf archive.yaml
+```
+
+Options:
+
+- `--inf`, `-i`: input archive YAML.
+- `--schema`, `-s`: optional alternative Yamale schema.
+
+### `archive load`
+
+Preflight or add a YAML-defined archive structure to an existing project. Dry-run is the default;
+existing resources are never updated, moved, merged, or deleted.
+
+```shell
+oldap-tools [common_options] archive load <project_id> --inf archive.yaml
+oldap-tools [common_options] archive load <project_id> --inf archive.yaml --apply
+```
+
+Options:
+
+- `--inf`, `-i`: input archive YAML.
+- `--dry-run`, `--apply`: preflight only or create the new archive units. Default: `--dry-run`.
+
+Each YAML `id` deterministically becomes `<project_id>:<id>`. The loader refuses collisions. A
+top-level YAML entry may use `parent` to attach its new subtree below an existing ArchiveUnit.
+See [Archive Structure YAML](archive-yaml.md) for the complete format and safety semantics.
+
+## Staging Commands
+
+### `staging ensure-mobile-folder`
+
+Validate existing StagingArea folder hierarchies and create the application-managed `Mobile`
+folder directly below `top` when it is missing. The operation is idempotent and uses dry-run by
+default.
+
+```shell
+oldap-tools [common_options] staging ensure-mobile-folder --staging-area <staging-area-iri>
+oldap-tools [common_options] staging ensure-mobile-folder --staging-area <staging-area-iri> --apply
+```
+
+Options:
+
+- `--project`: project containing the StagingAreas. Default: `fasnacht`.
+- `--staging-area`: StagingArea IRI; repeat the option to process several explicit areas.
+- `--all`: process every StagingArea instead of explicit IRIs.
+- `--dry-run`, `--apply`: report only or create missing folders. Default: `--dry-run`.
+
+Exactly one of `--all` and one or more `--staging-area` options is required. The command refuses
+ambiguous `top` folders, duplicate `Mobile` folders, and a folder named `Mobile` outside `top`.
+
 ## System Commands
 
 System graph commands operate on OLDAP system/shared/admin graphs. Valid graph arguments are `oldap`, `shared`, and `admin`.

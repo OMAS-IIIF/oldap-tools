@@ -2,6 +2,7 @@ from pathlib import Path
 
 import typer
 
+from oldap_tools.archive import load_archive, read_archive_yaml
 from oldap_tools.dump_list import dump_list
 from oldap_tools.config import AppConfig
 from oldap_tools.dump_project import dump_project
@@ -9,6 +10,7 @@ from oldap_tools.load_list import load_list
 from oldap_tools.load_project import load_project
 from oldap_tools.load_sysgraph import load_sysgraph, restore_sysgraph, purge_sysgraph, SystemGraphs
 from oldap_tools.ontology import dump_ontology, load_ontology, validate_ontology_yaml
+from oldap_tools.staging_folders import ensure_mobile_folders
 from oldap_tools import __version__
 
 from oldap_tools.logging import setup_logging
@@ -226,6 +228,106 @@ def ontology_dump(
                   include_taxonomies=include_taxonomies,
                   graphdb_user=cfg.graphdb_user,
                   graphdb_password=cfg.graphdb_password)
+
+
+archive = typer.Typer(help="Archive structure commands")
+app.add_typer(archive, name="archive")
+
+
+@archive.command("validate", help="Validate an archive structure YAML file.")
+def archive_validate(
+        inf: Path = typer.Option(..., "--inf", "-i", help="Input archive YAML file"),
+        schema: Path | None = typer.Option(None, "--schema", "-s", help="Alternative Yamale schema file")):
+    """Validate archive YAML without connecting to OLDAP."""
+
+    try:
+        read_archive_yaml(inf=inf, project_shortname="archive", schema=schema)
+    except ValueError as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(f"{inf} is valid")
+
+
+@archive.command("load", help="Add a YAML-defined archive structure to an existing project.")
+def archive_load(
+        ctx: typer.Context,
+        project_id: str = typer.Argument(..., help="Existing target project shortname or IRI"),
+        inf: Path = typer.Option(..., "--inf", "-i", help="Input archive YAML file"),
+        dry_run: bool = typer.Option(
+            True,
+            "--dry-run/--apply",
+            help="Preflight only, or create the archive units",
+        )):
+    """Preflight and optionally add archive units without changing existing data."""
+
+    cfg = ctx.obj
+    try:
+        plan = load_archive(
+            graphdb_base=cfg.graphdb_base,
+            repo=cfg.repo,
+            user=cfg.user,
+            password=cfg.password,
+            project_id=project_id,
+            inf=inf,
+            dry_run=dry_run,
+            graphdb_user=cfg.graphdb_user,
+            graphdb_password=cfg.graphdb_password,
+        )
+    except Exception as error:
+        typer.echo(f"Archive load failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+
+    action = "Would create" if dry_run else "Created"
+    typer.echo(f"{action} {len(plan.units)} archive unit(s) in project {project_id}.")
+    for unit in plan.units:
+        parent = f" below {unit.parent_iri}" if unit.parent_iri is not None else " as a root"
+        typer.echo(f"- {unit.iri} [{unit.level}]{parent}")
+
+
+staging = typer.Typer(help="StagingArea maintenance commands")
+app.add_typer(staging, name="staging")
+
+
+@staging.command("ensure-mobile-folder")
+def staging_ensure_mobile_folder(
+        ctx: typer.Context,
+        project_id: str = typer.Option("fasnacht", "--project", help="Project containing the StagingAreas"),
+        staging_area: list[str] | None = typer.Option(
+            None,
+            "--staging-area",
+            help="StagingArea IRI to process; may be supplied more than once",
+        ),
+        all_areas: bool = typer.Option(False, "--all", help="Process every StagingArea in the project"),
+        dry_run: bool = typer.Option(
+            True,
+            "--dry-run/--apply",
+            help="Validate and report only, or create missing Mobile folders",
+        )):
+    """Ensure the protected Mobile system folder below each selected top folder."""
+
+    cfg = ctx.obj
+    try:
+        plans = ensure_mobile_folders(
+            graphdb_base=cfg.graphdb_base,
+            repo=cfg.repo,
+            user=cfg.user,
+            password=cfg.password,
+            project_id=project_id,
+            staging_area_iris=staging_area,
+            all_areas=all_areas,
+            dry_run=dry_run,
+            graphdb_user=cfg.graphdb_user,
+            graphdb_password=cfg.graphdb_password,
+        )
+    except ValueError as error:
+        raise typer.BadParameter(str(error)) from error
+
+    for plan in plans:
+        if plan.needs_creation:
+            action = "would create" if dry_run else "created"
+            typer.echo(f"{plan.area.iri}: {action} Mobile below {plan.top_folder_iri}")
+        else:
+            typer.echo(f"{plan.area.iri}: Mobile already exists ({plan.existing_mobile_folder_iri})")
 
 def main():
     app()

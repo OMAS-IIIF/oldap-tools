@@ -15,3 +15,5 @@ build/
 !src/oldap_tools/schemas/
 !src/oldap_tools/schemas/*.yaml
 .DS_Store
+/fasnacht.zip
+*.docx
