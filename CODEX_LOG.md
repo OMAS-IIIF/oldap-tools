@@ -1,5 +1,11 @@
 # CODEX_LOG
 
+### Update 2026-08-10 21:35
+- Decisions: Retain the existing archive CLI surface and dry-run default while moving every reusable archive YAML concern to oldaplib.
+- Implementation: Replaced the former combined parser/importer with a thin connection adapter, removed the duplicate archive Yamale schema, retained a documented `read_archive_yaml` transition adapter, updated documentation/context, and added three focused CLI/centralization tests.
+- Open: Exercise the adapter against a running development GraphDB after downstream installation of the working oldaplib version.
+- Risks/Assumptions: Repository tests use the sibling oldaplib through `PYTHONPATH` until a future release; no release, commit, push, deployment, or GraphDB write was performed.
+
 ### Update 2026-08-03 12:07
 - Decisions: Use recursive project-neutral YAML as the canonical manual archive-tree format; allow multiple roots and additive attachment below an explicit existing parent while keeping version 1 strictly create-only and dry-run by default.
 - Implementation: Added the bundled Yamale schema, semantic parser/normalizer, stable project-IRI mapping, collision and parent preflight, parent-first creation with best-effort rollback, `archive validate` and `archive load` commands, unit tests, a two-fonds example, and complete format/command documentation.

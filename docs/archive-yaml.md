@@ -1,5 +1,10 @@
 # Archive Structure YAML
 
+The schema, parser, serializer, validation, project resolution, and import
+semantics are implemented centrally in `oldaplib`. `oldap-tools archive` is a
+thin connection and presentation adapter; it intentionally contains no second
+schema or parser.
+
 Archive YAML describes a manually curated hierarchy of `shared:ArchiveUnit`
 resources. The format is project-neutral: a project may contain one root, several
 independent fonds, or new branches attached to an archive unit that already
