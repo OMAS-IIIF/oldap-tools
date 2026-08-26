@@ -147,6 +147,102 @@ Each YAML `id` deterministically becomes `<project_id>:<id>`. The loader refuses
 top-level YAML entry may use `parent` to attach its new subtree below an existing ArchiveUnit.
 See [Archive Structure YAML](archive-yaml.md) for the complete format and safety semantics.
 
+## Data Commands
+
+### `data validate`
+
+Validate a versioned OLDAP instance-data YAML or JSON document locally. This
+command does not connect to OLDAP and does not require credentials.
+
+```shell
+oldap-tools data validate --inf resources.yaml
+```
+
+Options:
+
+- `--inf`, `-i`: input YAML or JSON file.
+
+Version 1 distinguishes literal values, language-tagged or explicitly typed
+literals, IRI references, resource role permissions, and explicit media source,
+handling, and ingest-profile instructions. It rejects unknown or duplicate keys
+and ambiguous or unsupported media combinations. It accepts `iri: auto` in a
+source document and reports how many identities still require preparation.
+Validation is not yet
+ontology-aware and performs no writes. See [Instance Data YAML/JSON](data-yaml.md)
+for the complete format.
+
+### `data prepare`
+
+Mint stable, UUID-based project-local resource names for every `iri: auto`
+placeholder. This is an offline step and requires no OLDAP credentials.
+
+```shell
+oldap-tools data prepare --inf incoming.yaml --out prepared.yaml
+```
+
+Options:
+
+- `--inf`, `-i`: source YAML or JSON document;
+- `--out`, `-o`: new prepared document in the same directory as the source;
+- `--force`: replace an existing output file; the input is never overwritten.
+
+The command changes only the placeholder scalars and preserves the source
+formatting and comments. The prepared output becomes the durable authority for
+dry-run, apply, reruns, and recovery. Live import and media-attach commands
+reject unresolved `auto` identities. Resource names are never inferred from a
+title, filename, path, or checksum. See
+[Resource identity and `iri: auto`](data-yaml.md#resource-identity-and-iri-auto).
+
+### `data import`
+
+Preflight a versioned instance-data document against its live OLDAP project.
+`--dry-run` is the default. `--apply` creates exactly one new RDF metadata
+resource and rejects documents containing zero or multiple resources. A local
+`image-iiif` instruction also imports the binary and verifies IIIF delivery.
+
+```shell
+oldap-tools [common_options] data import --dry-run --inf resources.yaml
+```
+
+Options:
+
+- `--inf`, `-i`: input YAML or JSON file;
+- `--dry-run`, `--apply`: read-only preflight or strict one-resource create.
+- `--batch`: enable resumable sequential multi-resource processing;
+- `--report`: with `--batch`, write a `.json`, `.yaml`, or `.yml` audit report.
+
+The command checks the live classes, inherited properties, OLDAP value and
+cardinality constraints, linked-resource visibility and target classes, roles,
+`ADMIN_CREATE`, and existing target IRIs. Apply repeats those checks immediately
+before OLDAP's atomic create. It never updates, overwrites, or deletes data.
+Local-media preflight additionally verifies the relative source path and
+SHA-256 before any write. Use common `--api` and `--media` options to override
+the OLDAP API and media-server origins. The input must contain no unresolved
+`iri: auto` placeholders; prepare them offline first.
+
+With `--batch`, the complete document is preflighted before the first write.
+Apply then processes resources in document order and stops at the first
+failure. A repeated run verifies already-created metadata and already-attached
+media, then resumes. Existing metadata must match the YAML apart from documented
+server-managed delivery properties; batch mode never becomes an update or
+upsert operation.
+
+### `data media-attach`
+
+Attach or idempotently verify the media declared for one existing resource.
+This is the recovery path when RDF creation succeeded but media ingest did not,
+and it also supports records created by an earlier metadata-only workflow.
+
+```shell
+oldap-tools [common_options] data media-attach --dry-run --inf resource.yaml
+oldap-tools [common_options] data media-attach --apply --inf resource.yaml
+```
+
+Dry-run verifies source integrity, authentication, target visibility, and
+MediaObject compatibility without writing. Apply streams the binary to
+oldap-mediaserver or verifies an already attached matching asset, then checks
+the OLDAP delivery fields and authenticated IIIF `info.json`.
+
 ## Staging Commands
 
 ### `staging ensure-mobile-folder`

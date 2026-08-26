@@ -182,11 +182,10 @@ This is deliberately create-only behavior:
 Validate the file without connecting to OLDAP:
 
 ```shell
-oldap-tools -u rosenth -p '...' archive validate --inf archive.yaml
+oldap-tools archive validate --inf archive.yaml
 ```
 
-The global user and password options are currently required by the CLI even
-though local schema validation does not connect to GraphDB.
+Local schema validation does not connect to OLDAP and requires no credentials.
 
 Preflight against an existing project without writing data:
 

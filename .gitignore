@@ -12,6 +12,7 @@ build/
 *.yaml
 !fasnacht/*.yaml
 !fasnacht-onto.yaml
+!examples/data/*.yaml
 !src/oldap_tools/schemas/
 !src/oldap_tools/schemas/*.yaml
 .DS_Store

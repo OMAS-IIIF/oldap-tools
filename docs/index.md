@@ -8,6 +8,7 @@ OLDAP Tools is a command-line utility for managing selected parts of an OLDAP in
 - [Command Reference](commands.md): all CLI commands and their main options.
 - [Ontology YAML](ontology-yaml.md): the structure of ontology YAML files, including classes, properties, lists, external ontologies, and Lucene connectors.
 - [Archive Structure YAML](archive-yaml.md): manually define, validate, and add archive trees without changing existing units.
+- [Instance Data YAML/JSON](data-yaml.md): versioned project resource data with explicit value semantics, local validation, and live read-only import preflight.
 - [Hierarchical Lists](lists.md): list YAML format and additive merge behavior.
 - [Update Semantics](update-semantics.md): what `update` and `replace` mean, including the important difference between taxonomy and resource-property updates.
 - [Operations and Backups](operations.md): backup behavior, project dumps, system graph restore/purge, and operational cautions.

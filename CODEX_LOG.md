@@ -1,5 +1,71 @@
 # CODEX_LOG
 
+### Update 2026-08-26 23:59
+- Decisions: Treat object-property IRIs fixed by `sh:in` as ontology-controlled named individuals, not ordinary permission-readable project resources; retain full existence/type checks for every unconstrained resource link.
+- Implementation: Corrected data preflight for combined `sh:class`/`sh:in` properties such as `shared:archiveLevel`, added a focused regression and documentation, updated the Poetry lock from OLDAPlib 0.7.10 to 0.7.15, and prepared oldap-tools 0.3.12.
+- Open: Repeat the live Chama five-resource archive preflight, then apply/rerun and perform the separate cycle-safe Lobato Item move.
+- Risks/Assumptions: Dynamic OLDAP instance construction remains authoritative for membership in the allowed-value set. The bypass applies only to the exact configured `sh:in` values; arbitrary links still require visibility and target-class verification.
+
+### Update 2026-08-25 14:31
+- Decisions: Reserve a later import extension for an explicit destination consisting of an already user-created StagingArea and selected existing StagingFolder. Do not infer or silently create staging containers during data/media import.
+- Implementation: Recorded the future staging-target requirement in the stable project roadmap; no code or YAML schema was changed.
+- Open: When implementing the slice, design the YAML block and validate existence, folder membership in the selected area, visibility, permissions, and retry semantics before writes.
+- Risks/Assumptions: Exact field names and the transition from staging to catalogue remain deliberately undecided until the workflow is implemented and tested incrementally.
+
+### Update 2026-08-25 12:24
+- Decisions: Treat RDF resource identity as independent of mutable or repeatable descriptive facts. Preserve explicit institutional IRIs; otherwise mint a UUID-based project-local name once during offline preparation. Make the prepared document—not a title, filename, path, checksum, or a fresh rerun—the durable identity authority.
+- Implementation: Added repeated `iri: auto` source placeholders, the text-preserving and atomic `data prepare` command, strict unresolved-identity guards on import/batch/media operations, distinct media asset IDs derived from the prepared resource names, same-filename regression coverage for two different binaries, CLI help, and complete format/command/context documentation.
+- Open: Exercise a prepared two-file same-filename document in a future live batch when suitable duplicate source filenames are available; consider export/import round-trip conventions separately.
+- Risks/Assumptions: References cannot target an unnamed `auto` resource until preparation has minted its name, so linked new records either need explicit IRIs or links added to the prepared file. The prepared file must be retained; regenerating it would create different identities.
+
+### Update 2026-08-25 00:47
+- Decisions: Treat owner inspection in SALSAH as the final acceptance gate for the first real batch vertical slice.
+- Implementation: Recorded successful visual and semantic review of `IMG_1508`, `IMG_1521`, and `IMG_0171`: IIIF images render, complete metadata is present, and all expected links navigate correctly.
+- Open: Choose the next bounded slice from additional Chama data, external-reference ingest, or evidence-driven generic UI refinement.
+- Risks/Assumptions: No defect was found in this slice; broader asset types and larger batches remain separate tests.
+
+### Update 2026-08-25 00:44
+- Decisions: Accept actual OLDAP and media-server state as conclusive proof of batch completion and idempotence; retain the generated reports as audit evidence rather than resume authority.
+- Implementation: Recorded the successful live dry-run, nine-resource apply, three HEIC attachments, and identical second apply for `chama-photographs-batch-01.yaml`. The rerun returned `metadata=existing_verified` for all nine resources and `media=existing_verified` for `IMG_1508`, `IMG_1521`, and `IMG_0171`, with no duplicate creation or upload.
+- Open: Inspect the three new photographs and their KnowledgeContribution relationships in SALSAH, then decide the next bounded metadata or UI increment.
+- Risks/Assumptions: Live CLI output confirms state verification; visual SALSAH inspection remains the next independent presentation check.
+
+### Update 2026-08-25 00:38
+- Decisions: Make the first live Chama batch a meaningful vertical slice rather than three isolated files: include reusable capture places, locomotive 489, and one complete KnowledgeContribution per owner annotation. Preserve the corrected Foster's filename `IMG_0171`, not the originally mistyped `IMG_1771`.
+- Implementation: Added `examples/data/chama-photographs-batch-01.yaml` with nine dependency-ordered resources: Chama engine house, Chama Main Street, locomotive 489, `IMG_1508`, `IMG_1521`, `IMG_0171`, and their three contributions. Recorded titles, normalized descriptions, dates, creators, capture places, depiction links, permissions, rights notes, provenance, original annotations, uncertainties, normalization notes, local media instructions, and verified SHA-256 values. Added regression validation and documentation/context links.
+- Open: Run the live batch dry-run with a report, review all nine ontology-aware plans, then apply. Rerun apply afterward to confirm every metadata and media phase reports `existing_verified`.
+- Risks/Assumptions: The engine-house and Main Street place descriptions and locomotive 489 classification derive from the owner's supplied Chama knowledge. Historical hotel claims remain attributed in KnowledgeContribution uncertainty notes. The Foster's photograph retains a depicted-person review note for broader publication.
+
+### Update 2026-08-25 00:29
+- Decisions: Add multi-resource import as a resumable, sequential create-only workflow rather than an artificial all-or-nothing transaction. Preflight the complete document before writing, stop at the first operational failure, and use actual OLDAP/media state—not a local report—as resume authority.
+- Implementation: Added `data import --batch` for dry-run and apply; exact verification of matching existing classes, YAML-declared properties, and role permissions; allowance for server-managed properties and the legitimate `custom` to `iiif` protocol transition; sequential metadata/media processing; first-failure stop with `not_started` remainder; JSON/YAML audit reports; CLI output; tests; and complete documentation.
+- Open: Build a representative multi-image Chama YAML, run batch dry-run and apply against the live services, then rerun it to verify recovery/idempotence with real OLDAP and IIIF data.
+- Risks/Assumptions: Batch order is significant and serves as the conservative dependency order; preflight rejects forward references to other new in-document resources. The workflow never edits an existing resource: mismatches fail preflight. A hidden existing IRI can still surface only when create commits. Report-write failure cannot undo a completed import; current OLDAP/media state remains authoritative.
+
+### Update 2026-08-25 00:13
+- Decisions: Keep media source, handling, and ingest profile independent; keep binaries outside YAML; enable only the fully supported local `image-iiif` copy profile while reserving stable names for future preservation, audio, video, and document workflows. Treat RDF creation and media attachment as separate recoverable service transactions.
+- Implementation: Added strict `media` parsing for local files, direct URLs, IIIF Image services, and IIIF manifests; relative-path and streaming SHA-256 preflight; automatic local image ingest after one-resource create; API authentication, media-server attach mode, OLDAP delivery-field and IIIF verification; idempotent `data media-attach`; API/media CLI origins; the IMG_1520 file reference; focused tests; and complete YAML/command/connection documentation.
+- Open: Run `data media-attach --dry-run` and `--apply` for the existing `chama:IMG_1520`, then inspect the IIIF image in SALSAH. Implement reserved profiles and URL-copy only with complete media-server contracts.
+- Risks/Assumptions: `image-iiif` derives its default asset ID from the resource local name and uses media storage path `catalogue`. External `reference` instructions do not transfer or probe remote content; their canonical delivery facts remain explicit RDF properties. If media attachment fails after RDF creation, the resource remains and the CLI directs the operator to the idempotent recovery command.
+
+### Update 2026-08-24 23:56
+- Decisions: Make the first instance-data write path strictly create-only and limit each apply execution to exactly one resource. Do not offer generic multi-resource rollback because independent oldaplib transactions and structured `oldap:Dating` helper nodes would make compensating deletion incomplete.
+- Implementation: Enabled `data import --apply`, retained dry-run as the default, repeated the complete live preflight immediately before OLDAP's transactional create, rejected multi-resource apply before writes, added explicit execution results and CLI reporting, expanded tests, and documented that metadata apply does not import media binaries.
+- Open: Inspect the resulting `chama:IMG_1520` resource in SALSAH and attach the HEIC binary/IIIF service separately. Design multi-resource apply only with an explicit atomic transaction strategy.
+- Risks/Assumptions: The apply path relies on `ResourceInstance.create()` for the final atomic collision and permission checks. The authenticated live apply created `chama:IMG_1520` with 13 properties and two typed references; it did not import or attach a media binary.
+
+### Update 2026-08-24 23:47
+- Decisions: Keep version-1 instance import strictly create-only and read-only; delegate ontology constraints to oldaplib's dynamic resource classes instead of duplicating SHACL/model rules in oldap-tools, and reject `--apply` explicitly.
+- Implementation: Added `data import --dry-run` with live project/class/property resolution, inherited constraint and cardinality validation, typed link and forward-reference checks, role lookup, `ADMIN_CREATE` verification, visible collision detection, concise plans, full documentation, and focused orchestration/error tests.
+- Open: Decide whether the next increment should add a reviewed create-only apply mode or first exercise the format with more multi-resource Chama data.
+- Risks/Assumptions: A resource hidden from the authenticated user is indistinguishable from a missing resource during read-only checks, so a later create could still discover a hidden IRI collision. The authenticated `IMG_1520` live preflight passed against the Chama project with 13 properties and two typed references; no data was written.
+
+### Update 2026-08-24 23:36
+- Decisions: Introduce a small, project-neutral, versioned instance-data interchange format before implementing imports; keep literals and IRI references explicit, keep every property value as a list, and make all purely local validators credential-free.
+- Implementation: Added version-1 YAML/JSON parsing and structural validation, duplicate-key and ambiguity checks, the offline `data validate` command, a complete `IMG_1520` Chama example, command/format documentation, centralized credential enforcement for connected commands, and focused YAML, JSON, CLI, and regression tests.
+- Open: Add ontology-aware `data import --dry-run` preflight that resolves the live project model, properties, cardinalities, references, roles, and create/conflict status before any write mode is considered.
+- Risks/Assumptions: Version-1 local validation does not prove that a project, class, property, role, or linked resource exists; ontology-dependent values such as `oldap:Dating` shorthand are deferred to the future preflight. No OLDAP/GraphDB data was written and `IMG_1520` was not imported.
+
 ### Update 2026-08-10 21:35
 - Decisions: Retain the existing archive CLI surface and dry-run default while moving every reusable archive YAML concern to oldaplib.
 - Implementation: Replaced the former combined parser/importer with a thin connection adapter, removed the duplicate archive Yamale schema, retained a documented `read_archive_yaml` transition adapter, updated documentation/context, and added three focused CLI/centralization tests.

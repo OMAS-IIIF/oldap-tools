@@ -9,6 +9,7 @@ OLDAP tools is a CLI tool for managing parts of the OLDAP framework. It allows t
 - load a hierarchical list from a YAML file
 - dump a hierarchical list to a YAML file
 - validate and add manually defined archive trees from YAML
+- validate versioned instance-data YAML/JSON locally and preflight it against a live OLDAP model
 
 # Installation
 
@@ -22,6 +23,11 @@ Structured documentation is available in [`docs/`](docs/index.md):
 - [Command Reference](docs/commands.md)
 - [Ontology YAML](docs/ontology-yaml.md)
 - [Archive Structure YAML](docs/archive-yaml.md)
+- [Instance Data YAML/JSON](docs/data-yaml.md)
+
+The first real resumable media batch is
+`examples/data/chama-photographs-batch-01.yaml`: three Chama HEIC photographs,
+their owner annotations, and the reusable resources they reference.
 - [Hierarchical Lists](docs/lists.md)
 - [Update Semantics](docs/update-semantics.md)
 - [Operations and Backups](docs/operations.md)
@@ -39,17 +45,26 @@ The CLI tool provides the following commands:
 - `oldap-tools ontology dump`: Dump an ontology datamodel to YAML or TriG
 - `oldap-tools archive validate`: Validate a manually defined archive structure YAML file
 - `oldap-tools archive load`: Add a YAML-defined archive structure to an existing project
+- `oldap-tools data validate`: Validate a versioned instance-data YAML/JSON document offline
+- `oldap-tools data prepare`: Replace `iri: auto` placeholders once with stable UUID-based project-local identities
+- `oldap-tools data import --dry-run`: Check instance data against a live project without writing
+- `oldap-tools data import --apply`: Create one resource and process a declared local IIIF image without updates or overwrites
+- `oldap-tools data import --apply --batch`: Resume a sequential multi-resource metadata-and-media import
+- `oldap-tools data media-attach`: Attach or idempotently verify media for one existing resource
 - `oldap-tools staging ensure-mobile-folder`: Add the application-managed Mobile folder to existing StagingAreas
 
 # Common options
 
 - `--graphdb`, `-g`: URL of the GraphDB server (default: "http://localhost:7200")
 - `--repo`, `-r`: Name of the repository (default: "oldap")
-- `--user`, `-u`: OLDAP user (*required*) which performs the operations
-- `--password` `-p`: OLDAP password (*required*)
+- `--user`, `-u`: OLDAP user which performs connected operations
+- `--password` `-p`: OLDAP password for connected operations
 - `--graphdb_user`: GraphDB user (default: None). Not needed if GraphDB runs without athentification.
 - `--graphdb_password`: GraphDB password (default: None). Not needed if GraphDB runs without athentification.
 - `--verbose`, `-v`: Print more information
+
+The local `ontology validate`, `archive validate`, and `data validate`
+commands do not require OLDAP credentials.
 
 # Command
 

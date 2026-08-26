@@ -52,12 +52,12 @@ class ArchiveAdapterTest(unittest.TestCase):
             "oldaplib.src.archive_import",
         )
 
-    def test_archive_validate_command_is_unchanged(self) -> None:
+    def test_archive_validate_command_is_offline(self) -> None:
         source = self._yaml_file()
 
         result = self.runner.invoke(
             app,
-            ["--user", "tester", "--password", "secret", "archive", "validate", "--inf", str(source)],
+            ["archive", "validate", "--inf", str(source)],
         )
 
         self.assertEqual(result.exit_code, 0, result.output)

@@ -5,6 +5,11 @@ import typer
 from oldap_tools.archive import load_archive, read_archive_yaml
 from oldap_tools.dump_list import dump_list
 from oldap_tools.config import AppConfig
+from oldap_tools.data_batch import run_batch_import, write_batch_report
+from oldap_tools.data_import import run_data_import
+from oldap_tools.data_prepare import prepare_data_file
+from oldap_tools.data_yaml import DataValidationError, load_data_document
+from oldap_tools.media_ingest import MediaIngestError, run_media_attach
 from oldap_tools.dump_project import dump_project
 from oldap_tools.load_list import load_list
 from oldap_tools.load_project import load_project
@@ -40,8 +45,10 @@ def app_callback(ctx: typer.Context,
                  ),
                  graphdb_base: str = typer.Option("http://localhost:7200", "--graphdb", "-g", help="GraphDB base URL"),
                  repo: str = typer.Option("oldap", "--repo", "-r", help="GraphDB repository"),
-                 user: str = typer.Option(..., "--user", "-u", help="OLDAP user"),
-                 password: str = typer.Option(..., "--password", "-p", help="OLDAP password", hide_input=True),
+                 api_base: str = typer.Option("http://localhost:8000", "--api", help="OLDAP API base URL"),
+                 media_base: str = typer.Option("http://localhost:8088", "--media", help="OLDAP media-server base URL"),
+                 user: str | None = typer.Option(None, "--user", "-u", help="OLDAP user (required for connected commands)"),
+                 password: str | None = typer.Option(None, "--password", "-p", help="OLDAP password (required for connected commands)", hide_input=True),
                  graphdb_user: str = typer.Option(None, "--graphdb_user", envvar="GRAPHDB_USER", help="GraphDB user"),
                  graphdb_password: str = typer.Option(None, "--graphdb_password", envvar="GRAPHDB_PASSWORD", help="GraphDB password", hide_input=True)
                  ):
@@ -49,11 +56,31 @@ def app_callback(ctx: typer.Context,
     ctx.obj = AppConfig(
         graphdb_base=graphdb_base,
         repo=repo,
+        api_base=api_base,
+        media_base=media_base,
         user=user,
         password=password,
         graphdb_user=graphdb_user,
         graphdb_password=graphdb_password
     )
+
+
+def connection_config(ctx: typer.Context) -> AppConfig:
+    """Return CLI configuration after enforcing connected-command credentials."""
+    cfg = ctx.obj
+    if not isinstance(cfg, AppConfig):
+        raise typer.BadParameter("OLDAP command configuration is unavailable.")
+    missing = []
+    if not cfg.user:
+        missing.append("--user")
+    if not cfg.password:
+        missing.append("--password")
+    if missing:
+        raise typer.BadParameter(
+            f"Connected commands require {' and '.join(missing)}. "
+            "Offline validate commands do not require credentials."
+        )
+    return cfg
 
 project = typer.Typer(help="Project-related commands")
 app.add_typer(project, name="project")
@@ -72,7 +99,7 @@ def project_dump(
     if out == Path("<project>.trig.gz"):
         out = Path(project_id).with_suffix(".trig.gz")
     typer.echo(f"Exporting '{project_id}' data to {out}")
-    cfg = ctx.obj
+    cfg = connection_config(ctx)
     dump_project(project_id=project_id,
                  graphdb_base=cfg.graphdb_base,
                  repo=cfg.repo,
@@ -89,7 +116,7 @@ def project_dump(
 @project.command("load")
 def project_load(ctx: typer.Context,
                  inf: Path = typer.Option(Path("dump.trig.gz"), "--inf", "-i", help="Input file for load")):
-    cfg = ctx.obj
+    cfg = connection_config(ctx)
     load_project(graphdb_base=cfg.graphdb_base,
                  repo=cfg.repo,
                  inf=inf,
@@ -106,7 +133,7 @@ def list_dump(ctx: typer.Context,
               project_id: str = typer.Argument(..., help="Project ID (e.g. swissbritnet, hyha, ...)"),
               list_id: str = typer.Argument(..., help="List ID (e.g. 'CreativeCommons', 'BuildingCategories', ...)"),
               out: Path = typer.Option(Path("dump.trig"), "--out", "-o", help="Output dump file")):
-    cfg = ctx.obj
+    cfg = connection_config(ctx)
     dump_list(project_id=project_id,
               list_id=list_id,
               graphdb_base=cfg.graphdb_base,
@@ -122,7 +149,7 @@ def list_dump(ctx: typer.Context,
 def list_load(ctx: typer.Context,
               project_id: str = typer.Argument(..., help="Project ID (e.g. swissbritnet, hyha, ...)"),
               inf: Path = typer.Option(Path("dump.trig.gz"), "--inf", "-i", help="Input file for load")):
-    cfg = ctx.obj
+    cfg = connection_config(ctx)
     load_list(project_id=project_id,
               graphdb_base=cfg.graphdb_base,
               repo=cfg.repo,
@@ -137,7 +164,7 @@ app.add_typer(sys, name="system")
 def sys_load(ctx: typer.Context,
              graph: SystemGraphs = typer.Argument(..., help="System graph to load. Allowed are 'oldap', 'shared', 'admin'."),
              inf: Path = typer.Option(Path("oldap.trig"),"--inf", "-i", help="Input file for load")):
-    cfg = ctx.obj
+    cfg = connection_config(ctx)
     load_sysgraph(graphdb_base=cfg.graphdb_base,
                   repo=cfg.repo,
                   inf=inf,
@@ -151,7 +178,7 @@ def sys_load(ctx: typer.Context,
 @sys.command("restore", help="Restore system graph from last backup")
 def sys_restore(ctx: typer.Context,
                 graph: SystemGraphs = typer.Argument(..., help="System graph to restore. Allowed are 'oldap', 'shared', 'admin'.")):
-    cfg = ctx.obj
+    cfg = connection_config(ctx)
     restore_sysgraph(graphdb_base=cfg.graphdb_base,
                      repo=cfg.repo,
                      graph=graph,
@@ -163,7 +190,7 @@ def sys_restore(ctx: typer.Context,
 @sys.command("purge", help="Purge system graph from last backup")
 def sys_purge(ctx: typer.Context,
                 graph: SystemGraphs = typer.Argument(..., help="System graph to purge backup. Allowed are 'oldap', 'shared', 'admin'.")):
-    cfg = ctx.obj
+    cfg = connection_config(ctx)
     purge_sysgraph(graphdb_base=cfg.graphdb_base,
                    repo=cfg.repo,
                    graph=graph,
@@ -192,7 +219,7 @@ def ontology_load(
         connectors: str = typer.Option("skip", "--connectors", help="Lucene connector mode: 'skip', 'create', or 'replace'"),
         backup: bool = typer.Option(True, "--backup/--no-backup", help="Dump model and lists before loading"),
         backup_out: Path | None = typer.Option(None, "--backup-out", help="Backup TriG gzip output file")):
-    cfg = ctx.obj
+    cfg = connection_config(ctx)
     load_ontology(graphdb_base=cfg.graphdb_base,
                   repo=cfg.repo,
                   inf=inf,
@@ -217,7 +244,7 @@ def ontology_dump(
             "--include-taxonomies",
             help="When dumping YAML, also write all project taxonomies as <ListId>.yaml and reference them from ontology.lists.",
         )):
-    cfg = ctx.obj
+    cfg = connection_config(ctx)
     dump_ontology(graphdb_base=cfg.graphdb_base,
                   repo=cfg.repo,
                   project_id=project_id,
@@ -228,6 +255,217 @@ def ontology_dump(
                   include_taxonomies=include_taxonomies,
                   graphdb_user=cfg.graphdb_user,
                   graphdb_password=cfg.graphdb_password)
+
+
+data = typer.Typer(help="Versioned OLDAP instance-data commands")
+app.add_typer(data, name="data")
+
+
+@data.command("validate", help="Validate an OLDAP instance-data YAML or JSON file.")
+def data_validate(
+        inf: Path = typer.Option(..., "--inf", "-i", help="Input data YAML or JSON file")):
+    """Validate format version 1 locally without connecting to OLDAP."""
+
+    try:
+        document = load_data_document(inf)
+    except DataValidationError as error:
+        typer.echo(f"Data validation failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"{inf} is valid OLDAP data version {document.version} "
+        f"({len(document.resources)} resource(s), project {document.project})"
+    )
+    if document.auto_iri_count:
+        typer.echo(
+            f"Contains {document.auto_iri_count} unresolved iri: auto placeholder(s); "
+            "run data prepare before live import."
+        )
+
+
+@data.command("prepare", help="Mint stable IRIs for resource-level iri: auto placeholders.")
+def data_prepare_command(
+        inf: Path = typer.Option(..., "--inf", "-i", help="Input data YAML or JSON file"),
+        out: Path = typer.Option(..., "--out", "-o", help="Prepared output in the same directory"),
+        force: bool = typer.Option(False, "--force", help="Replace an existing output file")):
+    """Prepare stable resource identities offline without contacting OLDAP."""
+
+    try:
+        count = prepare_data_file(inf, out, force=force)
+    except DataValidationError as error:
+        typer.echo(f"Data preparation failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(
+        f"Prepared {count} resource IRI(s) in {out}. "
+        "Use this output for dry-run, apply, and resume."
+    )
+
+
+@data.command("import", help="Preflight or create resources in a live OLDAP project.")
+def data_import_command(
+        ctx: typer.Context,
+        inf: Path = typer.Option(..., "--inf", "-i", help="Input data YAML or JSON file"),
+        dry_run: bool = typer.Option(
+            True,
+            "--dry-run/--apply",
+            help="Read-only preflight, or create one resource unless --batch is set",
+        ),
+        batch: bool = typer.Option(
+            False,
+            "--batch",
+            help="Allow resumable sequential processing of multiple resources",
+        ),
+        report: Path | None = typer.Option(
+            None,
+            "--report",
+            help="Batch audit report (.json, .yaml, or .yml)",
+        )):
+    """Preflight instance data or create resources without overwriting."""
+
+    operation = "Data preflight" if dry_run else "Data import"
+    try:
+        document = load_data_document(inf)
+    except DataValidationError as error:
+        typer.echo(f"{operation} failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    cfg = connection_config(ctx)
+    if report is not None and not batch:
+        typer.echo("Data import failed: --report requires --batch.", err=True)
+        raise typer.Exit(code=1)
+
+    if batch:
+        try:
+            plan, batch_execution = run_batch_import(
+                graphdb_base=cfg.graphdb_base,
+                repo=cfg.repo,
+                user=cfg.user,
+                password=cfg.password,
+                document=document,
+                apply=not dry_run,
+                api_base=cfg.api_base,
+                media_base=cfg.media_base,
+                graphdb_user=cfg.graphdb_user,
+                graphdb_password=cfg.graphdb_password,
+            )
+        except Exception as error:
+            typer.echo(f"Batch {operation.lower()} failed before processing: {error}", err=True)
+            raise typer.Exit(code=1) from error
+
+        report_error: Exception | None = None
+        if report is not None:
+            try:
+                write_batch_report(report, batch_execution)
+            except Exception as error:
+                report_error = error
+
+        typer.echo(
+            f"Batch {'dry-run' if dry_run else 'apply'} completed for "
+            f"{len(plan.resources)} resource(s) in project {plan.project}."
+        )
+        for result in batch_execution.resources:
+            line = (
+                f"- {result.iri}: metadata={result.metadata_status}, "
+                f"media={result.media_status}"
+            )
+            if result.error:
+                line += f"; error={result.error}"
+            typer.echo(line)
+        if report is not None and report_error is None:
+            typer.echo(f"Report written to {report}.")
+        if report_error is not None:
+            typer.echo(
+                f"Batch processing completed, but report writing failed: {report_error}",
+                err=True,
+            )
+        if not batch_execution.succeeded or report_error is not None:
+            raise typer.Exit(code=1)
+        return
+
+    try:
+        execution = run_data_import(
+            graphdb_base=cfg.graphdb_base,
+            repo=cfg.repo,
+            user=cfg.user,
+            password=cfg.password,
+            document=document,
+            apply=not dry_run,
+            api_base=cfg.api_base,
+            media_base=cfg.media_base,
+            graphdb_user=cfg.graphdb_user,
+            graphdb_password=cfg.graphdb_password,
+        )
+    except Exception as error:
+        typer.echo(f"{operation} failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+
+    plan = execution.plan
+    if dry_run:
+        typer.echo(
+            f"Dry-run passed for {len(plan.resources)} resource(s) in project "
+            f"{plan.project}; no data was written."
+        )
+    else:
+        typer.echo(
+            f"Created {len(execution.created_iris)} resource(s) in project {plan.project}."
+        )
+    for resource in plan.resources:
+        action = "would create" if dry_run else "created"
+        typer.echo(
+            f"- {action} {resource.iri} [{resource.resource_class}] "
+            f"with {resource.property_count} properties and "
+            f"{resource.reference_count} typed reference(s)"
+        )
+        if resource.media_action:
+            typer.echo(f"  media: {resource.media_action}")
+    for media_result in execution.media_results:
+        typer.echo(
+            f"- attached media {media_result.asset_id} to {media_result.resource_iri}; "
+            f"IIIF {media_result.width or '?'}x{media_result.height or '?'}"
+        )
+
+
+@data.command("media-attach", help="Preflight or attach media to one existing resource.")
+def data_media_attach_command(
+        ctx: typer.Context,
+        inf: Path = typer.Option(..., "--inf", "-i", help="Input data YAML or JSON file"),
+        dry_run: bool = typer.Option(
+            True,
+            "--dry-run/--apply",
+            help="Verify source and target, or attach and verify the media",
+        )):
+    """Finish or idempotently verify a document-declared media attachment."""
+
+    operation = "Media preflight" if dry_run else "Media attachment"
+    try:
+        document = load_data_document(inf)
+    except DataValidationError as error:
+        typer.echo(f"{operation} failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    cfg = connection_config(ctx)
+    try:
+        plan, results = run_media_attach(
+            document,
+            api_base=cfg.api_base,
+            media_base=cfg.media_base,
+            user=cfg.user,
+            password=cfg.password,
+            apply=not dry_run,
+        )
+    except MediaIngestError as error:
+        typer.echo(f"{operation} failed: {error}", err=True)
+        raise typer.Exit(code=1) from error
+
+    if dry_run:
+        typer.echo(
+            f"Media dry-run passed for {plan.resource_iri}: would copy "
+            f"{plan.original_name} as {plan.ingest_profile}; no data was written."
+        )
+        return
+    result = results[0]
+    action = "imported and attached" if result.imported_now else "already attached and verified"
+    typer.echo(
+        f"Media {action}: {result.asset_id} -> {result.resource_iri} "
+        f"({result.protocol}, {result.width or '?'}x{result.height or '?'})."
+    )
 
 
 archive = typer.Typer(help="Archive structure commands")
@@ -260,7 +498,7 @@ def archive_load(
         )):
     """Preflight and optionally add archive units without changing existing data."""
 
-    cfg = ctx.obj
+    cfg = connection_config(ctx)
     try:
         plan = load_archive(
             graphdb_base=cfg.graphdb_base,
@@ -305,7 +543,7 @@ def staging_ensure_mobile_folder(
         )):
     """Ensure the protected Mobile system folder below each selected top folder."""
 
-    cfg = ctx.obj
+    cfg = connection_config(ctx)
     try:
         plans = ensure_mobile_folders(
             graphdb_base=cfg.graphdb_base,
