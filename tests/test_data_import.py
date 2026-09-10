@@ -60,6 +60,9 @@ class FakeCataloguedPhotograph:
             toClass=Xsd_QName("shared:ArchiveLevel", validate=False),
             inSet={Iri("shared:ArchiveGroup", validate=False)},
         ),
+        Xsd_QName("shared:stagingDefaultRole", validate=False): FakeProperty(
+            toClass=Xsd_QName("oldap:Role", validate=False)
+        ),
     }
 
     @classmethod
@@ -173,6 +176,40 @@ class DataImportPreflightTest(unittest.TestCase):
         self.assertEqual(values["chama:creationDating"], "2018-07-08")
         self.assertEqual(values["attachedToRole"], {"oldap:Unknown": "DATA_VIEW"})
 
+    def test_omitted_permissions_use_oldaplib_defaults_and_are_not_verified(self):
+        source = VALID_DATA.replace(
+            "      permissions:\n        oldap:Unknown: DATA_VIEW\n",
+            "",
+        )
+
+        self.prepare(source)
+
+        self.assertNotIn("attachedToRole", FakeCataloguedPhotograph.last_kwargs)
+
+        existing = FakeCataloguedPhotograph(
+            iri=Iri("chama:IMG_1520"),
+            **{
+                "schema:name": LangString({"de": "Stationsgebäude in Chama"}),
+                "dcterms:creator": Iri("chama:LukasRosenthaler"),
+                "chama:capturePlace": Iri("chama:ChamaStation"),
+                "chama:creationDating": "2018-07-08",
+                "chama:publicDisplayPermission": True,
+                "attachedToRole": {"chama:Curator": "DATA_UPDATE"},
+            },
+        )
+        factory = FakeFactory()
+        factory.visible["chama:IMG_1520"] = existing
+
+        plan = prepare_data_import(
+            FakeConnection(),
+            factory,
+            loads_data_document(source),
+            role_reader=lambda _role: object(),
+            allow_existing=True,
+        )
+
+        self.assertEqual(plan.resources[0].disposition, "existing_verified")
+
     def test_controlled_object_property_value_needs_no_project_resource_read(self):
         source = VALID_DATA.replace(
             "        chama:publicDisplayPermission:\n",
@@ -188,6 +225,43 @@ class DataImportPreflightTest(unittest.TestCase):
             str(FakeCataloguedPhotograph.last_kwargs["shared:archiveLevel"]),
             "shared:ArchiveGroup",
         )
+
+    def test_role_target_uses_admin_role_reader_not_project_resource_read(self):
+        source = VALID_DATA.replace(
+            "        chama:publicDisplayPermission:\n",
+            "        shared:stagingDefaultRole:\n"
+            "          - iri: chama:Curator\n"
+            "        chama:publicDisplayPermission:\n",
+        )
+        resolved_roles: list[str] = []
+
+        plan = self.prepare(
+            source,
+            role_reader=lambda role: resolved_roles.append(str(role)) or object(),
+        )
+
+        self.assertEqual(plan.resources[0].reference_count, 3)
+        self.assertEqual(resolved_roles, ["oldap:Unknown", "chama:Curator"])
+        self.assertNotIn("chama:Curator", FakeFactory().visible)
+
+    def test_role_target_rejects_missing_admin_role(self):
+        source = VALID_DATA.replace(
+            "        chama:publicDisplayPermission:\n",
+            "        shared:stagingDefaultRole:\n"
+            "          - iri: chama:Curator\n"
+            "        chama:publicDisplayPermission:\n",
+        )
+
+        def role_reader(role):
+            if str(role) == "chama:Curator":
+                raise OldapErrorNotFound("missing role")
+            return object()
+
+        with self.assertRaisesRegex(
+            DataImportPreflightError,
+            "links role chama:Curator, which does not exist or is not visible",
+        ):
+            self.prepare(source, role_reader=role_reader)
 
     def test_rejects_unknown_properties_and_literal_link_values(self):
         with self.assertRaisesRegex(DataImportPreflightError, "not defined"):

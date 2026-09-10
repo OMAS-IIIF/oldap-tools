@@ -10,6 +10,15 @@ from oldap_tools.data_import import run_data_import
 from oldap_tools.data_prepare import prepare_data_file
 from oldap_tools.data_yaml import DataValidationError, load_data_document
 from oldap_tools.media_ingest import MediaIngestError, run_media_attach
+from oldap_tools.fasnacht_taxonomy_inventory import (
+    run_fasnacht_taxonomy_inventory,
+    write_inventory_report,
+)
+from oldap_tools.fasnacht_taxonomy_migration import (
+    apply_fasnacht_taxonomy_migration,
+    run_fasnacht_taxonomy_migration_plan,
+    write_migration_plan,
+)
 from oldap_tools.dump_project import dump_project
 from oldap_tools.load_list import load_list
 from oldap_tools.load_project import load_project
@@ -566,6 +575,141 @@ def staging_ensure_mobile_folder(
             typer.echo(f"{plan.area.iri}: {action} Mobile below {plan.top_folder_iri}")
         else:
             typer.echo(f"{plan.area.iri}: Mobile already exists ({plan.existing_mobile_folder_iri})")
+
+
+fasnacht = typer.Typer(help="Fasnacht project migration and audit commands")
+app.add_typer(fasnacht, name="fasnacht")
+
+
+@fasnacht.command("taxonomy-inventory")
+def fasnacht_taxonomy_inventory(
+        ctx: typer.Context,
+        mapping: Path = typer.Option(
+            Path("fasnacht/TaxonomyPhase1Mapping.yaml"),
+            "--mapping",
+            help="Version-1 Phase-1 mapping YAML",
+        ),
+        out: Path = typer.Option(..., "--out", "-o", help="Read-only report (.json, .yaml, or .yml)"),
+        project_id: str = typer.Option("fasnacht", "--project", help="Project to inspect")):
+    """Inventory taxonomy references and strict empty-year event candidates."""
+
+    cfg = connection_config(ctx)
+    try:
+        report = run_fasnacht_taxonomy_inventory(
+            graphdb_base=cfg.graphdb_base,
+            repo=cfg.repo,
+            user=cfg.user,
+            password=cfg.password,
+            mapping_path=mapping,
+            project_id=project_id,
+            graphdb_user=cfg.graphdb_user,
+            graphdb_password=cfg.graphdb_password,
+        )
+        write_inventory_report(out, report)
+    except (OSError, ValueError) as error:
+        raise typer.BadParameter(str(error)) from error
+
+    event_report = report["events"]
+    typer.echo(
+        f"Read-only taxonomy inventory written to {out}: "
+        f"{event_report['eventCount']} event(s), "
+        f"{event_report['reviewCandidateCount']} empty-year review candidate(s), "
+        f"{event_report['deletionCandidateCount']} strict empty-year candidate(s)."
+    )
+
+
+@fasnacht.command("taxonomy-migration-plan")
+def fasnacht_taxonomy_migration_plan(
+        ctx: typer.Context,
+        mapping: Path = typer.Option(
+            Path("fasnacht/TaxonomyPhase1Mapping.yaml"),
+            "--mapping",
+            help="Version-1 Phase-1 mapping YAML",
+        ),
+        decisions: Path = typer.Option(
+            Path("fasnacht/TaxonomyPhase2LocalDecisions.yaml"),
+            "--decisions",
+            help="Version-1 reviewed Phase-2 decisions YAML",
+        ),
+        out: Path = typer.Option(..., "--out", "-o", help="Dry-run manifest (.json, .yaml, or .yml)"),
+        project_id: str = typer.Option("fasnacht", "--project", help="Project to inspect")):
+    """Materialize the current Phase-2 data migration as a read-only manifest."""
+
+    cfg = connection_config(ctx)
+    try:
+        plan = run_fasnacht_taxonomy_migration_plan(
+            graphdb_base=cfg.graphdb_base,
+            repo=cfg.repo,
+            user=cfg.user,
+            password=cfg.password,
+            mapping_path=mapping,
+            decisions_path=decisions,
+            project_id=project_id,
+            graphdb_user=cfg.graphdb_user,
+            graphdb_password=cfg.graphdb_password,
+        )
+        write_migration_plan(out, plan)
+    except (OSError, ValueError) as error:
+        raise typer.BadParameter(str(error)) from error
+
+    summary = plan["summary"]
+    typer.echo(
+        f"Read-only migration plan written to {out}; digest {plan['digest']}: "
+        f"{summary['actionableReferenceCount']} change(s), "
+        f"{summary['unchangedReferenceCount']} unchanged, "
+        f"{summary['unresolvedReferenceCount']} unresolved, "
+        f"{summary['outOfScopeReferenceCount']} out of scope, "
+        f"{summary['ruleCountErrorCount']} rule-count error(s)."
+    )
+
+
+@fasnacht.command("taxonomy-migration-apply")
+def fasnacht_taxonomy_migration_apply(
+        ctx: typer.Context,
+        expected_digest: str = typer.Option(..., "--expected-digest", help="Digest from the immediately preceding dry-run"),
+        backup_out: Path = typer.Option(..., "--backup-out", help="New full project backup (.trig.gz)"),
+        mapping: Path = typer.Option(Path("fasnacht/TaxonomyPhase1Mapping.yaml"), "--mapping"),
+        decisions: Path = typer.Option(Path("fasnacht/TaxonomyPhase2LocalDecisions.yaml"), "--decisions"),
+        ontology_path: Path = typer.Option(Path("fasnacht/fasnacht-onto.yaml"), "--ontology"),
+        object_taxonomy: Path = typer.Option(Path("fasnacht/ObjectTaxonomy.yaml"), "--object-taxonomy"),
+        event_taxonomy: Path = typer.Option(Path("fasnacht/CarnivalEventTaxonomy.yaml"), "--event-taxonomy"),
+        practice_taxonomy: Path = typer.Option(Path("fasnacht/CarnivalPracticeTaxonomy.yaml"), "--practice-taxonomy"),
+        project_id: str = typer.Option("fasnacht", "--project"),
+        allow_local_rehearsal: bool = typer.Option(
+            False,
+            "--allow-local-rehearsal",
+            help="Explicitly permit a decisions file whose status is local-rehearsal",
+        )):
+    """Apply the reviewed local cutover; never migrates organisations or deletes events."""
+
+    cfg = connection_config(ctx)
+    try:
+        result = apply_fasnacht_taxonomy_migration(
+            graphdb_base=cfg.graphdb_base,
+            repo=cfg.repo,
+            user=cfg.user,
+            password=cfg.password,
+            mapping_path=mapping,
+            decisions_path=decisions,
+            ontology_path=ontology_path,
+            object_taxonomy_path=object_taxonomy,
+            event_taxonomy_path=event_taxonomy,
+            practice_taxonomy_path=practice_taxonomy,
+            backup_path=backup_out,
+            expected_digest=expected_digest,
+            project_id=project_id,
+            allow_local_rehearsal=allow_local_rehearsal,
+            graphdb_user=cfg.graphdb_user,
+            graphdb_password=cfg.graphdb_password,
+        )
+    except (OSError, ValueError) as error:
+        raise typer.BadParameter(str(error)) from error
+
+    typer.echo(
+        f"Taxonomy migration {result['digest']} applied: "
+        f"{result['changedReferenceCount']} reference change(s), "
+        f"backup {result['backup']} (sha256 {result['backupSha256']})."
+    )
 
 def main():
     app()

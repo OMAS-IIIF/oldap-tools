@@ -1,0 +1,120 @@
+CarnivalEventTaxonomy:
+  label:
+    - Veranstaltungsart@de
+  nodes:
+    Vorfasnacht:
+      label:
+        - Vorfasnacht@de
+      nodes:
+        Drummeli:
+          label:
+            - Drummeli@de
+        Pfyfferli:
+          label:
+            - Pfyfferli@de
+        Charivari:
+          label:
+            - Charivary@de
+        GlaibaslerCharivari:
+          label:
+            - Glaibasler Charivari@de
+        Mimoesli:
+          label:
+            - Mimösli@de
+        Raeppliserenade:
+          label:
+            - Räppli-Serenade@de
+        VorfasnachtAnderes:
+          label:
+            - Anderes@de
+    Fasnacht:
+      label:
+        - Fasnachtstage@de
+      nodes:
+        Morgenstreich:
+          label:
+            - Morgenstreich@de
+        Dienstag:
+          label:
+            - Zyschdig@de
+        Cortege:
+          label:
+            - Cortège@de
+        Guggenkonzert:
+          label:
+            - Guggekonzärt@de
+        Kinderfasnacht:
+          label:
+            - Kinderfasnacht@de
+        Schnitzelbank:
+          label:
+            - Schnitzelbank@de
+        Gaessle:
+          label:
+            - Gässle@de
+        Endstreich:
+          label:
+            - Ändstreich@de
+        Laternenausstellung:
+          label:
+            - Ladärne-Ustellig@de
+        Wagenausstellung:
+          label:
+            - Wagenaustellung@de
+        Bummelausflug:
+          label:
+            - Bummelaus@de
+        FasnachtAnderes:
+          label:
+            - Anderes@de
+    Brauchtum:
+      label:
+        - Brauchtum@de
+    Intern:
+      label:
+        - Vereinsaktivitäten / unter dem Jahr@de
+      nodes:
+        Cliquenabend:
+          label:
+            - Cliqueoobe@de
+        Stammabend:
+          label:
+            - Stammoobe@de
+        Marschuebung:
+          label:
+            - Marschübung@de
+        Sujetbekanngabe:
+          label:
+            - Sujet-Bekanntgabe@de
+        Larvenausgabe:
+          label:
+            - Larven-Ausgabe@de
+        Laterneneinpfeiffen:
+          label:
+            - Larven-Einpfeiffen@de
+    Historisch:
+      label:
+        - Historischer Anlass@de
+      nodes:
+        Monster:
+          label:
+            - Monstre-Trommelkonzert@de
+        Fasnachtsball:
+          label:
+            - Fasnachtsball@de
+        Preismasken:
+          label:
+            - Preismasken / Maskenprämierung@de
+        Volksfasnacht:
+          label:
+            - Volksfasnacht / Gassenfasnacht@de
+    Wettbewerb:
+      label:
+        - Wettbewerb@de
+      nodes:
+        Bryysdrummle:
+          label:
+            - Bryysdrummle@de
+    Musikanlass:
+      label:
+        - Musikalischer Anlass@de

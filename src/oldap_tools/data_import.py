@@ -74,6 +74,7 @@ class DataImportPreflightError(ValueError):
 
 
 RoleReader = Callable[[Xsd_QName], Any]
+_ROLE_CLASS = Xsd_QName("oldap:Role", validate=False)
 
 
 def _qname(identifier: str, context: Context, path: str) -> Xsd_QName:
@@ -281,7 +282,12 @@ def _instance_values(
                 if not _is_controlled_iri_value(value, property_definition)
             )
 
-    constructor_values["attachedToRole"] = dict(resource.permissions)
+    # Omitting ``permissions`` delegates role assignment to OLDAPLIB's
+    # authenticated-user defaults. Passing an empty mapping would suppress
+    # those defaults and serialize an object-less ``oldap:attachedToRole``
+    # predicate during create.
+    if resource.permissions:
+        constructor_values["attachedToRole"] = dict(resource.permissions)
     return constructor_values, references
 
 
@@ -328,12 +334,18 @@ def _verify_existing_resource(
                 f"{property_identifier} (YAML {expected_value!s}; OLDAP {actual_value!s})"
             )
 
-    expected_roles = expected.get(Xsd_QName("oldap:attachedToRole", validate=False))
-    actual_roles = existing.get(Xsd_QName("oldap:attachedToRole", validate=False))
-    if actual_roles != expected_roles:
-        mismatches.append(
-            f"permissions (YAML {expected_roles!s}; OLDAP {actual_roles!s})"
+    # Permissions are verified only when the document declares them. When the
+    # field is omitted, role assignment belongs to OLDAPLIB's user defaults and
+    # is intentionally outside the YAML state compared on resumable reruns.
+    if resource.permissions:
+        expected_roles = expected.get(
+            Xsd_QName("oldap:attachedToRole", validate=False)
         )
+        actual_roles = existing.get(Xsd_QName("oldap:attachedToRole", validate=False))
+        if actual_roles != expected_roles:
+            mismatches.append(
+                f"permissions (YAML {expected_roles!s}; OLDAP {actual_roles!s})"
+            )
     if mismatches:
         raise DataImportPreflightError(
             f"Resource {resource.iri} already exists but does not match the YAML: "
@@ -450,6 +462,26 @@ def prepare_data_import(
             permission_checked = True
 
         for reference_iri, expected_class in references:
+            # Roles are administrative resources in ``oldap:admin``, not
+            # permission-filtered instances in the project's data graph. Use
+            # the same authoritative resolver as YAML permission keys for
+            # object properties such as ``shared:stagingDefaultRole``.
+            if expected_class == _ROLE_CLASS:
+                role_iri = _qname(
+                    str(reference_iri),
+                    context,
+                    f"Resource {resource.iri} linked role",
+                )
+                if role_iri not in validated_roles:
+                    try:
+                        resolve_role(role_iri)
+                    except Exception as error:
+                        raise DataImportPreflightError(
+                            f"Resource {resource.iri} links role {role_iri}, which does not "
+                            "exist or is not visible to the authenticated user."
+                        ) from error
+                    validated_roles.add(role_iri)
+                continue
             planned_resource = planned_by_iri.get(str(reference_iri))
             if planned_resource is not None:
                 target_type = resource_types[planned_resource.iri]

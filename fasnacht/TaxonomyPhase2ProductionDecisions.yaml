@@ -1,0 +1,107 @@
+version: 1
+status: approved
+description: >-
+  Production-specific Phase-2 decisions reviewed against the 31 August 2026
+  production inventory. Expected counts bind every title-based decision to
+  that inventory. Apply still requires a fresh connected plan and its exact
+  digest.
+
+included_lists:
+  - ObjectTaxonomy
+  - CarnivalEventTaxonomy
+  - CarnivalTopicsTaxonomy
+
+approved_modes:
+  - exact
+  - broader
+
+target_properties:
+  ObjectTaxonomy: http://purl.org/dc/terms/type
+  CarnivalEventTaxonomy: http://purl.org/dc/terms/type
+  CarnivalTopicsTaxonomy: http://fasnacht.digital/ns/carnivalPractice
+
+review_match_rules:
+  - source_list: ObjectTaxonomy
+    source_node: Undetermined
+    name_regex: '(?i)plakette'
+    target_nodes: [Plakette]
+    expected_count: 20
+    rationale: The resource title explicitly identifies a carnival badge.
+  - source_list: ObjectTaxonomy
+    source_node: Undetermined
+    name_regex: '(?i)künstlerlarve'
+    target_nodes: [Larve]
+    expected_count: 24
+    rationale: The resource title explicitly identifies a carnival mask.
+  - source_list: ObjectTaxonomy
+    source_node: Undetermined
+    name_regex: '(?i)(fasnachtsfigur|^Stock für)'
+    target_nodes: [Requisite]
+    expected_count: 2
+    rationale: The described physical items are props under the simplified vocabulary.
+  - source_list: ObjectTaxonomy
+    source_node: Undetermined
+    name_regex: '^Rädäbäng '
+    target_nodes: [PublicationsAndPress]
+    expected_count: 2
+    rationale: Rädäbäng is treated as printed matter in the simplified vocabulary.
+  - source_list: ObjectTaxonomy
+    source_node: Undetermined
+    name_regex: '(?i)(Karl Jauslin|Plattner, Otto - Bild|Stoffbild|keine Beschreibung|Basler Fasnacht / Schnitzelbänke|Bâle, Le Waggis)'
+    target_nodes: [Kunst]
+    expected_count: 54
+    rationale: These records describe or stand for independently catalogued visual works; nine generic titles are explicitly accepted as images for this cutover.
+  - source_list: ObjectTaxonomy
+    source_node: Marsch
+    name_regex: '^Gluggsi$'
+    target_nodes: [MusicalNotation]
+    expected_count: 1
+    rationale: The catalogued march is assigned to sheet music.
+  - source_list: ObjectTaxonomy
+    source_node: Memorabilia
+    name_regex: '^Zinnbecher Jubiläum Pfluderi$'
+    target_nodes: [Honour]
+    expected_count: 1
+    rationale: The jubilee cup is treated as an honour in the simplified vocabulary.
+  - source_list: ObjectTaxonomy
+    source_node: Memorabilia
+    name_regex: '^Plagge$'
+    target_nodes: [Requisite]
+    expected_count: 1
+    rationale: The physical banner is treated as a prop under the simplified vocabulary, as approved for production.
+  - source_list: CarnivalEventTaxonomy
+    source_node: HistorischAnderes
+    name_regex: '(?i)(Tambourenfest|Musikfest|Turnfest)'
+    target_nodes: [Wettbewerb]
+    expected_count: 4
+    rationale: The historical competitive festivals are consolidated under competition.
+  - source_list: CarnivalEventTaxonomy
+    source_node: HistorischAnderes
+    name_regex: '^St\. Jakobsfest Basel 190[89]$'
+    target_nodes: [Performance]
+    expected_count: 2
+    rationale: The documented participation is represented as a performance.
+  - source_list: CarnivalTopicsTaxonomy
+    source_node: YearRoundClubCustoms
+    name_regex: '.*'
+    target_nodes: [SocialCohesionCriticismAndTolerance]
+    expected_count: 4
+    rationale: Year-round club customs primarily document social cohesion.
+  - source_list: CarnivalTopicsTaxonomy
+    source_node: CarnivalHistoryAndChange
+    name_regex: '.*'
+    target_nodes: [SocialCohesionCriticismAndTolerance]
+    expected_count: 1
+    rationale: Historical change is assigned to the social-practice dimension.
+  - source_list: CarnivalTopicsTaxonomy
+    source_node: ClubHistory
+    name_regex: '.*'
+    target_nodes: [SocialCohesionCriticismAndTolerance]
+    expected_count: 4
+    rationale: Club history documents social cohesion and collective identity.
+  - source_list: CarnivalTopicsTaxonomy
+    source_node: Cortege
+    name_regex: '.*'
+    target_nodes: [SocialCohesionCriticismAndTolerance]
+    expected_count: 1
+    rationale: The record is assigned to the collective social-practice dimension.

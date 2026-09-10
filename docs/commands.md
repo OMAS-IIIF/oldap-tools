@@ -213,8 +213,10 @@ Options:
 
 The command checks the live classes, inherited properties, OLDAP value and
 cardinality constraints, linked-resource visibility and target classes, roles,
-`ADMIN_CREATE`, and existing target IRIs. Apply repeats those checks immediately
-before OLDAP's atomic create. It never updates, overwrites, or deletes data.
+administrative role-valued object properties such as
+`shared:stagingDefaultRole`, `ADMIN_CREATE`, and existing target IRIs. Apply
+repeats those checks immediately before OLDAP's atomic create. It never updates,
+overwrites, or deletes data.
 Local-media preflight additionally verifies the relative source path and
 SHA-256 before any write. Use common `--api` and `--media` options to override
 the OLDAP API and media-server origins. The input must contain no unresolved
@@ -265,6 +267,45 @@ Options:
 
 Exactly one of `--all` and one or more `--staging-area` options is required. The command refuses
 ambiguous `top` folders, duplicate `Mobile` folders, and a folder named `Mobile` outside `top`.
+
+## Fasnacht Migration Commands
+
+### `fasnacht taxonomy-inventory`
+
+Run the SELECT-only source-list and empty-year-event inventory described in
+`fasnacht/TaxonomyPhase1.md`.
+
+### `fasnacht taxonomy-migration-plan`
+
+Build a fresh resource-level migration manifest from the live inventory,
+Phase-1 mapping, and reviewed Phase-2 decisions. The command never writes to
+OLDAP. The manifest reports actionable, unchanged, unresolved, and unexpected
+rule-count totals and carries a deterministic digest.
+
+```shell
+oldap-tools [common_options] fasnacht taxonomy-migration-plan \
+  --decisions fasnacht/TaxonomyPhase2LocalDecisions.yaml \
+  --out migration-plan.yaml
+```
+
+### `fasnacht taxonomy-migration-apply`
+
+Apply the Object/Event/Practice migration only after a matching dry-run. The
+command requires the exact plan digest and a new full-project backup path. A
+`local-rehearsal` decision document additionally requires the explicit
+`--allow-local-rehearsal` flag and must never be treated as production
+approval.
+
+```shell
+oldap-tools [common_options] fasnacht taxonomy-migration-apply \
+  --expected-digest <digest> \
+  --backup-out <new-backup.trig.gz> \
+  --allow-local-rehearsal
+```
+
+The command does not modify `OrganisationTaxonomy` and never deletes
+CarnivalEvent resources. See `fasnacht/TaxonomyPhase2.md` for the complete
+production gate and rollback requirements.
 
 ## System Commands
 

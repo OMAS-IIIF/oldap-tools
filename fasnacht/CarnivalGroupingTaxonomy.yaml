@@ -1,0 +1,73 @@
+# Flat, multi-valued content taxonomy for actor and formation types represented by archive media.
+CarnivalGroupingTaxonomy:
+  label:
+    - Carnival grouping types@en
+    - Arten von Fasnachtsgruppierungen@de
+    - Types de groupements carnavalesques@fr
+    - Tipi di gruppi carnevaleschi@it
+  definition:
+    - Flat, multi-valued vocabulary describing the type of carnival actor or formation depicted, heard, or discussed in an archive media item. It does not describe authorship, deposit, custody, or the type of a named organisation.@en
+    - Flaches, mehrwertiges Vokabular für die Art von Fasnachtsakteur oder Formation, die in einem Archivmedium dargestellt, hörbar oder inhaltlich behandelt wird. Es beschreibt weder Urheberschaft, Ablieferung oder Verwahrung noch den Typ einer namentlich erfassten Organisation.@de
+    - Vocabulaire plat et multivalué décrivant le type d'acteur ou de formation carnavalesque représenté, audible ou traité dans un média d'archive. Il ne décrit ni la création, le dépôt ou la conservation, ni le type d'une organisation nommément identifiée.@fr
+    - Vocabolario piatto e multivalore che descrive il tipo di attore o formazione carnevalesca raffigurato, udibile o trattato in un oggetto multimediale d'archivio. Non descrive la paternità, il deposito, la custodia o il tipo di un'organizzazione identificata per nome.@it
+  nodes:
+    Clique:
+      label:
+        - Carnival clique@en
+        - Clique@de
+        - Clique de carnaval@fr
+        - Clique carnevalesca@it
+    FloatAndChaise:
+      label:
+        - Float & chaise@en
+        - Wagen & Chaise@de
+        - Char & chaise@fr
+        - Carro & chaise@it
+    Gugge:
+      label:
+        - Guggen band@en
+        - Gugge@de
+        - Guggenmusik@fr
+        - Guggenmusik@it
+    Schnitzelbank:
+      label:
+        - Schnitzelbank@en
+        - Schnitzelbank@de
+        - Schnitzelbank@fr
+        - Schnitzelbank@it
+    Artist:
+      label:
+        - Artist@en
+        - Künstler:in@de
+        - Artiste@fr
+        - Artista@it
+    Trade:
+      label:
+        - Trade or business@en
+        - Gewerbe@de
+        - Commerce@fr
+        - Attività commerciale@it
+    PipersAndDrummersGroup:
+      label:
+        - Pipers and drummers group@en
+        - Pfeifer- und Tambourengruppe@de
+        - Groupe de fifres et tambours@fr
+        - Gruppo di pifferi e tamburini@it
+    Schissdraeggziigli:
+      label:
+        - Schissdräggziigli@en
+        - Schissdräggziigli@de
+        - Schissdräggziigli@fr
+        - Schissdräggziigli@it
+    IndividualMask:
+      label:
+        - Individual mask@en
+        - Einzelmaske@de
+        - Masque individuel@fr
+        - Maschera individuale@it
+    PrivateIndividuals:
+      label:
+        - Private individuals@en
+        - Private@de
+        - Particuliers@fr
+        - Privati@it

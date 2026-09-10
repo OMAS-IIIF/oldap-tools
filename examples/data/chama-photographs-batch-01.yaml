@@ -1,0 +1,410 @@
+data:
+  version: 1
+  project: chama
+  resources:
+    # Shared dependencies precede the photographs that reference them.
+    - iri: ChamaEngineHouse
+      class: chama:Place
+      properties:
+        schema:name:
+          - value: Lokschuppen Chama
+            language: de
+          - value: Chama engine house
+            language: en
+        schema:description:
+          - value: >-
+              Moderner Lokschuppen der Cumbres & Toltec Scenic Railroad im
+              Bahnhof Chama, New Mexico.
+            language: de
+      permissions:
+        oldap:Unknown: DATA_VIEW
+
+    - iri: ChamaMainStreet
+      class: chama:Place
+      properties:
+        schema:name:
+          - value: Main Street, Chama
+            language: de
+          - value: Main Street, Chama
+            language: en
+        schema:description:
+          - value: >-
+              Main Street in Chama, New Mexico, unmittelbar nördlich des
+              Bahnhofs der Cumbres & Toltec Scenic Railroad.
+            language: de
+      permissions:
+        oldap:Unknown: DATA_VIEW
+
+    - iri: Locomotive489
+      class: chama:Locomotive
+      properties:
+        schema:name:
+          - value: K-36-Dampflokomotive Nr. 489
+            language: de
+          - value: K-36 steam locomotive no. 489
+            language: en
+        schema:identifier:
+          - value: "489"
+        chama:locomotiveClass:
+          - iri: chama:K36
+      permissions:
+        oldap:Unknown: DATA_VIEW
+
+    - iri: IMG_1508
+      class: chama:CataloguedPhotograph
+      properties:
+        schema:name:
+          - value: Chama im Lokschuppen
+            language: de
+        schema:description:
+          - value: >-
+              Am Abend nach einem arbeitsreichen Tag stehen die
+              K-36-Dampflokomotiven 488 und 489 im modernen Lokschuppen der
+              Cumbres & Toltec Scenic Railroad unter Dampf. Sie werden für den
+              Einsatz am nächsten Tag bereitgehalten. Während der Nacht
+              schaufelt der Nachtwächter bei Bedarf Kohle nach, damit Feuer und
+              Dampfdruck erhalten bleiben. Die Aufnahme blickt im Lokschuppen
+              ostwärts in Richtung Coaling Tower. Maschinen und Gegenstände für
+              die tägliche Wartung sind rund um die Lokomotiven angeordnet.
+
+              Der Geruch nach Dampf, heissem Öl und Kohlerauch hat sich dem
+              Fotografen besonders eingeprägt.
+            language: de
+        dcterms:type:
+          - iri: dcmitype:StillImage
+        dcterms:creator:
+          - iri: chama:LukasRosenthaler
+        shared:mediaAccessMode:
+          - value: local
+        shared:originalName:
+          - value: IMG_1508.HEIC
+        shared:originalMimeType:
+          - value: image/heic
+        shared:checksum:
+          - value: 4a3a1e29bf4de3a198e165e0efa7c1ae9d896eb92242eacda1a8ac0ffc92de92
+        shared:protocol:
+          - value: custom
+        chama:creationDating:
+          - value: "2018-07-08"
+        chama:capturePlace:
+          - iri: chama:ChamaEngineHouse
+        chama:depicts:
+          - iri: chama:Locomotive488
+          - iri: chama:Locomotive489
+        chama:publicDisplayPermission:
+          - value: true
+        chama:creditLine:
+          - value: Lukas Rosenthaler
+        chama:rightsNote:
+          - value: >-
+              Vom Fotografen für die öffentliche SALSAH-Demo freigegeben.
+            language: de
+      permissions:
+        oldap:Unknown: DATA_VIEW
+      media:
+        source:
+          type: file
+          path: ../../../demo-data/IMG_1508.HEIC
+        handling: copy
+        ingest_profile: image-iiif
+
+    - iri: Annotation_IMG_1508_2026_08_21
+      class: chama:KnowledgeContribution
+      properties:
+        chama:describes:
+          - iri: chama:IMG_1508
+        dcterms:contributor:
+          - iri: chama:LukasRosenthaler
+        dcterms:created:
+          - value: "2026-08-21"
+        chama:contributionLanguage:
+          - value: de
+        chama:sourceContext:
+          - value: Project-owner annotation supplied during SALSAH 2 demo preparation
+        chama:originalText:
+          - value: |-
+              Titel: Chama Im Lokschuppen
+
+              Was ist zu sehen: Das Bild zeigt das innere des modernen Lokschuppens der CATS, am Abend nach eine arbeitsreichen Tag für die Dampfloks. 488 und 49 stehen unter Dampf und werden einsatzbereit gemacht für den nächsten Tag
+
+              Aufnahmeort und Blickrichtung: Im Lokschuppen in Richtung Coaling Tower, also Ostwärts
+
+              Lokomotiven, Gebäude oder andere erkennbare Objekte: K-36 #488 und #489. Man sieht Maschinen und Gegenstände, welche zur täglichen Wartung genutzt werden. Ganz links könnte eine grosse Bohrmaschine sein, um Löcher in Achsen von Eisenbahnrädern zu bohren/fräsen.
+
+              Was geschieht gerade: Die Loks "ruhen" – nur der Nachtwächter wird ab und zu Kohle nachschaufeln, um den Dampfdruck und das Feuer über Nacht zu erhalten
+
+              Persönliche Erinnerung oder Kontext: Der Geruch nach Dampf, heissen Öl und Kohlerauch hat sich mir eingeprägt
+
+              Unsicherheiten: Zweck der Maschine ganz links
+
+              Darf öffentlich gezeigt werden: Ja
+
+              Gewünschte Urheberangabe: Lukas Rosenthaler
+            language: de
+        chama:normalizedDescription:
+          - value: >-
+              Am Abend nach einem arbeitsreichen Tag stehen die
+              K-36-Dampflokomotiven 488 und 489 im modernen Lokschuppen der
+              Cumbres & Toltec Scenic Railroad unter Dampf. Sie werden für den
+              Einsatz am nächsten Tag bereitgehalten. Während der Nacht
+              schaufelt der Nachtwächter bei Bedarf Kohle nach, damit Feuer und
+              Dampfdruck erhalten bleiben. Die Aufnahme blickt im Lokschuppen
+              ostwärts in Richtung Coaling Tower. Maschinen und Gegenstände für
+              die tägliche Wartung sind rund um die Lokomotiven angeordnet.
+
+              Der Geruch nach Dampf, heissem Öl und Kohlerauch hat sich dem
+              Fotografen besonders eingeprägt.
+            language: de
+        chama:uncertaintyNote:
+          - value: >-
+              Der Zweck der grossen Maschine ganz links ist nicht bestätigt.
+              Möglicherweise handelt es sich um eine grosse Bohr- oder
+              Fräsmaschine für Arbeiten an Eisenbahnradsätzen; dies darf nicht
+              als gesicherte Feststellung präsentiert werden.
+            language: de
+        chama:normalizationNote:
+          - value: >-
+              Die abgekürzte Loknummer «49» wird aufgrund der späteren
+              ausdrücklichen Nennung als «489» interpretiert. CATS wurde in der
+              normalisierten Beschreibung ausgeschrieben; Rechtschreibung und
+              Grammatik wurden nur dort angepasst.
+            language: de
+      permissions:
+        oldap:Unknown: DATA_VIEW
+
+    - iri: IMG_1521
+      class: chama:CataloguedPhotograph
+      properties:
+        schema:name:
+          - value: The Hotel & Shops, Chama, New Mexico
+            language: de
+        schema:description:
+          - value: >-
+              Das historische Hotel liegt an der Main Street unmittelbar
+              gegenüber dem Bahnhof von Chama. Nach Angaben des Fotografen
+              wurde es um 1939 erbaut und war zunächst als Shamrock Hotel
+              bekannt. Später betrieb Roger Hogan es lange unter dem Namen «The
+              Hotel & Shops». Hogan war der Cumbres & Toltec Scenic Railroad eng
+              verbunden und dokumentierte die Eisenbahn als versierter
+              Drohnenpilot in zahlreichen Videos. Im Jahr 2025 wurde das Hotel
+              umfassend renoviert, wobei sein historischer Charakter erhalten
+              blieb.
+
+              Der Fotograf und seine Frau übernachteten 1987 zum ersten Mal in
+              diesem Hotel und kehrten danach immer wieder dorthin zurück. Seit
+              der Renovation waren sie noch nicht wieder in den USA.
+            language: de
+        dcterms:type:
+          - iri: dcmitype:StillImage
+        dcterms:creator:
+          - iri: chama:LukasRosenthaler
+        shared:mediaAccessMode:
+          - value: local
+        shared:originalName:
+          - value: IMG_1521.HEIC
+        shared:originalMimeType:
+          - value: image/heic
+        shared:checksum:
+          - value: 1f83328c7954a4298e3ec15597537c6e7795340da67207304e3dd1599c15c045
+        shared:protocol:
+          - value: custom
+        chama:creationDating:
+          - value: "2018-07-08"
+        chama:capturePlace:
+          - iri: chama:ChamaMainStreet
+        chama:publicDisplayPermission:
+          - value: true
+        chama:creditLine:
+          - value: Lukas Rosenthaler
+        chama:rightsNote:
+          - value: >-
+              Vom Fotografen für die öffentliche SALSAH-Demo freigegeben.
+            language: de
+      permissions:
+        oldap:Unknown: DATA_VIEW
+      media:
+        source:
+          type: file
+          path: ../../../demo-data/IMG_1521.HEIC
+        handling: copy
+        ingest_profile: image-iiif
+
+    - iri: Annotation_IMG_1521_2026_08_21
+      class: chama:KnowledgeContribution
+      properties:
+        chama:describes:
+          - iri: chama:IMG_1521
+        dcterms:contributor:
+          - iri: chama:LukasRosenthaler
+        dcterms:created:
+          - value: "2026-08-21"
+        chama:contributionLanguage:
+          - value: de
+        chama:sourceContext:
+          - value: Project-owner annotation supplied during SALSAH 2 demo preparation
+        chama:originalText:
+          - value: |-
+              Titel: The Hotel & Shops, Chama, NM
+
+              Was ist zu sehen: das historische Hotel, das gleich gegenüber des Bahnhofs an der Mainstreet liegt. Das Hotel sieht nahezu unverändert aus. Es wurde ca. 1939 erbaut und war unter dem Namen Shamrock Hotel bekannt. Lange wurde es dann von Roger Hogan als "The Hotel & Shops" betriebe. Roger war ein grosser Freund der CATS und begabter Drohnenpilot mit vielen Videos zur Eisenbahn. 2025 wurde das Hotel vollständig renoviert, ohne den alten Charme zu verlieren.
+
+              Aufnahmeort und Blickrichtung: Von der Mainstreet aus
+
+              Persönliche Erinnerung oder Kontext: Ich bin 1987 mit meiner Frau zum ersten mal im Hotel übernachtet. Seit dem sind wir immer wieder dort abgestiegen. Leider waren wir seit der Renovation nicht wieder in den USA gewesen.
+
+              Unsicherheiten: Keine Unsicherheit wurde angegeben.
+
+              Darf öffentlich gezeigt werden: Ja
+
+              Gewünschte Urheberangabe: Lukas Rosenthaler
+            language: de
+        chama:normalizedDescription:
+          - value: >-
+              Das historische Hotel liegt an der Main Street unmittelbar
+              gegenüber dem Bahnhof von Chama. Nach Angaben des Fotografen
+              wurde es um 1939 erbaut und war zunächst als Shamrock Hotel
+              bekannt. Später betrieb Roger Hogan es lange unter dem Namen «The
+              Hotel & Shops». Hogan war der Cumbres & Toltec Scenic Railroad eng
+              verbunden und dokumentierte die Eisenbahn als versierter
+              Drohnenpilot in zahlreichen Videos. Im Jahr 2025 wurde das Hotel
+              umfassend renoviert, wobei sein historischer Charakter erhalten
+              blieb.
+
+              Der Fotograf und seine Frau übernachteten 1987 zum ersten Mal in
+              diesem Hotel und kehrten danach immer wieder dorthin zurück. Seit
+              der Renovation waren sie noch nicht wieder in den USA.
+            language: de
+        chama:uncertaintyNote:
+          - value: >-
+              Das ungefähre Baujahr, die Namensgeschichte, die Verbindung mit
+              Roger Hogan und die Renovation von 2025 stammen aus dem Wissen
+              des Beitragenden und wurden noch nicht anhand dokumentarischer
+              oder publizierter Quellen überprüft.
+            language: de
+        chama:normalizationNote:
+          - value: >-
+              Die endgültige Dateikorrektur auf IMG_1521.HEIC ist massgeblich.
+              CATS wurde ausgeschrieben; historische Aussagen bleiben bis zur
+              Quellenprüfung ausdrücklich dem Beitragenden zugeschrieben.
+            language: de
+      permissions:
+        oldap:Unknown: DATA_VIEW
+
+    - iri: IMG_0171
+      class: chama:CataloguedPhotograph
+      properties:
+        schema:name:
+          - value: Foster's Hotel and Saloon
+            language: de
+        schema:description:
+          - value: >-
+              Foster's Hotel and Saloon steht an der Main Street in Chama. Das
+              Gebäude wurde nach Angaben des Fotografen um 1881 errichtet und
+              diente Eisenbahnern der Denver & Rio Grande Western Railroad sowie
+              Bergleuten auf dem Weg zu den Minen in den San Juan Mountains als
+              Unterkunft. Die abendliche Aufnahme blickt von der Main Street
+              ostwärts in Richtung Cumbres Pass. Die Bar ist geöffnet und gut
+              besucht.
+
+              Für den Fotografen bietet Foster's das beste mexikanische Essen
+              in Chama, eine grossartige Bar und eine einzigartige, vom Wilden
+              Westen geprägte Atmosphäre.
+            language: de
+        dcterms:type:
+          - iri: dcmitype:StillImage
+        dcterms:creator:
+          - iri: chama:LukasRosenthaler
+        shared:mediaAccessMode:
+          - value: local
+        shared:originalName:
+          - value: IMG_0171.HEIC
+        shared:originalMimeType:
+          - value: image/heic
+        shared:checksum:
+          - value: 932ed78a14c2edd0775796e27c14abe055d59cf47feee8bd9acd1460ba97d066
+        shared:protocol:
+          - value: custom
+        chama:creationDating:
+          - value: "2023-08-25"
+        chama:capturePlace:
+          - iri: chama:ChamaMainStreet
+        chama:publicDisplayPermission:
+          - value: true
+        chama:creditLine:
+          - value: Lukas Rosenthaler
+        chama:rightsNote:
+          - value: >-
+              Vom Fotografen für die öffentliche SALSAH-Demo freigegeben;
+              erkennbare Personen sind vor einer breiteren Veröffentlichung
+              routinemässig zu prüfen.
+            language: de
+      permissions:
+        oldap:Unknown: DATA_VIEW
+      media:
+        source:
+          type: file
+          path: ../../../demo-data/IMG_0171.HEIC
+        handling: copy
+        ingest_profile: image-iiif
+
+    - iri: Annotation_IMG_0171_2026_08_21
+      class: chama:KnowledgeContribution
+      properties:
+        chama:describes:
+          - iri: chama:IMG_0171
+        dcterms:contributor:
+          - iri: chama:LukasRosenthaler
+        dcterms:created:
+          - value: "2026-08-21"
+        chama:contributionLanguage:
+          - value: de
+        chama:sourceContext:
+          - value: Project-owner annotation supplied during SALSAH 2 demo preparation
+        chama:originalText:
+          - value: |-
+              Titel: Fosters Hotel and Saloon
+
+              Was ist zu sehen: Fosters Hotel & Saloon wurde ca. 1881 gebaut, als Herberge für Eisenbahner der D&RGW und für Mineure, welche auf dem Weg in die Minen der San Juan Mountains waren.
+
+              Aufnahmeort und Blickrichtung: Von der Main street aus, Richtung Osten (Cumbres Pass)
+
+              Was geschieht gerade: Die Bar ist offen und gut frequentiert
+
+              Persönliche Erinnerung oder Kontext: Bestes mexikanisches Essen in Chama, tolle Bar und eine einmalige Atmosphäre. Echter Wilder Westen!
+
+              Unsicherheiten: Keine Unsicherheit wurde angegeben.
+
+              Darf öffentlich gezeigt werden: Ja
+
+              Gewünschte Urheberangabe: Lukas Rosenthaler
+            language: de
+        chama:normalizedDescription:
+          - value: >-
+              Foster's Hotel and Saloon steht an der Main Street in Chama. Das
+              Gebäude wurde nach Angaben des Fotografen um 1881 errichtet und
+              diente Eisenbahnern der Denver & Rio Grande Western Railroad sowie
+              Bergleuten auf dem Weg zu den Minen in den San Juan Mountains als
+              Unterkunft. Die abendliche Aufnahme blickt von der Main Street
+              ostwärts in Richtung Cumbres Pass. Die Bar ist geöffnet und gut
+              besucht.
+
+              Für den Fotografen bietet Foster's das beste mexikanische Essen
+              in Chama, eine grossartige Bar und eine einzigartige, vom Wilden
+              Westen geprägte Atmosphäre.
+            language: de
+        chama:uncertaintyNote:
+          - value: >-
+              Das ungefähre Baujahr und die historische Nutzung stammen aus dem
+              Wissen des Beitragenden und wurden noch nicht anhand
+              dokumentarischer oder publizierter Quellen überprüft. Vor einer
+              breiteren Veröffentlichung ist zu prüfen, ob Gäste erkennbar sind.
+            language: de
+        chama:normalizationNote:
+          - value: >-
+              Die vorhandene Datei IMG_0171.HEIC wird verwendet; die ursprünglich
+              genannte Datei IMG_1771.HEIC war ein Zahlendreher. D&RGW wurde
+              ausgeschrieben und persönliche Bewertungen bleiben als solche
+              gekennzeichnet.
+            language: de
+      permissions:
+        oldap:Unknown: DATA_VIEW

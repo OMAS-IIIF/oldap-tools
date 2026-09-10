@@ -21,8 +21,9 @@ ontology:
     StoryKeywords: ./StoryKeywords.yaml
     OrganisationTaxonomy: ./OrganisationTaxonomy.yaml
     CarnivalEventTaxonomy: ./CarnivalEventTaxonomy.yaml
+    CarnivalGroupingTaxonomy: ./CarnivalGroupingTaxonomy.yaml
     PublicationStatus: ./PublicationStatus.yaml
-    CarnivalTopicsTaxonomy: ./CarnivalTopicsTaxonomy.yaml
+    CarnivalPracticeTaxonomy: ./CarnivalPracticeTaxonomy.yaml
     MediumRepresentationTaxonomy: ./MediumRepresentationTaxonomy.yaml
   external_ontologies:
     dcterms:
@@ -962,13 +963,18 @@ ontology:
             it: Descrizione o sintesi dell'oggetto di Carnevale, come un festival, un'esposizione o un evento.
           editor: TEXT_AREA_WITH_LANG
           order: 2
-        - iri: dcterms:subject
-          to_class: list:CarnivalTopicsTaxonomy
+        - iri: fasnacht:carnivalPractice
+          to_class: list:CarnivalPracticeTaxonomy
           name:
-            en: Carnival categories
-            de: Fasnachtssparten
-            fr: Catégories du carnaval
-            it: Categorie del carnevale
+            en: Carnival practice
+            de: Praxis / Handlung
+            fr: Pratique carnavalesque
+            it: Pratica carnevalesca
+          description:
+            en: Cultural practices or forms of expression represented by this carnival thing.
+            de: Kulturelle Praktiken oder Ausdrucksformen, die durch dieses Fasnachtsding dargestellt werden.
+            fr: Pratiques culturelles ou formes d'expression représentées par cet objet carnavalesque.
+            it: Pratiche culturali o forme di espressione rappresentate da questo oggetto carnevalesco.
           order: 3
         - iri: fasnacht:dating
           to_class: oldap:Dating
@@ -1213,6 +1219,21 @@ ontology:
           it: Fonte esterna dell'oggetto. Solo per gli oggetti di archivio esterni.
         max_count: 1
         order: 8
+      - iri: fasnacht:archiveUnit
+        to_class: shared:ArchiveUnit
+        inverse_of: schema:about
+        name:
+          en: Archive unit
+          de: Archiveinheit
+          fr: Unité d'archives
+          it: Unità archivistica
+        description:
+          en: Archive unit to which this archival object is assigned in the archive structure.
+          de: Archiveinheit, der dieses Archivobjekt in der Archivstruktur zugeordnet ist.
+          fr: Unité d'archives à laquelle cet objet d'archive est rattaché dans la structure archivistique.
+          it: Unità archivistica alla quale questo oggetto d'archivio è assegnato nella struttura archivistica.
+        max_count: 1
+        order: 9
 
     fasnacht:ArchiveMediaObject:
       superclass:
@@ -1292,19 +1313,58 @@ ontology:
           fr: Objets d'archive ou événements carnavalesques facultatifs représentés, numérisés ou autrement documentés par cet objet média.
           it: Oggetti d'archivio o eventi carnevaleschi facoltativi raffigurati, digitalizzati o altrimenti rappresentati da questo oggetto multimediale.
         order: 5
-      - iri: dcterms:subject
-        to_class: list:CarnivalTopicsTaxonomy
+      - iri: fasnacht:carnivalPractice
+        to_class: list:CarnivalPracticeTaxonomy
         name:
-          en: Carnival topics
-          de: Fasnachtsthemen
-          fr: Thèmes du carnaval
-          it: Temi del carnevale
+          en: Carnival practice
+          de: Praxis / Handlung
+          fr: Pratique carnavalesque
+          it: Pratica carnevalesca
         description:
-          en: Subjects, practices, or cultural expressions directly depicted or addressed by this archive media item.
-          de: Themen, Praktiken oder kulturelle Ausdrucksformen, die dieses Archivmedium direkt darstellt oder behandelt.
-          fr: Sujets, pratiques ou expressions culturelles directement représentés ou abordés par cet objet média d'archive.
-          it: Temi, pratiche o espressioni culturali direttamente rappresentati o trattati da questo oggetto multimediale d'archivio.
+          en: Cultural practices or forms of expression directly depicted or addressed by this archive media item.
+          de: Kulturelle Praktiken oder Ausdrucksformen, die dieses Archivmedium direkt darstellt oder behandelt.
+          fr: Pratiques culturelles ou formes d'expression directement représentées ou abordées par cet objet média d'archive.
+          it: Pratiche culturali o forme di espressione direttamente rappresentate o trattate da questo oggetto multimediale d'archivio.
         order: 6
+      - iri: fasnacht:carnivalGrouping
+        to_class: list:CarnivalGroupingTaxonomy
+        name:
+          en: Depicted or discussed carnival grouping
+          de: Dargestellte oder behandelte Fasnachtsgruppierung
+          fr: Groupement carnavalesque représenté ou traité
+          it: Gruppo carnevalesco raffigurato o trattato
+        description:
+          en: Types of carnival actors or formations depicted, heard, or discussed in this archive media item. This is distinct from a specifically identified associated organisation and from authorship, deposit, or custody.
+          de: Arten von Fasnachtsakteuren oder Formationen, die in diesem Archivmedium dargestellt, hörbar oder inhaltlich behandelt werden. Dies ist von einer konkret identifizierten verbundenen Organisation sowie von Urheberschaft, Ablieferung und Verwahrung zu unterscheiden.
+          fr: Types d'acteurs ou de formations carnavalesques représentés, audibles ou traités dans ce média d'archive. Cette indication se distingue d'une organisation associée précisément identifiée ainsi que de la création, du dépôt et de la conservation.
+          it: Tipi di attori o formazioni carnevalesche raffigurati, udibili o trattati in questo oggetto multimediale d'archivio. Questa indicazione è distinta da un'organizzazione associata identificata e dalla paternità, dal deposito o dalla custodia.
+        order: 7
+      - iri: fasnacht:representedObjectType
+        to_class: list:ObjectTaxonomy
+        name:
+          en: Depicted or discussed object type
+          de: Dargestellte oder behandelte Objektart
+          fr: Type d'objet représenté ou traité
+          it: Tipo di oggetto raffigurato o trattato
+        description:
+          en: Object types recognisable, depicted, or discussed in this archive media item without asserting or requiring a link to a specifically identified ArchiveObject.
+          de: Objektarten, die in diesem Archivmedium erkennbar, dargestellt oder inhaltlich behandelt werden, ohne dass damit ein konkret identifiziertes ArchiveObject behauptet oder vorausgesetzt wird.
+          fr: Types d'objets reconnaissables, représentés ou traités dans ce média d'archive, sans affirmer ni exiger un lien vers un ArchiveObject précisément identifié.
+          it: Tipi di oggetti riconoscibili, raffigurati o trattati in questo oggetto multimediale d'archivio, senza affermare o richiedere un collegamento a un ArchiveObject identificato con precisione.
+        order: 8
+      - iri: fasnacht:representedEventType
+        to_class: list:CarnivalEventTaxonomy
+        name:
+          en: Recognisable or discussed carnival event type
+          de: Erkennbare oder behandelte Fasnachtsanlassart
+          fr: Type d'événement carnavalesque reconnaissable ou traité
+          it: Tipo di evento carnevalesco riconoscibile o trattato
+        description:
+          en: Carnival event types recognisable, depicted, heard, or discussed in this archive media item without asserting or requiring a link to a specifically identified CarnivalEvent.
+          de: Arten von Fasnachtsanlässen, die in diesem Archivmedium erkennbar, dargestellt, hörbar oder inhaltlich behandelt werden, ohne dass damit ein konkret identifizierter CarnivalEvent behauptet oder vorausgesetzt wird.
+          fr: Types d'événements carnavalesques reconnaissables, représentés, audibles ou traités dans ce média d'archive, sans affirmer ni exiger un lien vers un CarnivalEvent précisément identifié.
+          it: Tipi di eventi carnevaleschi riconoscibili, raffigurati, udibili o trattati in questo oggetto multimediale d'archivio, senza affermare o richiedere un collegamento a un CarnivalEvent identificato con precisione.
+        order: 9
       - iri: fasnacht:associatedOrganisation
         to_class: fasnacht:Agent
         name:
@@ -1317,7 +1377,7 @@ ontology:
           de: Organisationen oder Institutionen, die im Medium dargestellt werden oder für dessen Inhalt unmittelbar relevant sind. Dies ist nicht die Angabe, wer die Datei bereitgestellt hat.
           fr: Organisations ou institutions représentées dans le média ou directement concernées par son contenu. Cette propriété est distincte de l'agent ayant fourni le fichier.
           it: Organizzazioni o istituzioni rappresentate nel media o direttamente rilevanti per il suo contenuto. Questa proprietà è distinta dall'agente che ha fornito il file.
-        order: 7
+        order: 10
       - iri: fasnacht:location
         to_class: fasnacht:Place
         name:
@@ -1331,7 +1391,7 @@ ontology:
           fr: Lieu où le support a été enregistré.
           it: Luogo in cui è stato registrato il materiale.
         max_count: 1
-        order: 8
+        order: 11
       - iri: fasnacht:creationDating
         to_class: oldap:Dating
         name:
@@ -1344,7 +1404,7 @@ ontology:
           de: Datum, an dem der ursprüngliche analoge oder digital entstandene Medieninhalt geschaffen oder aufgenommen wurde. Ein späteres Digitalisierungsdatum wird hier nicht erfasst.
           fr: Date à laquelle le contenu média analogique original ou né numérique a été créé ou enregistré. La date d'une numérisation ultérieure n'est pas enregistrée ici.
           it: Data in cui il contenuto multimediale analogico originale o nativo digitale è stato creato o registrato. La data di una digitalizzazione successiva non viene registrata qui.
-        order: 9
+        order: 12
       - iri: fasnacht:contributingAgent
         subproperty_of: schema:provider
         to_class: fasnacht:Agent
@@ -1360,7 +1420,7 @@ ontology:
           it: Organizzazione o persona che ha messo la risorsa digitale a disposizione del progetto. Questo indica la provenienza del documento o file digitale e non implica necessariamente la paternità o la proprietà dell’oggetto originale.
         min_count: 1
         max_count: 1
-        order: 10
+        order: 13
       - iri: dcterms:creator
         to_class: fasnacht:Agent
         name:
@@ -1373,7 +1433,7 @@ ontology:
           de: Person oder Organisation, die das Archivmedienobjekt erstellt hat.
           fr: Personne ou organisation qui a créé l'objet média d'archive.
           it: Persona o organizzazione che ha creato l'oggetto multimediale d'archivio.
-        order: 11
+        order: 14
       - iri: dcterms:rights
         to_class: list:CreativeCommons
         name:
@@ -1388,7 +1448,7 @@ ontology:
           it: Diritti o licenza che regolano il riuso dell'oggetto multimediale d'archivio.
         min_count: 1
         max_count: 1
-        order: 12
+        order: 15
       - iri: fasnacht:rightsStatementUrl
         datatype: xsd:anyURI
         name:
@@ -1397,7 +1457,7 @@ ontology:
           fr: Autre Déclaration de droits
           it: Altre dichiarazioni sui diritti
         max_count: 1
-        order: 13
+        order: 16
       - iri: schema:position
         datatype: xsd:integer
         name:
@@ -1405,7 +1465,7 @@ ontology:
           de: Position/Sequenznummer/Seite
           fr: Position
           it: Posizione
-        order: 14
+        order: 17
 
     fasnacht:StagingArea:
       superclass:

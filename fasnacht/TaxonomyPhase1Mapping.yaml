@@ -1,0 +1,148 @@
+version: 1
+status: draft
+description: >-
+  Phase-1 mapping for the planned flat Fasnacht vocabularies. Only exact rules
+  are candidates for automatic migration. Broader rules require a reviewed
+  migration policy; review rules always require record-level inspection.
+
+lists:
+  ObjectTaxonomy:
+    target_list: ObjectTaxonomy
+    groups:
+      - source_nodes: [Laterne]
+        target_nodes: [Laterne]
+        mode: exact
+      - source_nodes: [Larve]
+        target_nodes: [Larve]
+        mode: exact
+      - source_nodes: [Kostuem]
+        target_nodes: [Kostuem]
+        mode: exact
+      - source_nodes: [Plakette]
+        target_nodes: [Plakette]
+        mode: exact
+      - source_nodes: [Requisite]
+        target_nodes: [Requisite]
+        mode: exact
+      - source_nodes: [Musikinstrument, Trommel, Piccolo, AnderesInstrument]
+        target_nodes: [Musikinstrument]
+        mode: broader
+        note: Instrument subtypes are intentionally collapsed.
+      - source_nodes: [Vereinsdokument, Protokoll, MembershipRegister, Correspondence, FinancialRecords, StatutesAndRegulations, OtherClubRecords]
+        target_nodes: [Vereinsdokument]
+        mode: broader
+        note: Detailed club-record types are intentionally collapsed.
+      - source_nodes: [PublicationsAndPress, Buch, Chronik, Magazin, ProgrammeAndEventGuide, Brochure, Flyer, Poster, NewspaperArticleOrClipping]
+        target_nodes: [PublicationsAndPress]
+        mode: broader
+        note: Publication and press subtypes are intentionally collapsed to Drucksachen.
+      - source_nodes: [MusicalNotation]
+        target_nodes: [MusicalNotation]
+        mode: exact
+      - source_nodes: [Zeedel]
+        target_nodes: [Zeedel]
+        mode: exact
+      - source_nodes: [Kunst, LanternPanel, Helge, DesignOrSketch, IllustrationOrGraphicWork, Painting, AnalogPhotograph]
+        target_nodes: [Kunst]
+        mode: broader
+        note: Visual works are intentionally collapsed to Bild; digital image files remain ArchiveMediaObjects.
+      - source_nodes: [CarnivalEquipmentAndMaterialObjects, FloatOrChaise, CarnivalTextsAndMusicNotation, SchnitzelbankText, SongLyrics, Manuscript, MusicalWorks, Marsch, OtherMusicalWork, AnalogMediaAndCarriers, PhonographRecord, MagneticTape, AudioCassette, FilmCarrier, OtherAnalogCarrier, Memorabilia, Other, Undetermined]
+        target_nodes: []
+        mode: review
+        note: No unambiguous successor can be inferred without inspecting each record.
+
+  CarnivalEventTaxonomy:
+    target_list: CarnivalEventTaxonomy
+    groups:
+      - source_nodes: [Vorfasnacht, Drummeli, Pfyfferli, Charivari, GlaibaslerCharivari, Mimoesli, Raeppliserenade, VorfasnachtAnderes]
+        target_nodes: [Vorfasnacht]
+        mode: broader
+      - source_nodes: [Fasnacht, FasnachtAnderes, Volksfasnacht]
+        target_nodes: [Fasnacht]
+        mode: broader
+      - source_nodes: [Morgenstreich]
+        target_nodes: [Morgenstreich]
+        mode: exact
+      - source_nodes: [Dienstag, Kinderfasnacht]
+        target_nodes: [Dienstag]
+        mode: broader
+      - source_nodes: [Cortege]
+        target_nodes: [Cortege]
+        mode: exact
+      - source_nodes: [Guggenkonzert]
+        target_nodes: [Guggenkonzert]
+        mode: exact
+      - source_nodes: [Endstreich]
+        target_nodes: [Endstreich]
+        mode: exact
+      - source_nodes: [Bummelausflug]
+        target_nodes: [Bummelausflug]
+        mode: exact
+      - source_nodes: [Intern, Cliquenabend, Stammabend, Marschuebung, Sujetbekanngabe, Larvenausgabe, Laterneneinpfeiffen]
+        target_nodes: [Intern]
+        mode: broader
+      - source_nodes: [Schnitzelbank]
+        target_nodes: [Performance]
+        mode: broader
+      - source_nodes: [Fasnachtsball]
+        target_nodes: [Fasnachtsball]
+        mode: exact
+      - source_nodes: [Preismasken, Wettbewerb, Bryysdrummle]
+        target_nodes: [Wettbewerb]
+        mode: broader
+      - source_nodes: [Gaessle, Laternenausstellung, Wagenausstellung, Brauchtum, Historisch, Monster, Musikanlass]
+        target_nodes: []
+        mode: review
+        note: The new event vocabulary has no unambiguous successor for these values.
+      - source_nodes: [HistorischAnderes]
+        target_nodes: []
+        mode: review
+        source_state: legacy
+        note: Referenced by local data although absent from the current repository taxonomy YAML.
+
+  CarnivalTopicsTaxonomy:
+    target_list: CarnivalPracticeTaxonomy
+    groups:
+      - source_nodes: [MusicAndSound, Pipes, Drums, MarchesAndCompositions, GuggenMusic]
+        target_nodes: [Music]
+        mode: exact
+      - source_nodes: [WordSatireAndStage, Schnitzelbank, CarnivalVersesAndTexts, PreCarnivalStageAndTheatre]
+        target_nodes: [OralAndWrittenExpressions]
+        mode: broader
+      - source_nodes: [SatireAndHumour]
+        target_nodes: [OralAndWrittenExpressions, SocialCohesionCriticismAndTolerance]
+        mode: broader
+      - source_nodes: [SujetAndVisualDesign, Sujet, LanternArt, Masks, Costumes, FloatsAndChaises, CarnivalBadges, GraphicArtAndIllustration]
+        target_nodes: [CraftAndArt]
+        mode: broader
+      - source_nodes: [CommunityAndClubLife, CliqueCulture, ClubLife, YouthAndYoungGuards, OldGuards, IndependentFormations, IndividualMasks]
+        target_nodes: [SocialCohesionCriticismAndTolerance]
+        mode: broader
+      - source_nodes: [CraftAndProduction, LanternMaking, MaskMaking, CostumeMaking, InstrumentMaking, FloatAndStageConstruction]
+        target_nodes: [CraftAndArt]
+        mode: exact
+      - source_nodes: [CarnivalCustomsAndCalendar, PreCarnival, Morgenstreich, Cortege, CarnivalTuesdayAndChildren, Gaessle, LanternAndFloatExhibitions, Endstreich, Bummel, YearRoundClubCustoms, HistoryOrganisationAndInterpretation, CarnivalHistoryAndChange, ClubHistory, CarnivalOrganisation, CarnivalCommittee, ArchivesMuseumsAndCollections, ExhibitionsAndEducation]
+        target_nodes: []
+        mode: review
+        note: Event/calendar/history subjects do not identify one cultural practice without record context.
+
+  OrganisationTaxonomy:
+    target_list: null
+    groups:
+      - source_nodes: [Clique, Wagenclique, Guggenmusik, Chaise, Schyssdraeggzuegli, Schnitzelbangg, Wilde, Fasnachtscomite, Artist, Gedaechtnisinstitutionen, Archiv, Bundesarchiv, Staatsarchiv, Cliqenarchiv, Institutionsarchiv, Privatarchiv, Museum, Staatsmuseum, Privatmuseum]
+        target_nodes: []
+        mode: review
+        note: Target model is pending expert clarification; no organisation migration is authorized.
+      - source_nodes: [Stamm]
+        target_nodes: []
+        mode: review
+        source_state: legacy
+        note: Referenced by local data although absent from the current repository taxonomy YAML.
+
+media_forms:
+  dcmitype:Text: Dokument
+  dcmitype:StillImage: Foto
+  dcmitype:Sound: Ton
+  dcmitype:MovingImage: Video
+  object_workflow: >-
+    Objekt starts or selects an ArchiveObject workflow and is not a media-form value on ArchiveMediaObject.

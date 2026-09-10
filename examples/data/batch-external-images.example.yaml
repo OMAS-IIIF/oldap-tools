@@ -1,0 +1,50 @@
+# Illustrative batch structure. Replace the placeholder IRIs and URLs before apply.
+data:
+  version: 1
+  project: chama
+  resources:
+    - iri: BatchExampleExternalImage1
+      class: shared:MediaObject
+      properties:
+        dcterms:type:
+          - iri: dcmitype:StillImage
+        shared:mediaAccessMode:
+          - value: external
+        shared:originalName:
+          - value: Example external photograph 1
+        shared:originalMimeType:
+          - value: image/jpeg
+        shared:protocol:
+          - value: http
+        shared:mediaUrl:
+          - value: https://images.example.org/example-1.jpg
+      permissions:
+        oldap:Unknown: DATA_VIEW
+      media:
+        source:
+          type: url
+          url: https://images.example.org/example-1.jpg
+        handling: reference
+
+    - iri: BatchExampleExternalImage2
+      class: shared:MediaObject
+      properties:
+        dcterms:type:
+          - iri: dcmitype:StillImage
+        shared:mediaAccessMode:
+          - value: external
+        shared:originalName:
+          - value: Example external photograph 2
+        shared:originalMimeType:
+          - value: image/jpeg
+        shared:protocol:
+          - value: http
+        shared:mediaUrl:
+          - value: https://images.example.org/example-2.jpg
+      permissions:
+        oldap:Unknown: DATA_VIEW
+      media:
+        source:
+          type: url
+          url: https://images.example.org/example-2.jpg
+        handling: reference

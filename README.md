@@ -52,6 +52,9 @@ The CLI tool provides the following commands:
 - `oldap-tools data import --apply --batch`: Resume a sequential multi-resource metadata-and-media import
 - `oldap-tools data media-attach`: Attach or idempotently verify media for one existing resource
 - `oldap-tools staging ensure-mobile-folder`: Add the application-managed Mobile folder to existing StagingAreas
+- `oldap-tools fasnacht taxonomy-inventory`: Produce a read-only Fasnacht taxonomy and empty-event migration report
+- `oldap-tools fasnacht taxonomy-migration-plan`: Expand the current Fasnacht data references into a digest-bound read-only migration manifest
+- `oldap-tools fasnacht taxonomy-migration-apply`: Apply the reviewed Object/Event/Practice cutover after a full project backup; organisations and event resources remain untouched
 
 # Common options
 

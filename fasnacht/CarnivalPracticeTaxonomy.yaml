@@ -1,0 +1,37 @@
+# Active flat practice taxonomy referenced by fasnacht-onto.yaml.
+CarnivalPracticeTaxonomy:
+  label:
+    - Carnival practices and forms of expression@en
+    - Praxis und Ausdrucksformen der Fasnacht@de
+    - Pratiques et formes d'expression du carnaval@fr
+    - Pratiche e forme di espressione del carnevale@it
+  definition:
+    - Flat, multi-valued vocabulary describing the cultural practice or form of expression represented by archive material.@en
+    - Flaches, mehrwertiges Vokabular für die kulturelle Praxis oder Ausdrucksform, die durch Archivgut dargestellt wird.@de
+    - Vocabulaire plat et multivalué décrivant la pratique culturelle ou la forme d'expression représentée par les documents d'archive.@fr
+    - Vocabolario piatto e multivalore che descrive la pratica culturale o la forma di espressione rappresentata dal materiale d'archivio.@it
+  nodes:
+    CraftAndArt:
+      label:
+        - Craft and art@en
+        - Handwerk & Kunst@de
+        - Artisanat et art@fr
+        - Artigianato e arte@it
+    Music:
+      label:
+        - Music@en
+        - Musik@de
+        - Musique@fr
+        - Musica@it
+    OralAndWrittenExpressions:
+      label:
+        - Oral and written forms of expression@en
+        - Mündliche und schriftliche Ausdrucksformen@de
+        - Formes d'expression orales et écrites@fr
+        - Forme di espressione orali e scritte@it
+    SocialCohesionCriticismAndTolerance:
+      label:
+        - Social cohesion, social criticism, and tolerance@en
+        - Sozialer Zusammenhalt, Gesellschaftskritik und Toleranz@de
+        - Cohésion sociale, critique de la société et tolérance@fr
+        - Coesione sociale, critica della società e tolleranza@it

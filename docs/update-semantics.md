@@ -82,6 +82,8 @@ When `properties` is present for an existing resource class:
 
 - New properties listed in YAML are added.
 - Existing properties listed in YAML are updated.
+- Relationship targets declared with `to_class` replace the existing `sh:class`
+  value when they differ.
 - Existing properties missing from YAML are removed from the resource class.
 
 `oldaplib` performs permission and in-use checks during the update. If a removal or restrictive change would affect data that is already in use, the update can fail. Do not rely on that as the primary safety mechanism; treat the YAML property list as a complete class definition whenever `properties` is present.
@@ -117,4 +119,3 @@ For existing production-like projects:
 3. Prefer `--mode update`.
 4. Include full `properties` lists for resource classes when you intend class-property synchronization.
 5. Use taxonomy YAML freely for additive list growth, but do not expect it to rename, move, or delete existing nodes.
-

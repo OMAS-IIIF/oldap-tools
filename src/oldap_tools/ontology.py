@@ -638,16 +638,26 @@ def _set_attr(obj: Any, attr: Any, value: Any) -> None:
         obj[attr] = value
 
 
+def _property_constructor_key(attr: PropClassAttr) -> str:
+    """Return the normalized constructor key for an OLDAP property attribute."""
+    fragment = attr.value.fragment
+    return {"class": "toClass", "in": "inSet"}.get(fragment, fragment)
+
+
 def _sync_property(existing: PropertyClass, desired_spec: dict[str, Any], lists: dict[str, OldapList]) -> None:
     desired = _property_kwargs(desired_spec, lists)
     for attr in PropClassAttr:
         fragment = attr.value.fragment
         if fragment == "type":
             continue
-        yaml_key = ATTR_TO_YAML.get(fragment, fragment)
-        if fragment in desired:
-            _set_attr(existing, attr, desired[fragment])
-        elif yaml_key in desired_spec or fragment in desired_spec:
+        # OLDAP exposes sh:class and sh:in through the constructor-facing names
+        # ``toClass`` and ``inSet``.  Their RDF fragments therefore cannot be
+        # used directly to look up the normalized desired values.
+        constructor_key = _property_constructor_key(attr)
+        yaml_key = ATTR_TO_YAML.get(constructor_key, constructor_key)
+        if constructor_key in desired:
+            _set_attr(existing, attr, desired[constructor_key])
+        elif yaml_key in desired_spec or constructor_key in desired_spec:
             _set_attr(existing, attr, None)
 
 
@@ -825,7 +835,8 @@ def _dump_property(prop: PropertyClass) -> dict[str, Any]:
     for attr, value in prop._attributes.items():
         if attr == PropClassAttr.TYPE:
             continue
-        key = ATTR_TO_YAML.get(attr.value.fragment, attr.value.fragment)
+        constructor_key = _property_constructor_key(attr)
+        key = ATTR_TO_YAML.get(constructor_key, constructor_key)
         result[key] = _plain(value)
     return result
 

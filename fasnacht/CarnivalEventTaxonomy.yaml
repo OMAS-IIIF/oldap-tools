@@ -1,120 +1,103 @@
+# Active flat event taxonomy referenced by fasnacht-onto.yaml.
 CarnivalEventTaxonomy:
   label:
-    - Veranstaltungsart@de
+    - Carnival event types@en
+    - Arten von Fasnachtsanlässen@de
+    - Types d'événements carnavalesques@fr
+    - Tipi di eventi carnevaleschi@it
+  definition:
+    - Flat controlled vocabulary for identifiable carnival events.@en
+    - Flaches kontrolliertes Vokabular für identifizierbare Fasnachtsanlässe.@de
+    - Vocabulaire contrôlé plat pour les événements carnavalesques identifiables.@fr
+    - Vocabolario controllato piatto per eventi carnevaleschi identificabili.@it
   nodes:
     Vorfasnacht:
       label:
+        - Pre-carnival@en
         - Vorfasnacht@de
-      nodes:
-        Drummeli:
-          label:
-            - Drummeli@de
-        Pfyfferli:
-          label:
-            - Pfyfferli@de
-        Charivari:
-          label:
-            - Charivary@de
-        GlaibaslerCharivari:
-          label:
-            - Glaibasler Charivari@de
-        Mimoesli:
-          label:
-            - Mimösli@de
-        Raeppliserenade:
-          label:
-            - Räppli-Serenade@de
-        VorfasnachtAnderes:
-          label:
-            - Anderes@de
+        - Précarnaval@fr
+        - Pre-carnevale@it
     Fasnacht:
       label:
-        - Fasnachtstage@de
-      nodes:
-        Morgenstreich:
-          label:
-            - Morgenstreich@de
-        Dienstag:
-          label:
-            - Zyschdig@de
-        Cortege:
-          label:
-            - Cortège@de
-        Guggenkonzert:
-          label:
-            - Guggekonzärt@de
-        Kinderfasnacht:
-          label:
-            - Kinderfasnacht@de
-        Schnitzelbank:
-          label:
-            - Schnitzelbank@de
-        Gaessle:
-          label:
-            - Gässle@de
-        Endstreich:
-          label:
-            - Ändstreich@de
-        Laternenausstellung:
-          label:
-            - Ladärne-Ustellig@de
-        Wagenausstellung:
-          label:
-            - Wagenaustellung@de
-        Bummelausflug:
-          label:
-            - Bummelaus@de
-        FasnachtAnderes:
-          label:
-            - Anderes@de
-    Brauchtum:
+        - Carnival@en
+        - Fasnacht@de
+        - Carnaval@fr
+        - Carnevale@it
+    Bummelausflug:
       label:
-        - Brauchtum@de
+        - Bummel@en
+        - Bummel@de
+        - Bummel@fr
+        - Bummel@it
     Intern:
       label:
-        - Vereinsaktivitäten / unter dem Jahr@de
-      nodes:
-        Cliquenabend:
-          label:
-            - Cliqueoobe@de
-        Stammabend:
-          label:
-            - Stammoobe@de
-        Marschuebung:
-          label:
-            - Marschübung@de
-        Sujetbekanngabe:
-          label:
-            - Sujet-Bekanntgabe@de
-        Larvenausgabe:
-          label:
-            - Larven-Ausgabe@de
-        Laterneneinpfeiffen:
-          label:
-            - Larven-Einpfeiffen@de
-    Historisch:
+        - Club activity@en
+        - Vereinsaktivität@de
+        - Activité associative@fr
+        - Attività associativa@it
+    Morgenstreich:
       label:
-        - Historischer Anlass@de
-      nodes:
-        Monster:
-          label:
-            - Monstre-Trommelkonzert@de
-        Fasnachtsball:
-          label:
-            - Fasnachtsball@de
-        Preismasken:
-          label:
-            - Preismasken / Maskenprämierung@de
-        Volksfasnacht:
-          label:
-            - Volksfasnacht / Gassenfasnacht@de
+        - Morgenstreich@en
+        - Morgenstreich@de
+        - Morgenstreich@fr
+        - Morgenstreich@it
+    Dienstag:
+      label:
+        - Carnival Tuesday@en
+        - Fasnachtsdienstag@de
+        - Mardi du carnaval@fr
+        - Martedì di carnevale@it
+    Cortege:
+      label:
+        - Cortège@en
+        - Cortège@de
+        - Cortège@fr
+        - Cortège@it
+    Endstreich:
+      label:
+        - Endstreich@en
+        - Endstreich@de
+        - Endstreich@fr
+        - Endstreich@it
+    StarMarch:
+      label:
+        - Star march@en
+        - Sternmarsch@de
+        - Marche en étoile@fr
+        - Marcia a stella@it
+    Guggenkonzert:
+      label:
+        - Guggen concert@en
+        - Guggenkonzert@de
+        - Concert de Guggenmusik@fr
+        - Concerto di Guggenmusik@it
+    ClosingEvening:
+      label:
+        - Closing evening@en
+        - Schlussabend@de
+        - Soirée de clôture@fr
+        - Serata conclusiva@it
+    Performance:
+      label:
+        - Performance@en
+        - Auftritt@de
+        - Représentation@fr
+        - Esibizione@it
+    FloatPreview:
+      label:
+        - Float preview@en
+        - Wagenvernissage@de
+        - Vernissage de char@fr
+        - Vernissage del carro@it
+    Fasnachtsball:
+      label:
+        - Masked ball@en
+        - Maskenball@de
+        - Bal masqué@fr
+        - Ballo in maschera@it
     Wettbewerb:
       label:
+        - Competition@en
         - Wettbewerb@de
-      nodes:
-        Bryysdrummle:
-          label:
-            - Bryysdrummle@de
-    Musikanlass:
-      label:
-        - Musikalischer Anlass@de
+        - Concours@fr
+        - Concorso@it

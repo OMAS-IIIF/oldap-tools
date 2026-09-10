@@ -1,0 +1,55 @@
+data:
+  version: 1
+  project: chama
+  resources:
+    - iri: IMG_1520
+      class: chama:CataloguedPhotograph
+      properties:
+        schema:name:
+          - value: Stationsgebäude in Chama
+            language: de
+        schema:description:
+          - value: >-
+              Das historische Stationsgebäude von Chama ist im typischen Gelb
+              der Denver & Rio Grande Western Railroad gestrichen. Im Vordergrund
+              liegt das Ticket Office, in dem Fahrkarten gekauft oder abgeholt
+              werden können. Die Aufnahme entstand am Abend nach der Ankunft des
+              Zuges aus Antonito; der Bahnhof wird bald geschlossen. Der Blick
+              geht westwärts zum heutigen Streckenende. Bis 1968 führte die
+              Strecke von Chama weiter nach Durango, Colorado.
+
+              Das Gebäude wurde von der Cumbres & Toltec Scenic Railroad
+              sorgfältig restauriert. Nach Einschätzung des Fotografen vermittelt
+              sein heutiges Erscheinungsbild einen Eindruck davon, wie der Bahnhof
+              in den 1950er- und 1960er-Jahren ausgesehen haben dürfte.
+            language: de
+        dcterms:type:
+          - iri: dcmitype:StillImage
+        dcterms:creator:
+          - iri: chama:LukasRosenthaler
+        shared:mediaAccessMode:
+          - value: local
+        shared:originalName:
+          - value: IMG_1520.HEIC
+        shared:originalMimeType:
+          - value: image/heic
+        shared:checksum:
+          - value: e58b00ea8a255a2baf0c463d91d8e05bcd9fdaaf21d6f30dc4ffd7b657a98c8b
+        shared:protocol:
+          - value: custom
+        chama:creationDating:
+          - value: "2018-07-08"
+        chama:capturePlace:
+          - iri: chama:ChamaStation
+        chama:publicDisplayPermission:
+          - value: true
+        chama:creditLine:
+          - value: Lukas Rosenthaler
+      permissions:
+        oldap:Unknown: DATA_VIEW
+      media:
+        source:
+          type: file
+          path: ../../../demo-data/IMG_1520.HEIC
+        handling: copy
+        ingest_profile: image-iiif

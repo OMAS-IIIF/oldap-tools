@@ -258,6 +258,7 @@ Properties:
 - `fasnacht:usedAt`: Datierung der Verwendung als `oldap:Dating`.
 - `fasnacht:currentLocation`: aktueller Ort als `fasnacht:Place`, maximal ein Wert.
 - `schema:identifier`: Signatur oder Identifikator, maximal ein Wert.
+- `fasnacht:archiveUnit`: optionale, eindeutige Zuordnung zur `shared:ArchiveUnit`; die inverse Beziehung wird als `schema:about` an der Archiveinheit ausgedrückt.
 
 Name, Beschreibung, Datierung, Organisationsbezug, Teil-Ganzes-Beziehungen und Ort kommen über die Oberklasse `fasnacht:CarnivalThing` hinzu.
 
@@ -277,6 +278,9 @@ Properties:
 - `fasnacht:contributingAgent`: Person oder Organisation, die das Medium zur Verfügung stellt, Pflichtfeld, genau ein Wert.
 - `dcterms:creator`: Urheberin oder Urheber als `fasnacht:Agent`.
 - `fasnacht:creationDating`: Erstellungsdatum oder Datierung als `oldap:Dating`.
+- `fasnacht:carnivalGrouping`: optionale, mehrwertige inhaltliche Klassifikation der dargestellten, hörbaren oder behandelten Fasnachtsakteure und Formationen über `CarnivalGroupingTaxonomy`.
+- `fasnacht:representedObjectType`: optionale, mehrwertige Klassifikation erkennbarer oder behandelter Objektarten über `ObjectTaxonomy`, ohne einen konkreten Gegenstand vorauszusetzen.
+- `fasnacht:representedEventType`: optionale, mehrwertige Klassifikation erkennbarer oder behandelter Fasnachtsanlassarten über `CarnivalEventTaxonomy`, ohne einen konkreten Anlass vorauszusetzen.
 - `dcterms:rights`: Lizenz oder Rechteangabe über `CreativeCommons`, Pflichtfeld, genau ein Wert.
 - `schema:position`: Position, Sequenznummer oder Seitenangabe.
 
@@ -294,6 +298,12 @@ Die Ontologie modelliert mehrere zentrale Beziehungstypen:
 - Lizenzen und kontrollierte Kategorien werden über Taxonomien modelliert.
 
 ## Taxonomien
+
+### `CarnivalGroupingTaxonomy`
+
+Flache, mehrwertige Inhaltstaxonomie für Arten von Fasnachtsakteuren und Formationen, die in einem Archivmedium dargestellt, hörbar oder behandelt werden. Sie ist von der Klassifikation einer konkret identifizierten Organisation über `OrganisationTaxonomy` sowie von Urheberschaft, Ablieferung und Verwahrung getrennt.
+
+Knoten: `Clique`, `FloatAndChaise`, `Gugge`, `Schnitzelbank`, `Artist`, `Trade`, `PipersAndDrummersGroup`, `Schissdraeggziigli`, `IndividualMask` und `PrivateIndividuals`.
 
 ### `CreativeCommons`
 

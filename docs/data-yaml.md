@@ -55,6 +55,11 @@ Required resource fields:
 
 `permissions` and `media` are optional. Permission keys are role QNames or IRIs, and their values are
 OLDAP data-permission names from `DATA_RESTRICTED` through `DATA_PERMISSIONS`.
+When `permissions` is omitted or empty, the importer does not emit an empty
+`oldap:attachedToRole` relation: OLDAPLIB applies the authenticated user's
+default roles. A resumable rerun verifies permissions only if the source
+document explicitly declared them; omitted permissions are not an assertion
+that an existing resource must have no roles.
 
 ## Resource identity and `iri: auto`
 
@@ -305,6 +310,10 @@ constraint—such as `dcmitype:StillImage` or `shared:ArchiveGroup`—are checke
 against the property's allowed values but are not mistaken for project-data
 resources. This also applies when the object property additionally declares a
 target class, as `shared:archiveLevel` does with `shared:ArchiveLevel`.
+Object properties targeting `oldap:Role`, such as
+`shared:stagingDefaultRole`, are resolved through OLDAP's administrative role
+registry rather than incorrectly searched in the project's data graph. The
+role must exist and be visible to the authenticated user.
 
 The dry-run constructs candidate objects only in memory and never calls a write
 method. A target that is not visible to the authenticated user cannot be

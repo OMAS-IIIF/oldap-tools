@@ -1,5 +1,89 @@
 # CODEX_LOG
 
+### Update 2026-09-11 00:42
+- Decisions: Require oldaplib 0.7.18 as the minimum runtime dependency for coordinated archive writes and recovery; a locally updated lock alone is insufficient for downstream package installs.
+- Implementation: Updated dependency floor and refreshed lock; 72 tests pass across tests/ and test/. Restored the missing CarnivalEventTaxonomy-PrePhase2.yaml fixture from HEAD without changing the active taxonomy. Package build metadata requires oldaplib >=0.7.18,<0.8.0. Source version is 0.3.12 while the latest reachable tag is v0.3.11; align release/tag and publish PyPI before Docker build.
+- Open: User Git consolidation, versioned publication and inspection of newly built Docker images before production activation.
+- Risks/Assumptions: Existing unrelated work/staged deletions retained. No commit, tag, push, PyPI publication, Docker rebuild or production write. Package builds are local verification artifacts.
+
+### Update 2026-09-03 00:04
+- Decisions: Support progressive media description by separating recognisable object/event categories from the identity of a concrete linked ArchiveObject or CarnivalEvent. Keep both direct classifications optional and multi-valued.
+- Implementation: Added `fasnacht:representedObjectType` and `fasnacht:representedEventType` to ArchiveMediaObject, targeting ObjectTaxonomy and CarnivalEventTaxonomy respectively, with multilingual labels and definitions that explicitly avoid asserting a concrete resource identity; updated model documentation and stable context.
+- Open: Load the additive ontology update locally, expose both fields in media editing and the guided Wizard, prefill new concrete targets from direct categories, and combine direct plus linked types in public search with conflict handling.
+- Risks/Assumptions: Existing data remains valid and unchanged. Direct values may become redundant or conflict with subsequently linked resources, so the application must surface rather than silently overwrite such cases.
+
+### Update 2026-09-02 23:58
+- Decisions: Model represented carnival actor/formation types as a dedicated media-content taxonomy rather than reusing the entity-oriented OrganisationTaxonomy. Keep the field optional and multi-valued.
+- Implementation: Added the flat ten-node `CarnivalGroupingTaxonomy`, registered it in the Fasnacht ontology, and added the multi-valued `fasnacht:carnivalGrouping` link to ArchiveMediaObject with multilingual labels and definitions; documented its separation from named organisations, authorship, deposit, and custody.
+- Open: Load the additive ontology/list update locally, then expose the new field in archive media forms, the guided Wizard, public detail/search facets, and optional OrganisationTaxonomy-based suggestions.
+- Risks/Assumptions: No instance receives a grouping automatically. Suggested mappings from a named organisation must remain user-controlled, particularly for the legacy combined Artist/Business category.
+
+### Update 2026-09-02 21:32
+- Decisions: Allow archival objects, but not carnival events, to be placed directly in the archive structure. Keep placement optional and constrain each ArchiveObject to at most one ArchiveUnit.
+- Implementation: Added `fasnacht:archiveUnit` to `fasnacht:ArchiveObject` with `max_count: 1`, targeting `shared:ArchiveUnit` and declared as the inverse of the existing generic `schema:about` archive relation; updated the technical model documentation and stable project context.
+- Open: Load the additive ontology update locally, then extend archive placement, object creation/editing, export, and frontend workflows in a separate implementation slice.
+- Risks/Assumptions: Existing ArchiveObjects remain valid because no `min_count` was introduced. No instance data is assigned automatically by this ontology-only change.
+
+### Update 2026-08-31 22:40
+- Decisions: Accept the successful digest-bound production cutover after its internal invariant checks and independently validate the immediate pre-cutover backup before declaring the data migration complete.
+- Implementation: Production applied digest `a2ea33a59866a8b73695e07a8ab901ea8d9dc65c1e8c3edcc6969f4659e0b295`, changing 138 of 231 archive references. Apply verified exact flat lists, practice shapes, zero legacy/out-of-scope references, Topics removal, and unchanged counts of 88 CarnivalEvents and 30 Organisation references. The 495 KiB pre-cutover backup parses as 27,165 TriG triples across shacl/onto/lists/data and has SHA-256 `7dc8525f928acb5d7e9306ae40e02209d0e6f60d8dd58841107a152fdff522bb`.
+- Open: Deploy the matching FasnachtsPage taxonomy build and smoke-test public/admin archive workflows; separately decide Organisation grouping and the 67 described yearly-event candidates.
+- Risks/Assumptions: Archive editing remained frozen during apply. Aktuelles, EventAnnouncement, Story, and MediaLibraryObject resources were excluded by class and zero out-of-scope references were present. Keep the verified backup until post-deployment acceptance is complete.
+
+### Update 2026-08-31 22:30
+- Decisions: Treat a verified full production backup as a hard precondition and do not retry the failed apply until the standalone authenticated export succeeds.
+- Implementation: Diagnosed the first production apply as failing in the pre-mutation raw RDF4J graph export; no backup file was created and the mutation phase was never entered. Raw graph exports now forward the configured GraphDB Basic Auth pair, reject partial credentials, report the failed graph and HTTP status, and have focused regression coverage.
+- Open: Run a new standalone read-only production project dump, verify its gzip/TriG integrity and SHA-256 locally, then rerun the digest-guarded apply with a distinct new backup path.
+- Risks/Assumptions: The two successful connection messages and missing backup file locate the failure after read-only plan generation but before the first migration write. No retry is authorized until backup verification passes.
+
+### Update 2026-08-31 22:10
+- Decisions: Classify the production-only archive object `Plagge` as Requisite and accept the production-only ClubHistory reference under social cohesion; retain `Launch Kooperation` as the archive CarnivalEvent evidenced by its class and ArchiveMediaObject link.
+- Implementation: Added an explicit approved production decisions file with production-bound expected counts and rationale. The file is separate from the local rehearsal decisions and must be named explicitly for both connected plan and apply. Plan output and apply rejection now also name out-of-scope reference failures explicitly.
+- Open: Generate the final connected production plan, review its zero-error manifest and digest, then obtain a separate apply authorization and maintenance-window confirmation.
+- Risks/Assumptions: Approval covers taxonomy mapping decisions, not execution. Any production data change after the inventory changes the digest or guarded counts and forces a new review.
+
+### Update 2026-08-31 21:55
+- Decisions: Restrict the taxonomy cutover to the archive domain. Only exclusively typed ArchiveObject, CarnivalEvent, and ArchiveMediaObject resources may enter a migration action; NewsItem, EventAnnouncement, Story, MediaLibraryObject, and mixed/unknown types are protected.
+- Implementation: Added class evidence to every planned action and a fail-closed `outOfScope` manifest section, digest input, readiness condition, summary count, regression test, and production-runbook boundary. The production inventory currently contains zero out-of-scope references among the three migrated taxonomies.
+- Open: Resolve the production-only `Plagge` classification, approve production-specific review counts, regenerate the connected plan, and review its new digest before any write.
+- Risks/Assumptions: `Launch Kooperation` is demonstrably an archive CarnivalEvent with one ArchiveMediaObject incoming link and no NewsItem, EventAnnouncement, Story, or MediaLibraryObject link in the production inventory; its editorial title alone does not determine its target event type.
+
+### Update 2026-08-31 18:45
+- Decisions: Treat Organisation taxonomy usages and CarnivalEvent resources as protected migration invariants, alongside exact flat-list contents and the two intended practice property shapes.
+- Implementation: Added these values to the digest-bound plan and made apply fail after cutover if list nodes/parents, practice SHACL shapes, organisation-reference count, event-resource count, or Topics removal differ from the reviewed plan.
+- Open: Regenerate the production plan after its inventory so the protected production counts are included in the approved digest.
+- Risks/Assumptions: Organisation protection counts RDF references rather than distinct resources, ensuring multiple assignments on one resource cannot disappear unnoticed.
+
+### Update 2026-08-31 18:40
+- Decisions: Activate the flat Object/Event vocabularies and a separate multi-valued Practice vocabulary locally, retain stable compatible node IRIs, require digest-bound resource manifests and a complete backup, exclude Organisation and event-resource deletion, and use a narrow SHACL/OWL property cutover instead of rebuilding the in-use model.
+- Implementation: Added reviewed count-guarded local decisions, dry-run/apply CLI commands, flat-list replacement, transactional reference migration/verification, practice model cutover, tests, active ontology/list sources, and the Phase-2 runbook. The local cutover changed 134 of 227 in-scope references, left 93 stable, produced 12/15/4 flat nodes, removed Topics, and verified zero legacy references, 10 practice values, 30 unchanged organisation references, and 87 unchanged events.
+- Open: Generate and review a production inventory and production-specific `approved` decisions file, rehearse exact graph restoration in that environment, obtain the operator's digest/maintenance-window approval, then run the production command. Separately review the 67 described but unreferenced yearly events and resolve the grouping model.
+- Risks/Assumptions: Nine generically titled local image records are an explicit Bild rehearsal assumption. A discarded generic `ontology load --mode replace` attempt exposed an OLDAPLIB SPARQL-generation failure after clearing the local model graphs; only those graphs were restored from the full backup before the narrow verified cutover. Production must use the migration command and must not use generic model replace.
+
+### Update 2026-08-31 17:17
+- Decisions: Prepare the expert-requested flat Fasnacht vocabularies additively and keep every active list and ontology reference unchanged during Phase 1. Retain compatible node IDs, model practice as a separate multi-valued draft list, keep DCMI media forms, treat `Objekt` as an ArchiveObject workflow, and block organisation migration pending expert clarification.
+- Implementation: Added inactive flat Object/Event/Practice HList drafts, a complete grouped source-to-target mapping, a SELECT-only `fasnacht taxonomy-inventory` command with JSON/YAML reporting, orphan-node detection, mapping coverage/target validation, two-stage empty-year review/strict candidates with substantive evidence, focused tests, and Phase-1 documentation. The successful local run reported 119/87/21/30 references across Object/Event/Topics/Organisation, 67 empty-year review candidates, and no strict deletion candidate.
+- Open: Review the completed local inventory and run the same report in production; resolve referenced review cases, approve broader/practice mappings, clarify the grouping model and `Ehrung`, and design the backed-up list-replacement cutover before any apply operation exists.
+- Risks/Assumptions: Labels and translations are working drafts requiring domain review. `OrganisationTaxonomy` is intentionally untouched. The local inventory found referenced legacy nodes `CarnivalEventTaxonomy:HistorischAnderes` and `OrganisationTaxonomy:Stamm`, now explicitly mapped to review. OLDAP list-node IDs are virtual and the inventory derives them from their list-specific node IRI. The inventory never writes to OLDAP; an event candidate is only a report item and still requires human approval before deletion.
+
+### Update 2026-08-29 00:28
+- Decisions: Treat an object property targeting `oldap:Role` as an administrative reference, not an ordinary project-data link. Reuse the existing authoritative `Role.read` boundary and role cache rather than adding a StagingArea-specific exception.
+- Implementation: Routed `shared:stagingDefaultRole` and every future `oldap:Role`-targeting property through administrative role resolution; retained normal project visibility/type checks for all other object links; added positive and missing-role regressions; and documented the YAML preflight contract. All 17 focused data-import and batch tests pass, Python compilation is clean, and no GraphDB-backed test was run.
+- Open: Rerun the five-resource Chama staging dry-run, then apply and verify idempotency only after a clean preflight.
+- Risks/Assumptions: OLDAP roles remain instances of the exact administrative class `oldap:Role`; the special resolution intentionally does not apply to unrelated project resources. This change is backward-compatible and performs no writes during preflight.
+
+### Update 2026-08-27 23:46
+- Decisions: Treat `to_class` changes as ordinary supported ontology updates; keep the fix in generic `oldap-tools` synchronization rather than adding a Chama-specific workaround or requiring destructive model replacement.
+- Implementation: Normalized the OLDAP `sh:class`/`sh:in` fragments to their `toClass`/`inSet` constructor keys during property synchronization and ontology dumping. Added regressions proving `chama:Agent` is replaced by `chama:Person` and dumps use canonical `to_class`; documented the update behavior. Seven unittest cases, Python compilation, and Chama ontology validation pass.
+- Open: Rerun the backed-up Chama ontology update with this working tree, then verify GraphDB reports `chama:Person` and refresh the SALSAH Story creation form.
+- Risks/Assumptions: The failed earlier update left live `sh:class chama:Agent` unchanged, as confirmed directly in GraphDB. The correction is generic and backward-compatible, but must be rerun once to repair that live value.
+
+### Update 2026-08-27 14:14
+- Decisions: Interpret omitted or empty instance `permissions` as delegation to OLDAPLIB's authenticated-user default roles, not as an explicit empty `oldap:attachedToRole` assertion. Verify roles on resumable reruns only when YAML declared them.
+- Implementation: Stopped passing empty permission mappings into dynamic resource constructors, made existing-resource role comparison conditional on declared permissions, documented the optional-field semantics, and added a regression covering construction plus resumable verification. All 47 unit tests and Python compilation pass.
+- Open: Rerun the interrupted Chama map batch; the first three resources should verify as existing while the digital representation and map work continue from actual OLDAP state.
+- Risks/Assumptions: An authenticated user with no default roles can create a resource without YAML-declared roles only if OLDAPLIB supports that state; normal deployments should configure intentional default roles or declare permissions explicitly. Omitted permissions deliberately do not constrain later permission changes.
+
 ### Update 2026-08-26 23:59
 - Decisions: Treat object-property IRIs fixed by `sh:in` as ontology-controlled named individuals, not ordinary permission-readable project resources; retain full existence/type checks for every unconstrained resource link.
 - Implementation: Corrected data preflight for combined `sh:class`/`sh:in` properties such as `shared:archiveLevel`, added a focused regression and documentation, updated the Poetry lock from OLDAPlib 0.7.10 to 0.7.15, and prepared oldap-tools 0.3.12.

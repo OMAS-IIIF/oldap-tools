@@ -20,6 +20,35 @@ from oldap_tools.graph_helpers import export_graphs_as_trig
 log = logging.getLogger(__name__)
 
 
+def graphdb_http_auth(
+    graphdb_user: str | None,
+    graphdb_password: str | None,
+) -> tuple[str, str] | None:
+    """Return HTTP Basic Auth for raw GraphDB graph exports.
+
+    Graph exports use the RDF4J HTTP endpoint directly rather than the OLDAP
+    connection object. Protected repositories therefore require their
+    GraphDB credentials to be forwarded explicitly.
+
+    Args:
+        graphdb_user: Optional GraphDB HTTP username.
+        graphdb_password: Optional GraphDB HTTP password.
+
+    Returns:
+        A requests-compatible authentication tuple, or ``None`` for an
+        unprotected GraphDB endpoint.
+
+    Raises:
+        ValueError: If only one half of the credential pair was supplied.
+    """
+
+    if bool(graphdb_user) != bool(graphdb_password):
+        raise ValueError("GraphDB graph export requires both username and password.")
+    if graphdb_user is None or graphdb_password is None:
+        return None
+    return graphdb_user, graphdb_password
+
+
 def dump_project(project_id: str,
                  graphdb_base: str,
                  repo: str,
@@ -104,7 +133,7 @@ def dump_project(project_id: str,
         graphdb_base=graphdb_base,
         repo=repo,
         graph_iris=project_graphs,
-        auth=None,  # or None
+        auth=graphdb_http_auth(graphdb_user, graphdb_password),
     )
 
     with gzip.open(out, "wt", encoding="utf-8", newline="") as f:
