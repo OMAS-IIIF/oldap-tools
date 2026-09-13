@@ -1,5 +1,11 @@
 # CODEX_LOG
 
+### Update 2026-09-13 22:48
+- Decisions: Make docker-build self-sufficient when the tagged oldap-tools release has not yet been published to PyPI; only confirmed HTTP 404 authorizes automatic publication.
+- Implementation: Added documented ensure-pypi-release prerequisite and stdlib helper with tag/package agreement, registry timeout/error handling, fresh temporary build artifacts, Poetry publication and bounded visibility polling. Six isolated tests and Make dry-run/diff checks pass.
+- Open: Real publication/build on the user's next make docker-build; existing Poetry PyPI credentials required.
+- Risks/Assumptions: No real upload, Docker build, version bump, commit or push performed during verification. Existing PyPI versions remain immutable and are reused; stale local dist files are never published.
+
 ### Update 2026-09-11 00:42
 - Decisions: Require oldaplib 0.7.18 as the minimum runtime dependency for coordinated archive writes and recovery; a locally updated lock alone is insufficient for downstream package installs.
 - Implementation: Updated dependency floor and refreshed lock; 72 tests pass across tests/ and test/. Restored the missing CarnivalEventTaxonomy-PrePhase2.yaml fixture from HEAD without changing the active taxonomy. Package build metadata requires oldaplib >=0.7.18,<0.8.0. Source version is 0.3.12 while the latest reachable tag is v0.3.11; align release/tag and publish PyPI before Docker build.

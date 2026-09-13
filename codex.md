@@ -1,5 +1,7 @@
 # oldap-tools Project Context
 
+- Docker release workflow: `make docker-build` first runs `ensure-pypi-release`. The helper in `scripts/ensure_pypi_release.py` checks tag/package version agreement and PyPI; only HTTP 404 triggers a fresh build and publication using a temporary distribution directory. Existing releases are reused, registry errors stop the build, and publication must become visible before Docker starts. Existing Poetry credentials are used.
+
 - Production archive compatibility requires oldaplib >=0.7.18,<0.8.0. Verify the installed library in released Docker images; local lockfiles alone do not establish deployed compatibility.
 
 `oldap-tools` is a Python CLI package for managing selected OLDAP project assets. It can dump and load project data, load and dump hierarchical lists, validate ontology YAML, load or dump OLDAP ontology data models, create archive trees from validated YAML, and validate versioned project instance data.

@@ -13,7 +13,7 @@ help:
 	@echo "  bump-patch-level   increase patch level of version number and push"
 	@echo "  bump-minor-level   increase patch level of version number and push"
 	@echo "  bump-major-level   increase patch level of version number and push"
-	@echo "  docker-build       build latest docker image and push it"
+	@echo "  docker-build       ensure PyPI release, build Docker image and push it"
 	@echo "  dump-fasnacht      dump fasnacht data"
 	@echo "  load-fasnacht      load fasnacht data"
 
@@ -45,8 +45,15 @@ load-fasnacht:
 show-version:
 	@echo "VERSION=${VERSION}"
 
-.PHONY: docker-build
-docker-build:
+# Docker installs the tagged package from PyPI, not from this working tree.
+# Only a confirmed missing release triggers a fresh Poetry build/publication.
+# Existing releases are reused; tag/version mismatch or network errors abort.
+# Uses configured Poetry/PyPI credentials and never uploads stale dist/ files.
+.PHONY: ensure-pypi-release docker-build
+ensure-pypi-release:
+	poetry run python scripts/ensure_pypi_release.py --version "$(PYPI_VERSION)"
+
+docker-build: ensure-pypi-release
 	docker buildx build --platform $(PLATFORMS) \
 		--build-arg OLDAP_TOOLS_VERSION=$(PYPI_VERSION) \
 		-t $(IMAGE):$(VERSION) \
