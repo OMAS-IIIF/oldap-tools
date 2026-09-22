@@ -1,5 +1,53 @@
 # CODEX_LOG
 
+### Update 2026-09-22 23:37
+- Decisions: Make operations.md the practical entry point for the API ontology workflow, with explicit transport/backup scope and recovery guidance. User confirmed all resources are visible again after the model recovery.
+- Implementation: Reworked operations.md around dump/validate/preview/apply/verify, native Lucene modes, ZIP contents, partial failures, isolated restoration tests and Workbench cache freshness. Aligned README, command reference, API contracts, installation, update semantics, YAML examples, docs index and stable project context. Corrected the direct replacement command, stale connector exclusions and outdated property-removal checklist. Checked 43 relative links/anchors and shell syntax of 45 examples across nine documents; diff whitespace checks pass.
+- Open: Publish matching tools/API/library releases through the normal workflow; no documentation build configuration is present in this repository.
+- Risks/Assumptions: Documentation-only changes; no commands from the operational examples were executed and no runtime/data changes were made. Zero-operation planning does not imply exact taxonomy equality or completed index construction; these limits are now explicit.
+
+### Update 2026-09-22 23:26
+- Decisions: Administrative model planning/export must read GraphDB freshly after out-of-band Workbench edits; never clear all Redis databases to repair model visibility.
+- Implementation: API JSON model GET and TriG download now use DataModel.read(ignore_cache=True). Two regression cases simulate deleted graphs with a stale cached model; 14 targeted API/auth/connector tests pass. Safely restarted local API. Captured complete explicit RDF before/after snapshots at /Users/rosenth/.codex/backups/oldap-fasnacht-recovery-20260922-232248; restored only fasnacht onto/shacl from the user's 23:15 API ZIP after confirming zero differences against the exported YAML. Restoration held the normal writer gate and used additive RDF import with exact graph-scope validation.
+- Open: User browser acceptance; publish the API fix through normal release workflow. Workbench edits to other cached entities still require appropriate scoped invalidation.
+- Risks/Assumptions: The earlier same-state roundtrip did not test external graph deletion and overstated recovery confidence. Fresh administrative reads cost additional GraphDB queries. All 27 other graph contexts are RDF-isomorphic before/after, including all 25,435 Fasnacht data triples and taxonomies. Recovered API: 16 classes; YAML replace dry-run: zero operations; Lucene: 693 entities; ArchiveObject/ArchiveMediaObject API samples read successfully. Connector configuration/index was not replaced during recovery. No global cache flush, data-graph mutation, or production change.
+
+### Update 2026-09-22 23:06
+- Decisions: Preserve complete Lucene creation options in native YAML; load remains opt-in and project-scoped. Existing shorthand and transport defaults remain supported.
+- Implementation: Add native YAML configuration, lossless default dumps/--no-connectors, API create/replace planning with reviewed revisions, connector snapshots, direct export/query escaping fixes and roundtrip/conflict/compatibility tests. 126 tools tests + 8 legacy tests + 25 targeted library/API/export/auth tests passed. Live Fasnacht dump retained 16 classes, 10 taxonomies and all options of the 8-field connector; replace dry-run planned zero operations. No live connector/model writes.
+- Open: Publish paired releases before use outside this local development setup; no release/version bump performed.
+- Risks/Assumptions: Connector commands are not RDF transactions. Failed replacement attempts restoration but may require reindexing; administrators outside configured writer coordination must serialize changes. Installed a local, unpublished oldaplib wheel still labelled 0.7.21 in the native API Python 3.13 environment; activated with writer-gated make restart. Production unchanged.
+
+### Update 2026-09-22 22:43
+- Decisions: Default ontology dump to the existing API. Use --out-dir for YAML packages with --include-taxonomies, create missing directories and require --overwrite for conflicting export files; retain explicit direct dumps for TriG/legacy behavior.
+- Implementation: Added canonical API-to-YAML serialization of project/external ontology/standalone/class metadata, relative taxonomies/<ListId>.yaml references and list class aliases. Shared validated taxonomy downloads with import planning. Downloads/schema/conflict checks precede staged per-file publication, ontology.yaml last; unrelated files remain and symlink destinations are refused. Updated CLI, documentation and context. Added export/roundtrip/file-safety tests and aligned the older credential-message test with hidden password prompting. All 127 tests across both directories and diff checks pass.
+- Open: None for the requested API YAML/taxonomy export. Unsupported OWL property extensions/annotation targets fail explicitly; existing node_kind import limitations and direct-only raw TriG/Lucene export remain documented.
+- Risks/Assumptions: Read-only live Fasnacht export to a temporary directory verified 16 classes, ten taxonomies and zero subsequent import-plan operations. No live data writes or changes to user model files. Per-file replacement is atomic, but refreshing an existing package is not a whole-directory transaction; avoid concurrent exports/readers while overwriting. Existing user-created API backup ZIP retained.
+
+### Update 2026-09-22 22:34
+- Decisions: Prompt for omitted OLDAP passwords at the shared connected-command boundary, with hidden terminal input; retain explicit --password for automation.
+- Implementation: connection_config requires --user, prompts with hide_input=True and replaces the frozen configuration in memory. Updated help, README, connection documentation and context. Regression coverage verifies hidden input, EOF abort before connection, explicit-password bypass, and prompt-free offline validation/help; all 39 API/CLI tests and diff checks pass.
+- Open: None for the password prompt.
+- Risks/Assumptions: No credential persistence, API/library changes or live operations. Interactive prompting is restricted to commands that invoke connection_config.
+
+### Update 2026-09-22 22:29
+- Decisions: Keep strict pre-write backup validation; fix malformed model serialization at its OLDAPLIB source instead of bypassing validation or rewriting downloads in the client.
+- Implementation: Wrap RDFLib syntax/parser failures in a concise CLI-compatible error with export line and no-writes status. Added invalid-export regression; 36 API tests pass. Corrected sibling OLDAPLIB external ontology/empty-class TriG serialization and ontology rdf:type, with three focused library tests. Built and installed an unpublished 0.7.21 wheel into the actual launchd Python 3.13 API runtime and used guarded make restart.
+- Open: User may rerun the import without --dry-run; nine planned changes remain. Publish a normal new OLDAPLIB release before distributing the server-side fixes beyond this local environment.
+- Risks/Assumptions: Original failure was before any import mutation or backup creation. Read-only verification against the restarted local API successfully parsed 1,524 RDF triples and created/checked a temporary 45,368-byte ZIP with all ten taxonomies; no ontology changes applied. No new API routes, production deployment or PyPI publication. Snapshot retains the previously documented recovery limitations.
+
+### Update 2026-09-22 22:17
+- Decisions: Treat YAML editor aliases and API DASH identifiers as the same value, avoiding spurious updates on every ontology import.
+- Implementation: Normalize editor payloads and comparisons through the existing Editor enum; preserve null removal and reject invalid names before writes. Added regression tests for equivalent aliases, actual changes and null/invalid values; all 35 API tests and diff checks pass. Updated the API contract documentation.
+- Open: Repeat the user's live dry-run; if current editor settings already match, its 33 operations should reduce to nine (one archiveUnit addition and eight order changes).
+- Risks/Assumptions: The pasted dry-run does not include previous editor values, so the exact remaining count requires a fresh read. No live writes performed.
+
+### Update 2026-09-22 22:11
+- Decisions: Make ontology load an oldap-api client by default, retaining explicit --transport direct for administration. Preserve omitted class properties unless --remove-unused is supplied; respect the existing conservative class-in-use guard. No oldap-api/oldaplib changes or new dependencies.
+- Implementation: Added authenticated HTTP session/refresh transport, read-only ontology and taxonomy planning, dependency-ordered class creation, YAML-to-API field translation, guarded removals, --dry-run, per-request progress/failure reporting and exclusive API ZIP snapshots. Updated direct synchronization defaults and public documentation/context. 111 tests pass across the two test directories (including 32 new API contract/failure tests and direct-removal regression); current Fasnacht YAML prepares offline with 16 classes and 10 lists; CLI help and diff checks pass.
+- Open: Rehearse create/replay/extend/remove and recovery on a disposable development project against the deployed API. API graph replacement, Lucene administration and node_kind writes remain unsupported; other CLI commands retain their existing transports.
+- Risks/Assumptions: API operations commit independently; no concurrent schema writers, automatic rollback or ambiguous-write retries. ZIP snapshots are API exports, not raw graph backups or project-load inputs. The existing API reports class-in-use as a specific HTTP 500 message; unknown errors stop execution. No live data changes, deployment, package publication or Git commit performed.
+
 ### Update 2026-09-13 22:48
 - Decisions: Make docker-build self-sufficient when the tagged oldap-tools release has not yet been published to PyPI; only confirmed HTTP 404 authorizes automatic publication.
 - Implementation: Added documented ensure-pypi-release prerequisite and stdlib helper with tag/package agreement, registry timeout/error handling, fresh temporary build artifacts, Poetry publication and bounded visibility polling. Six isolated tests and Make dry-run/diff checks pass.

@@ -350,6 +350,35 @@ def _lucene_field_defaults(field_name: str, spec: str | list[str] | dict[str, An
 
 
 def _build_lucene_payload(name: str, spec: dict[str, Any], context: Context) -> dict[str, Any]:
+    """Expand shorthand QNames or preserve an exclusive native configuration.
+
+    Native input receives transport-level validation before any import writes;
+    GraphDB remains responsible for validating advanced option semantics.
+    """
+    if "configuration" in spec:
+        if set(spec) != {"configuration"}:
+            raise ValueError("Native Lucene configuration cannot be combined with shorthand options.")
+        configuration = spec["configuration"]
+        if not isinstance(configuration, dict):
+            raise ValueError("Native Lucene configuration must be a mapping.")
+        result = json.loads(json.dumps(configuration, allow_nan=False))
+        types = result.get("types")
+        fields = result.get("fields", [] if result.get("detectFields") is True else None)
+        if not isinstance(types, list) or not types or not all(isinstance(value, str) and value for value in types):
+            raise ValueError("Native Lucene configuration needs a nonempty types array.")
+        if not isinstance(fields, list) or (not fields and result.get("detectFields") is not True):
+            raise ValueError("Native Lucene configuration needs fields or detectFields.")
+        names = set()
+        for field in fields:
+            if not isinstance(field, dict) or not isinstance(field.get("fieldName"), str) or not field["fieldName"]:
+                raise ValueError("Every native Lucene field needs a fieldName.")
+            if field["fieldName"] in names:
+                raise ValueError("Native Lucene field names must be unique.")
+            names.add(field["fieldName"])
+            chain = field.get("propertyChain")
+            if not isinstance(chain, list) or not chain or not all(isinstance(value, str) and value for value in chain):
+                raise ValueError("Every native Lucene field needs a nonempty propertyChain.")
+        return result
     fields = spec.get("fields") or {}
     if isinstance(fields, dict):
         field_items = fields.items()
@@ -379,6 +408,11 @@ def _build_lucene_payload(name: str, spec: dict[str, Any], context: Context) -> 
 def _merge_lucene_payloads(connector_name: str, payloads: list[dict[str, Any]]) -> dict[str, Any]:
     if not payloads:
         raise ValueError(f'Lucene connector "{connector_name}" needs at least one specification.')
+
+    if len(payloads) == 1:
+        if not payloads[0].get("types") or not (payloads[0].get("fields") or payloads[0].get("detectFields") is True):
+            raise ValueError("Lucene configuration needs types and fields (or detectFields).")
+        return payloads[0]
 
     merged = {
         "fields": [],
@@ -424,16 +458,18 @@ def _merge_lucene_payloads(connector_name: str, payloads: list[dict[str, Any]]) 
 
 
 def _lucene_connector_exists(con: Connection, connector_name: str) -> bool:
+    Xsd_NCName(connector_name, validate=True)
     sparql = f"""
     PREFIX luc: <http://www.ontotext.com/connectors/lucene#>
     ASK {{
-        ?connector luc:listConnectors "inst:{connector_name}" .
+        <http://www.ontotext.com/connectors/lucene/instance#{connector_name}> luc:listConnectors ?name .
     }}
     """
     return con.query(sparql)["boolean"]
 
 
 def _drop_lucene_connector(con: Connection, connector_name: str) -> None:
+    Xsd_NCName(connector_name, validate=True)
     sparql = f"""
     PREFIX luc: <http://www.ontotext.com/connectors/lucene#>
     PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
@@ -445,15 +481,16 @@ def _drop_lucene_connector(con: Connection, connector_name: str) -> None:
 
 
 def _create_lucene_connector(con: Connection, connector_name: str, payload: dict[str, Any]) -> None:
-    payload_json = json.dumps(payload, ensure_ascii=False, indent=2)
+    Xsd_NCName(connector_name, validate=True)
+    from rdflib import Literal
+    payload_json = Literal(json.dumps(payload, ensure_ascii=False, allow_nan=False)).n3()
     sparql = f"""
     PREFIX luc: <http://www.ontotext.com/connectors/lucene#>
     PREFIX inst: <http://www.ontotext.com/connectors/lucene/instance#>
     INSERT DATA {{
-        inst:{connector_name} luc:createConnector '''{payload_json}''' .
+        inst:{connector_name} luc:createConnector {payload_json} .
     }}
     """
-    print(sparql)
     con.update_query(sparql)
 
 
@@ -470,12 +507,13 @@ def _read_lucene_connector_payload(con: Connection, connector_name: str) -> dict
     """
     result = con.query(sparql)
     bindings = result.get("results", {}).get("bindings", [])
-    if not bindings:
-        return None
+    if len(bindings) != 1:
+        raise ValueError("Existing Lucene connector returned no unique configuration.")
     value = bindings[0].get("options", {}).get("value")
-    if not value:
-        return None
-    return json.loads(value)
+    configuration = json.loads(value)
+    if not isinstance(configuration, dict):
+        raise ValueError("Existing Lucene connector returned invalid configuration.")
+    return configuration
 
 
 def _iri_to_yaml_ref(context: Context, value: str) -> str:
@@ -483,78 +521,14 @@ def _iri_to_yaml_ref(context: Context, value: str) -> str:
     return str(qname) if qname is not None else value
 
 
-def _lucene_field_yaml(field: dict[str, Any], context: Context) -> tuple[str | None, Any]:
-    field_name = field["fieldName"]
-    chain = [_iri_to_yaml_ref(context, item) for item in field.get("propertyChain", [])]
-    if not chain:
-        raise ValueError(f'Lucene field "{field_name}" has no propertyChain.')
-
-    defaults = {
-        "indexed": True,
-        "stored": True,
-        "analyzed": True,
-        "multivalued": True,
-        "ignoreInvalidValues": False,
-        "facet": False,
-    }
-    extras = {key: field[key] for key, value in defaults.items() if key in field and field[key] != value}
-
-    if len(chain) == 1:
-        auto_name = _lucene_field_name_from_property(chain[0])
-        if field_name == auto_name and not extras:
-            return None, chain[0]
-        if not extras:
-            return field_name, chain[0]
-        return field_name, {"chain": chain[0], **extras}
-
-    return field_name, {"chain": chain, **extras}
-
-
 def _dump_lucene_connector(con: Connection, project: Project) -> dict[str, Any] | None:
+    """Export complete native options without dropping advanced GraphDB settings."""
     connector_name = str(project.projectShortName)
     payload = _read_lucene_connector_payload(con, connector_name)
     if not payload:
         return None
 
-    context = Context(name="OLDAP_TOOLS_ONTOLOGY_DUMP")
-    context[project.projectShortName] = project.namespaceIri
-
-    spec: dict[str, Any] = {
-        "types": [_iri_to_yaml_ref(context, item) for item in payload.get("types", [])],
-    }
-    defaults = {
-        "languages": ["en", "de", "fr", "it"],
-        "readonly": False,
-        "detectFields": False,
-        "importGraph": False,
-        "skipInitialIndexing": False,
-        "boostProperties": [],
-        "stripMarkup": False,
-    }
-    for key, default in defaults.items():
-        if key in payload and payload[key] != default:
-            spec[key] = payload[key]
-
-    field_list: list[Any] = []
-    field_map: dict[str, Any] = {}
-    use_field_map = False
-    for field in payload.get("fields", []):
-        field_name, field_spec = _lucene_field_yaml(field, context)
-        if field_name is None:
-            field_list.append(field_spec)
-            if use_field_map:
-                field_map[_lucene_field_name_from_property(field_spec)] = field_spec
-        else:
-            if not use_field_map:
-                field_map.update({_lucene_field_name_from_property(item): item for item in field_list})
-                use_field_map = True
-            field_map[field_name] = field_spec
-    if use_field_map:
-        spec["fields"] = field_map
-    else:
-        spec["fields"] = field_list
-
-    return {connector_name: spec}
+    return {connector_name: {"configuration": payload}}
 
 
 def _apply_lucene_connectors(con: Connection, project: Project, ontology: dict[str, Any], mode: str) -> None:
@@ -566,6 +540,8 @@ def _apply_lucene_connectors(con: Connection, project: Project, ontology: dict[s
     connector_specs = ontology.get("lucene_connectors") or {}
     if not connector_specs:
         return
+    if len(connector_specs) > 1 and any("configuration" in spec for spec in connector_specs.values()):
+        raise ValueError("Native Lucene configuration must be the only connector specification.")
     connector_name = str(project.projectShortName)
     payload = _merge_lucene_payloads(
         connector_name,
@@ -661,7 +637,12 @@ def _sync_property(existing: PropertyClass, desired_spec: dict[str, Any], lists:
             _set_attr(existing, attr, None)
 
 
-def _sync_resource(existing: ResourceClass, desired_spec: dict[str, Any], desired: ResourceClass, lists: dict[str, OldapList]) -> None:
+def _sync_resource(existing: ResourceClass, desired_spec: dict[str, Any], desired: ResourceClass, lists: dict[str, OldapList], *, remove_unused: bool = False) -> None:
+    """Apply explicit class fields; preserve omitted properties unless opted in.
+
+    Removal is still subject to OLDAPLIB's transactional in-use checks. This
+    option never deletes omitted classes or standalone property definitions.
+    """
     for attr, key in ((ResClassAttribute.LABEL, "label"), (ResClassAttribute.COMMENT, "comment"), (ResClassAttribute.CLOSED, "closed")):
         if key in desired_spec:
             _set_attr(existing, attr, desired.get(attr))
@@ -680,11 +661,11 @@ def _sync_resource(existing: ResourceClass, desired_spec: dict[str, Any], desire
         else:
             _sync_property(current_prop, prop_spec, lists)
     for prop_iri, _prop in list(existing.properties_items()):
-        if prop_iri not in desired_iris:
+        if remove_unused and prop_iri not in desired_iris:
             del existing[prop_iri]
 
 
-def _apply_update(con: Connection, project: Project, ontology: dict[str, Any], lists: dict[str, OldapList]) -> None:
+def _apply_update(con: Connection, project: Project, ontology: dict[str, Any], lists: dict[str, OldapList], *, remove_unused: bool = False) -> None:
     try:
         model = DataModel.read(con, project, ignore_cache=True)
     except OldapErrorNotFound:
@@ -726,7 +707,7 @@ def _apply_update(con: Connection, project: Project, ontology: dict[str, Any], l
         if existing is None:
             model[key] = desired
         elif isinstance(existing, ResourceClass):
-            _sync_resource(existing, spec, desired, lists)
+            _sync_resource(existing, spec, desired, lists, remove_unused=remove_unused)
     model.update()
 
 
@@ -765,6 +746,7 @@ def load_ontology(
     connector_mode: str,
     backup: bool,
     backup_out: Path | None,
+    remove_unused: bool = False,
     graphdb_user: str | None = None,
     graphdb_password: str | None = None,
 ) -> None:
@@ -800,7 +782,7 @@ def load_ontology(
             model = _build_datamodel(con, project, ontology, lists)
             model.create()
         elif mode == "update":
-            _apply_update(con, project, ontology, lists)
+            _apply_update(con, project, ontology, lists, remove_unused=remove_unused)
         else:
             raise ValueError(f'Unknown mode "{mode}"')
         _apply_lucene_connectors(con, project, ontology, connector_mode)
@@ -943,6 +925,7 @@ def dump_ontology(
     user: str,
     password: str,
     include_taxonomies: bool = False,
+    include_connectors: bool = True,
     graphdb_user: str | None = None,
     graphdb_password: str | None = None,
 ) -> None:
@@ -997,7 +980,7 @@ def dump_ontology(
     doc["ontology"]["classes"] = {}
     for qname in model.get_resclasses():
         doc["ontology"]["classes"][str(qname)] = _dump_resource(model[qname])
-    lucene_connectors = _dump_lucene_connector(con, project)
+    lucene_connectors = _dump_lucene_connector(con, project) if include_connectors else None
     if lucene_connectors:
         doc["ontology"]["lucene_connectors"] = lucene_connectors
     if out.suffix == ".gz":

@@ -63,7 +63,8 @@ property:
   editor: any(str(), null(), required=False)
 
 lucene_connector:
-  types: list(str())
+  configuration: map(required=False)
+  types: list(str(), required=False)
   languages: list(str(), required=False)
   fields: any(map(str(), any()), list(any()), required=False)
   readonly: bool(required=False)

@@ -233,7 +233,8 @@ class DataYamlTest(unittest.TestCase):
         result = self.runner.invoke(app, ["project", "load"])
 
         self.assertNotEqual(result.exit_code, 0)
-        self.assertIn("Connected commands require --user and --password", result.output)
+        self.assertIn("Connected commands require --user", result.output)
+        self.assertNotIn("OLDAP password:", result.output)
 
     @patch("oldap_tools.cli.run_data_import")
     def test_import_command_reports_read_only_plan(self, run_import) -> None:

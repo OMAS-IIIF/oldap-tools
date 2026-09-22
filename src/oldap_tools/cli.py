@@ -1,4 +1,5 @@
 from pathlib import Path
+from dataclasses import replace
 
 import typer
 
@@ -24,6 +25,9 @@ from oldap_tools.load_list import load_list
 from oldap_tools.load_project import load_project
 from oldap_tools.load_sysgraph import load_sysgraph, restore_sysgraph, purge_sysgraph, SystemGraphs
 from oldap_tools.ontology import dump_ontology, load_ontology, validate_ontology_yaml
+from oldap_tools.ontology_api import load_ontology_api
+from oldap_tools.ontology_api_dump import dump_ontology_api
+from oldaplib.src.helpers.oldaperror import OldapError
 from oldap_tools.staging_folders import ensure_mobile_folders
 from oldap_tools import __version__
 
@@ -57,7 +61,7 @@ def app_callback(ctx: typer.Context,
                  api_base: str = typer.Option("http://localhost:8000", "--api", help="OLDAP API base URL"),
                  media_base: str = typer.Option("http://localhost:8088", "--media", help="OLDAP media-server base URL"),
                  user: str | None = typer.Option(None, "--user", "-u", help="OLDAP user (required for connected commands)"),
-                 password: str | None = typer.Option(None, "--password", "-p", help="OLDAP password (required for connected commands)", hide_input=True),
+                 password: str | None = typer.Option(None, "--password", "-p", help="OLDAP password (prompted without echo for connected commands when omitted)", hide_input=True),
                  graphdb_user: str = typer.Option(None, "--graphdb_user", envvar="GRAPHDB_USER", help="GraphDB user"),
                  graphdb_password: str = typer.Option(None, "--graphdb_password", envvar="GRAPHDB_PASSWORD", help="GraphDB password", hide_input=True)
                  ):
@@ -75,20 +79,23 @@ def app_callback(ctx: typer.Context,
 
 
 def connection_config(ctx: typer.Context) -> AppConfig:
-    """Return CLI configuration after enforcing connected-command credentials."""
+    """Require a user and prompt once without echo when its password is missing.
+
+    Only connected commands call this boundary. Offline validation and help never
+    prompt. The immutable configuration is replaced in memory; cancellation or
+    EOF aborts before a connection is opened.
+    """
     cfg = ctx.obj
     if not isinstance(cfg, AppConfig):
         raise typer.BadParameter("OLDAP command configuration is unavailable.")
-    missing = []
     if not cfg.user:
-        missing.append("--user")
-    if not cfg.password:
-        missing.append("--password")
-    if missing:
         raise typer.BadParameter(
-            f"Connected commands require {' and '.join(missing)}. "
+            "Connected commands require --user. "
             "Offline validate commands do not require credentials."
         )
+    if not cfg.password:
+        cfg = replace(cfg, password=typer.prompt("OLDAP password", hide_input=True))
+        ctx.obj = cfg
     return cfg
 
 project = typer.Typer(help="Project-related commands")
@@ -224,11 +231,34 @@ def ontology_validate(
 def ontology_load(
         ctx: typer.Context,
         inf: Path = typer.Option(..., "--inf", "-i", help="Input ontology YAML file"),
-        mode: str = typer.Option("update", "--mode", "-m", help="Load mode: 'update' or 'replace'"),
+        transport: str = typer.Option("api", "--transport", help="Connection transport: 'api' (default) or 'direct'"),
+        mode: str = typer.Option("update", "--mode", "-m", help="Load mode: 'update' or 'replace' (direct only)"),
+        remove_unused: bool = typer.Option(False, "--remove-unused", help="Request removal of omitted class properties, subject to server in-use checks"),
+        dry_run: bool = typer.Option(False, "--dry-run", help="Read live API state and show planned changes without applying them"),
         connectors: str = typer.Option("skip", "--connectors", help="Lucene connector mode: 'skip', 'create', or 'replace'"),
         backup: bool = typer.Option(True, "--backup/--no-backup", help="Dump model and lists before loading"),
-        backup_out: Path | None = typer.Option(None, "--backup-out", help="Backup TriG gzip output file")):
+        backup_out: Path | None = typer.Option(None, "--backup-out", help="API snapshot .zip or direct backup .trig.gz output file")):
+    """Load via OLDAP API by default; retain explicit direct administration."""
+    if transport not in {"api", "direct"}:
+        raise typer.BadParameter("--transport must be api or direct.")
+    if mode not in {"update", "replace"}:
+        raise typer.BadParameter("--mode must be update or replace.")
+    if connectors not in {"skip", "create", "replace"}:
+        raise typer.BadParameter("--connectors must be skip, create or replace.")
+    if transport == "api" and mode != "update":
+        raise typer.BadParameter("API loading supports --mode update. Use --transport direct for full model replacement.")
+    if transport == "direct" and dry_run:
+        raise typer.BadParameter("--dry-run is available with --transport api only.")
     cfg = connection_config(ctx)
+    if transport == "api":
+        try:
+            load_ontology_api(api_base=cfg.api_base, user=cfg.user, password=cfg.password,
+                              inf=inf, remove_unused=remove_unused, dry_run=dry_run, connector_mode=connectors,
+                              backup=backup, backup_out=backup_out, emit=typer.echo)
+        except (ValueError, OSError, OldapError) as error:
+            typer.echo(f"ERROR: {error}", err=True)
+            raise typer.Exit(code=1) from error
+        return
     load_ontology(graphdb_base=cfg.graphdb_base,
                   repo=cfg.repo,
                   inf=inf,
@@ -238,6 +268,7 @@ def ontology_load(
                   connector_mode=connectors,
                   backup=backup,
                   backup_out=backup_out,
+                  remove_unused=remove_unused,
                   graphdb_user=cfg.graphdb_user,
                   graphdb_password=cfg.graphdb_password)
 
@@ -246,22 +277,47 @@ def ontology_load(
 def ontology_dump(
         ctx: typer.Context,
         project_id: str = typer.Argument(..., help="Project ID (e.g. fasnacht, hyha, ...)"),
-        out: Path = typer.Option(Path("ontology.yaml"), "--out", "-o", help="Output file"),
+        transport: str = typer.Option("api", "--transport", help="Connection transport: 'api' (default) or 'direct'"),
+        out: Path | None = typer.Option(None, "--out", "-o", help="Single output file (default: ontology.yaml)"),
+        out_dir: Path | None = typer.Option(None, "--out-dir", help="API YAML package directory; created if missing"),
+        overwrite: bool = typer.Option(False, "--overwrite", help="Replace existing API dump files"),
         fmt: str = typer.Option("yaml", "--format", "-f", help="Output format: 'yaml' or 'trig'"),
+        include_connectors: bool = typer.Option(True, "--include-connectors/--no-connectors", help="Include Lucene configuration in YAML dumps"),
         include_taxonomies: bool = typer.Option(
             False,
             "--include-taxonomies",
-            help="When dumping YAML, also write all project taxonomies as <ListId>.yaml and reference them from ontology.lists.",
+            help="Include all taxonomies and relative YAML references; API mode requires --out-dir.",
         )):
+    """Export via the API, or explicitly select the legacy direct dump."""
+    if transport not in {"api", "direct"}:
+        raise typer.BadParameter("--transport must be api or direct.")
+    if out is not None and out_dir is not None:
+        raise typer.BadParameter("Use either --out-dir or --out, not both.")
+    if transport == "api" and fmt != "yaml":
+        raise typer.BadParameter("API dumps use YAML. Use --transport direct for a TriG graph backup.")
+    if transport == "api" and include_taxonomies and out_dir is None:
+        raise typer.BadParameter("--include-taxonomies requires --out-dir with API transport.")
+    if transport == "direct" and (out_dir is not None or overwrite):
+        raise typer.BadParameter("--out-dir and --overwrite are API dump options; use --out for direct dumps.")
     cfg = connection_config(ctx)
+    if transport == "api":
+        try:
+            dump_ontology_api(api_base=cfg.api_base, user=cfg.user, password=cfg.password,
+                              project_id=project_id, out=out, out_dir=out_dir,
+                              include_taxonomies=include_taxonomies, overwrite=overwrite, include_connectors=include_connectors, emit=typer.echo)
+        except (ValueError, OSError, OldapError) as error:
+            typer.echo(f"ERROR: {error}", err=True)
+            raise typer.Exit(code=1) from error
+        return
     dump_ontology(graphdb_base=cfg.graphdb_base,
                   repo=cfg.repo,
                   project_id=project_id,
-                  out=out,
+                  out=out or Path("ontology.yaml"),
                   fmt=fmt,
                   user=cfg.user,
                   password=cfg.password,
                   include_taxonomies=include_taxonomies,
+                  include_connectors=include_connectors,
                   graphdb_user=cfg.graphdb_user,
                   graphdb_password=cfg.graphdb_password)
 

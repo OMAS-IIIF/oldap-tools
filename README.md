@@ -22,6 +22,7 @@ Structured documentation is available in [`docs/`](docs/index.md):
 - [Installation and Connection](docs/installation.md)
 - [Command Reference](docs/commands.md)
 - [Ontology YAML](docs/ontology-yaml.md)
+- [Ontology Loading Through the API](docs/ontology-api.md)
 - [Archive Structure YAML](docs/archive-yaml.md)
 - [Instance Data YAML/JSON](docs/data-yaml.md)
 
@@ -60,8 +61,9 @@ The CLI tool provides the following commands:
 
 - `--graphdb`, `-g`: URL of the GraphDB server (default: "http://localhost:7200")
 - `--repo`, `-r`: Name of the repository (default: "oldap")
+- `--api`: OLDAP API URL for ontology loading and media operations (default: "http://localhost:8000")
 - `--user`, `-u`: OLDAP user which performs connected operations
-- `--password` `-p`: OLDAP password for connected operations
+- `--password` `-p`: OLDAP password; connected commands prompt without echo when omitted
 - `--graphdb_user`: GraphDB user (default: None). Not needed if GraphDB runs without athentification.
 - `--graphdb_password`: GraphDB password (default: None). Not needed if GraphDB runs without athentification.
 - `--verbose`, `-v`: Print more information
@@ -152,12 +154,19 @@ This command validates an ontology YAML file against the bundled schema:
 
 This command loads or updates a project datamodel from a YAML file:
 
-```oldap-tools [common_options] ontology load --inf <filename> [--mode update|replace] [--connectors create|replace] [--backup|--no-backup] [--backup-out <filename>]```
+```oldap-tools --api <api-url> --user <user> ontology load --inf <filename> [--dry-run] [--remove-unused]```
 
-By default, the command makes a TriG gzip backup of the model and list graphs before loading. The
-`replace` mode deletes the existing datamodel graphs (`<project>:shacl` and `<project>:onto`) and
-recreates them from YAML. The `update` mode compares the YAML classes and properties with the current
-datamodel and lets `oldaplib` perform the corresponding updates.
+The omitted password is prompted without echo. The command uses `oldap-api` by default, with an API ZIP snapshot before
+changes. Omitted properties are preserved unless `--remove-unused` is supplied; server in-use
+checks still apply. Use `--dry-run` for a live change preview. Each API mutation is a separate
+transaction, so earlier successful changes remain committed if a later request fails.
+See [Operations and Backups](docs/operations.md) for the complete workflow and
+[Ontology API](docs/ontology-api.md) for contracts and limitations.
+
+`--transport direct` retains the GraphDB administrative path and its TriG gzip backup.
+`--mode replace` requires direct transport and deletes/recreates the datamodel graphs
+(`<project>:shacl` and `<project>:onto`). The separate `--connectors create|replace`
+option also works through the updated API; API `replace` skips an identical connector configuration.
 Set an attribute to `null` in update mode to delete it, for example `label`, `comment`, `name`,
 `description`, `min_count`, or `max_count`.
 
@@ -227,21 +236,30 @@ ontology:
 ```
 
 `oldap-tools` creates one GraphDB Lucene connector per project. The connector
-name is always the project short name. Multiple entries below
-`lucene_connectors` are treated as YAML grouping/specification blocks and are
-merged into that project connector.
+name is always the project short name. Multiple shorthand entries below
+`lucene_connectors` are merged into that project connector. Dumps use one native
+`configuration` entry to preserve all GraphDB options; this form cannot be mixed
+with other groups.
 
 ## Ontology dump
 
-This command dumps an ontology datamodel either as YAML or as a TriG gzip file containing the
-`<project>:shacl`, `<project>:onto`, and `<project>:lists` graphs:
+This command exports the current ontology through the API. For a portable package
+including all taxonomies, supply an output directory (created if missing):
 
-```oldap-tools [common_options] ontology dump [-out <filename>] [--format yaml|trig] [--include-taxonomies] <project_id>```
+```bash
+oldap-tools --api http://localhost:8000 --user rosenth ontology dump fasnacht \
+  --out-dir ./export/fasnacht --include-taxonomies
+```
 
-When dumping YAML, `--include-taxonomies` writes all project lists as separate `<ListId>.yaml`
-files next to the ontology YAML file and adds an `ontology.lists` block that references them.
-External ontology references are always included with their namespace, labels, comments, and
-proposed resource, datatype-property, and object-property names.
+The directory contains `ontology.yaml` and `taxonomies/<ListId>.yaml`, linked by relative
+`ontology.lists` paths. Project metadata, external ontology declarations, standalone properties
+and classes are included, along with native Lucene configuration when a connector
+exists. Use `--no-connectors` to omit it. Existing export files require `--overwrite`;
+unrelated files remain.
+The password is prompted without echo. Use `--out model.yaml` for a single file without taxonomies.
+
+For the legacy TriG graph backup, select `--transport direct --format trig --out model.trig.gz`.
+See [Ontology API](docs/ontology-api.md) for roundtrip, overwrite and export-scope details.
 
 ## Ensure the Staging Mobile folder
 

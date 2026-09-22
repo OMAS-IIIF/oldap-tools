@@ -156,7 +156,7 @@ Use `to_class: list:<ListId>` to point to the node class generated for a hierarc
 
 ## Lucene Connectors
 
-Lucene connectors are optional and are skipped unless `ontology load` is called with `--connectors create` or `--connectors replace`.
+Lucene connectors are optional and are skipped unless `ontology load` is called with `--connectors create` or `--connectors replace`. Both transports support these modes.
 
 ```yaml
 lucene_connectors:
@@ -173,11 +173,11 @@ lucene_connectors:
           - fasnacht:archiveObjectTitle
 ```
 
-OLDAP Tools creates one GraphDB Lucene connector per project. The connector name is always the project short name. Multiple entries under `lucene_connectors` are treated as grouping blocks and merged into that one project connector.
+OLDAP Tools creates one GraphDB Lucene connector per project. The connector name is always the project short name. Multiple shorthand entries under `lucene_connectors` are treated as grouping blocks and merged into that one project connector. Native `configuration` must be the sole connector entry.
 
 Single-property fields may be written as a QName. Multi-step chains must provide an explicit `fieldName`.
 
-Supported connector settings:
+Supported shorthand connector settings:
 
 - `types`
 - `languages`
@@ -188,3 +188,24 @@ Supported connector settings:
 - `skipInitialIndexing`
 - `boostProperties`
 - `stripMarkup`
+
+Dumps use the native form to retain all GraphDB creation options, including
+advanced field filters and analyzers:
+
+```yaml
+lucene_connectors:
+  fasnacht:
+    configuration:
+      types:
+        - http://fasnacht.digital/ns/ArchiveObject
+      fields:
+        - fieldName: title
+          propertyChain:
+            - http://schema.org/name
+          analyzed: true
+```
+
+Native values are passed verbatim, so use full IRIs rather than shorthand QNames.
+`configuration` cannot be combined with shorthand keys or other connector groups.
+Existing shorthand remains accepted. For modes, API requirements and roundtrip
+behavior, see [API workflow](ontology-api.md#lucene-configuration-roundtrip).

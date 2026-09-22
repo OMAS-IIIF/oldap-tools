@@ -4,16 +4,19 @@ This page documents what OLDAP Tools changes when loading YAML into an existing 
 
 ## Ontology Load Modes
 
-`ontology load` supports two modes:
+`ontology load` defaults to API transport and incremental updates. Direct
+administration also supports graph replacement:
 
 ```bash
 oldap-tools [common_options] ontology load --inf ontology.yaml --mode update
-oldap-tools [common_options] ontology load --inf ontology.yaml --mode replace
+oldap-tools [common_options] ontology load --transport direct --inf ontology.yaml --mode replace
 ```
 
 ### `update`
 
-`update` is the default and recommended mode. It reads the current datamodel and applies changes from YAML through `oldaplib`.
+`update` is the default and recommended mode. It reads the current datamodel and
+applies explicit YAML changes through existing `oldap-api` endpoints. The server
+uses `oldaplib`; `--transport direct` invokes that library locally.
 
 It can:
 
@@ -39,7 +42,11 @@ It does not delete `<project>:lists` directly. However, because list node classe
 
 ## Automatic Backup
 
-By default, `ontology load` writes a gzipped TriG backup before applying changes. The backup includes model and list graphs, but not project data.
+By default, API loading writes a ZIP snapshot before applying a nonempty plan.
+It includes the API model TriG export, project/model JSON and all project list
+YAML, plus reviewed connector state when requested, but no instance data or complete administrative graphs. It is not accepted
+by `project load`. Direct transport retains the gzipped model/list graph backup.
+See [Ontology API](ontology-api.md) for snapshot scope and recovery limitations.
 
 Disable only when you already have another reliable backup:
 
@@ -72,9 +79,11 @@ If a class exists:
 
 - `label`, `comment`, `closed`, and `superclass` are updated only when the corresponding key is present in YAML.
 - If `properties` is absent, the class property set is left unchanged.
-- If `properties` is present, the YAML property list is treated as the desired property set for that class.
+- If `properties` is present, supplied properties are added or updated; omitted properties remain unchanged by default.
 
-The last point is important: existing class properties that are not listed in YAML are removed from the resource class. This is intentional current behavior and differs from taxonomy merging.
+Only `--remove-unused` makes omitted class properties removal candidates. An
+absent `properties` key never requests deletion, even with this option. Classes
+and standalone definitions absent from YAML are never automatically deleted.
 
 ## Properties On Existing Resource Classes
 
@@ -84,9 +93,14 @@ When `properties` is present for an existing resource class:
 - Existing properties listed in YAML are updated.
 - Relationship targets declared with `to_class` replace the existing `sh:class`
   value when they differ.
-- Existing properties missing from YAML are removed from the resource class.
+- Existing properties missing from YAML are preserved unless `--remove-unused` is supplied.
 
-`oldaplib` performs permission and in-use checks during the update. If a removal or restrictive change would affect data that is already in use, the update can fail. Do not rely on that as the primary safety mechanism; treat the YAML property list as a complete class definition whenever `properties` is present.
+The API loader excludes standalone and foreign-project definitions from removal.
+`oldaplib` performs permission and in-use checks during updates. Its current guard
+may refuse removal for any class with instances, even if the particular property
+has no values. API loading prints `KEEP` for that specific refusal and continues;
+other failures stop the import. Direct transport propagates the library refusal.
+Review `--remove-unused --dry-run` before requesting synchronization.
 
 ## Standalone Properties
 
@@ -110,6 +124,17 @@ classes:
 
 Use this intentionally. A missing YAML key usually means "do not change this attribute"; a key set to `null` means "remove this attribute" where supported by the datamodel update logic.
 
+## Connector Updates
+
+Connector mode is independent of model mode. Loading defaults to
+`--connectors skip`, even when the YAML includes connector instructions. In API
+mode, `create` refuses an existing connector and `replace` leaves an identical
+configuration unchanged. A changed configuration is applied after model/list
+operations with a revision check. Native configuration replaces the complete
+connector configuration; it is not an additive field merge with the remote index.
+Direct `replace` explicitly rebuilds the connector. See
+[Operations](operations.md#lucene-connectors) for failures and backup scope.
+
 ## Recommended Workflow
 
 For existing production-like projects:
@@ -117,5 +142,9 @@ For existing production-like projects:
 1. Run with the default backup behavior.
 2. Validate YAML first with `ontology validate`.
 3. Prefer `--mode update`.
-4. Include full `properties` lists for resource classes when you intend class-property synchronization.
-5. Use taxonomy YAML freely for additive list growth, but do not expect it to rename, move, or delete existing nodes.
+4. Use `--dry-run` to inspect API changes; opt into removals with `--remove-unused` only when the supplied class property lists describe the intended retained set.
+5. Use taxonomy YAML for additive list growth, but do not expect it to rename, move, or delete existing nodes.
+6. Select connector mode explicitly and verify resource reads and search after application.
+
+For a complete command sequence and tests after Workbench changes, see
+[Operations and Backups](operations.md).

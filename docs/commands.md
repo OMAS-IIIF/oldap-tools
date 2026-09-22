@@ -89,16 +89,21 @@ oldap-tools [common_options] ontology load --inf ontology.yaml [options]
 
 Options:
 
-- `--mode`, `-m`: `update` or `replace`. Default: `update`.
-- `--connectors`: `skip`, `create`, or `replace`. Default: `skip`.
-- `--backup` / `--no-backup`: create a model/list backup before loading. Default: backup enabled.
-- `--backup-out`: explicit backup output file.
+- `--transport`: `api` (default) or `direct`.
+- `--mode`, `-m`: `update` (default); `replace` requires direct transport.
+- `--remove-unused`: opt in to guarded removal of omitted class properties.
+- `--dry-run`: preview planned API operations without applying them (API only).
+- `--connectors`: `skip` (default), `create`, or `replace`; supported with both transports.
+- `--backup` / `--no-backup`: back up pre-import model/list state before applying a nonempty plan; API snapshots also retain reviewed connector state when requested. Default: enabled.
+- `--backup-out`: API snapshot `.zip` or direct graph backup `.trig.gz`.
 
 See [Update Semantics](update-semantics.md) before using this command on an existing project.
+See [Operations and Backups](operations.md#api-ontology-workflow) for the full workflow, and
+[Ontology API](ontology-api.md) for authentication, endpoint contracts and partial-failure handling.
 
 ### `ontology dump`
 
-Dump a project ontology datamodel as YAML or as gzipped TriG.
+Dump a project ontology datamodel and its Lucene configuration through the API as YAML, optionally with taxonomy files.
 
 ```bash
 oldap-tools [common_options] ontology dump [options] <project_id>
@@ -107,10 +112,20 @@ oldap-tools [common_options] ontology dump [options] <project_id>
 Options:
 
 - `--out`, `-o`: output file. Default: `ontology.yaml`.
-- `--format`, `-f`: `yaml` or `trig`. Default: `yaml`.
-- `--include-taxonomies`: when dumping YAML, write all project taxonomies as separate `<ListId>.yaml` files and reference them from `ontology.lists`.
+- `--out-dir`: API package directory, created if missing; writes `ontology.yaml`. Mutually exclusive with `--out`.
+- `--include-taxonomies`: include all project taxonomy YAML files and relative `ontology.lists` references. API transport requires `--out-dir` and writes files under `taxonomies/`.
+- `--include-connectors/--no-connectors`: include native Lucene instructions in YAML (default: included; API requires matching server update).
+- `--overwrite`: replace conflicting API export files; unrelated files are retained. Default: refuse conflicts.
+- `--transport`: `api` (default) or the legacy `direct` transport.
+- `--format`, `-f`: `yaml` (default); `trig` requires direct transport.
 
-The TriG format includes `<project>:shacl`, `<project>:onto`, and `<project>:lists`, but not `<project>:data`.
+```bash
+oldap-tools --api http://localhost:8000 --user rosenth ontology dump fasnacht \
+  --out-dir ./export/fasnacht --include-taxonomies
+```
+
+Direct TriG includes `<project>:shacl`, `<project>:onto`, and `<project>:lists`, but not `<project>:data`.
+Direct YAML retains the existing file layout and overwrite behavior; the new directory and overwrite options apply to API exports.
 
 ## Archive Commands
 
@@ -332,7 +347,7 @@ Existing system graphs are first moved to backup graphs with a `_bak` suffix.
 Restore the last `_bak` system graph backup.
 
 ```bash
-oldap-tools [common_options] system restore <oldap|shared|admin>
+oldap-tools [common_options] system restore oldap
 ```
 
 ### `system purge`
@@ -340,5 +355,5 @@ oldap-tools [common_options] system restore <oldap|shared|admin>
 Clear the `_bak` backup graph for a system graph.
 
 ```bash
-oldap-tools [common_options] system purge <oldap|shared|admin>
+oldap-tools [common_options] system purge oldap
 ```

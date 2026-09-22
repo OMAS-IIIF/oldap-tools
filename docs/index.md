@@ -11,7 +11,8 @@ OLDAP Tools is a command-line utility for managing selected parts of an OLDAP in
 - [Instance Data YAML/JSON](data-yaml.md): versioned project resource data with explicit value semantics, local validation, and live read-only import preflight.
 - [Hierarchical Lists](lists.md): list YAML format and additive merge behavior.
 - [Update Semantics](update-semantics.md): what `update` and `replace` mean, including the important difference between taxonomy and resource-property updates.
-- [Operations and Backups](operations.md): backup behavior, project dumps, system graph restore/purge, and operational cautions.
+- [Ontology API](ontology-api.md): API contracts, native connector configuration, snapshots and transport limits.
+- [Operations and Backups](operations.md): API dump/preview/load workflow, backup scopes, recovery tests, Workbench/cache behavior and system graph operations.
 
 ## Main Concepts
 
@@ -28,6 +29,13 @@ Most project-level operations require an OLDAP user with sufficient OLDAP permis
 
 ## Safety Defaults
 
-The ontology loader defaults to `--mode update` and creates a model/list backup before loading. This is the recommended default for normal schema evolution.
+The ontology loader defaults to API transport and `--mode update`, preserves
+omitted properties, and creates an API ZIP snapshot before changes. Use
+`--dry-run` to preview changes and `--remove-unused` to request guarded removal.
+See [Ontology API](ontology-api.md) for the workflow and snapshot limitations.
 
-Use `--mode replace` only when you intentionally want to recreate the project datamodel graphs. It deletes `<project>:shacl` and `<project>:onto` and then rebuilds them from YAML.
+YAML dumps include Lucene configuration by default; loads retain `--connectors skip`
+unless `create` or `replace` is selected. API connector replacement skips an identical
+configuration. Model planning and export require the updated API's fresh GraphDB reads.
+
+Use `--transport direct --mode replace` only when you intentionally want to recreate the project datamodel graphs. It deletes `<project>:shacl` and `<project>:onto` and then rebuilds them from YAML.

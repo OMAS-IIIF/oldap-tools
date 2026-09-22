@@ -6,7 +6,7 @@ from types import SimpleNamespace
 from oldaplib.src.enums.propertyclassattr import PropClassAttr
 from oldaplib.src.xsd.xsd_qname import Xsd_QName
 
-from oldap_tools.ontology import _dump_property, _sync_property
+from oldap_tools.ontology import _dump_property, _sync_property, _sync_resource
 
 
 class _PropertyStub:
@@ -50,6 +50,17 @@ class TestOntologyPropertySync(unittest.TestCase):
             _dump_property(prop),
             {"iri": "schema:author", "to_class": "chama:Person"},
         )
+
+    def test_direct_sync_preserves_omitted_properties_by_default(self) -> None:
+        iri = Xsd_QName("chama:legacy", validate=False)
+        class ResourceStub(dict):
+            def properties_items(self):
+                return self.items()
+        existing = ResourceStub({iri: object()})
+        _sync_resource(existing, {"properties": []}, None, {})
+        self.assertIn(iri, existing)
+        _sync_resource(existing, {"properties": []}, None, {}, remove_unused=True)
+        self.assertNotIn(iri, existing)
 
 
 if __name__ == "__main__":

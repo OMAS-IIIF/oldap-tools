@@ -8,16 +8,21 @@
 
 ## Repository State
 
+- `ontology load` and `ontology dump` default to the existing OLDAP HTTP API (`--api`); `--transport direct` retains administrative GraphDB operations. Other command groups retain their current transports. Omitted class properties are preserved in both update paths unless `--remove-unused` is supplied. See `docs/ontology-api.md` for contracts, limits, snapshots and development acceptance steps.
 - Package source lives in `src/oldap_tools/`.
-- User documentation lives in `docs/`.
+- User documentation lives in `docs/`. `operations.md` is the operational entry point for API dump/preview/load, backup scopes and recovery/cache handling; `ontology-api.md` holds detailed API contracts and limits.
 - Example and active Fasnacht project definitions live in `fasnacht/`.
 - The package is managed with Poetry and exposes the `oldap-tools` console script.
-- Connection construction is centralized in `src/oldap_tools/connection.py`; normal CLI operations use `oldaplib`'s trusted direct mode without issuing access tokens or requiring JWT signing secrets. Media ingest authenticates through oldap-api because oldap-mediaserver correctly requires a short-lived user Bearer token.
-- Local validators for ontologies, archive trees, and instance data do not require credentials; connected commands validate that both OLDAP user and password were supplied.
+- Connection construction is centralized in `src/oldap_tools/connection.py`; direct CLI operations use `oldaplib`'s trusted direct mode without issuing access tokens or requiring JWT signing secrets. Media ingest authenticates through oldap-api because oldap-mediaserver correctly requires a short-lived user Bearer token.
+- Local validators for ontologies, archive trees, and instance data do not require credentials. Connected commands require --user and prompt without echo when --password is omitted; explicit passwords remain supported. Prompt cancellation/EOF aborts before connecting, and the supplied password remains only in the in-memory configuration.
 - The current worktree may contain user-created artifacts; do not reset or remove unrelated files.
 
 ## Architecture
 
+- `ontology_api_dump.py` exports API project/model JSON to validated canonical YAML. `--out-dir DIR --include-taxonomies` creates ontology.yaml plus taxonomies/<ListId>.yaml with relative references; --out retains single-file YAML/gzip output. Existing export files require --overwrite, symlink destinations are rejected, unrelated files remain, and all downloads/validation precede staged per-file publication (ontology.yaml last). The package is not a raw graph/audit backup and includes native Lucene configuration by default, with --no-connectors as an opt-out. Nonempty OWL property-type extensions/annotation targets unsupported by YAML are rejected. `list_api.read_api_lists` is shared with import planning and validates the complete taxonomy inventory. Live Fasnacht export/reimport preview verified 16 classes, ten taxonomies and zero changes on 2026-09-22.
+- `api_client.py` owns the authenticated HTTP session, proactive cookie-based access-token refresh, bounded requests and non-retryable mutation failures. `ontology_api.py` translates YAML to existing API contracts, reads complete project model/list state, plans changes, writes API ZIP snapshots and executes logged per-request transactions. `list_api.py` plans conservative taxonomy insertions. These modules do not open GraphDB connections. Model/list operations reuse existing routes; lucene_api.py uses the additive /admin/lucene/<project> endpoint. Backup exports require the 2026-09-22 OLDAPLIB TriG fixes (external ontology triples, propertyless class terminators, rdf:type); these are locally activated in an unpublished 0.7.21 wheel. Invalid TriG is reported as a controlled pre-write failure rather than leaking RDFLib's incompatible SyntaxError into Typer/Rich.
+- API ontology imports support incremental model/class/property/external-ontology changes, new project creation, taxonomy creation/extension and read-only `--dry-run`. New class creation follows superclass dependency order; property links follow class identities. API `--remove-unused` candidates are omitted class properties, excluding standalone/foreign definitions; the existing API's explicit class-in-use refusal preserves them. This is conservative class-level protection, not global predicate cleanup.
+- API snapshots are exclusive-create ZIP files containing project/model JSON, exported model TriG and all taxonomy YAML. They are not raw RDF graph backups and have no automatic restore command. Each API write is independently committed; imports stop on unrecognized failures and never retry ambiguous mutations. Concurrent schema writers are not supported. Graph replacement, node_kind writes and removal of class closed attributes remain outside the API import path. Connector create/replace is opt-in; identical API replacements do not rebuild the index and reviewed state is retained in lucene.json when a backup is written.
 - `cli.py` defines the Typer command surface.
 - `connection.py` is the single boundary for authenticated direct GraphDB connections.
 - `load_project.py`, `dump_project.py`, and `delete_projectdata.py` handle project graph operations.
@@ -52,6 +57,7 @@
 
 ## Current Roadmap
 
+- Rehearse API ontology loading on a disposable development project against the deployed API: create, unchanged replay, property/taxonomy extension, guarded removal on unused and instantiated classes, and failure recovery. Local contract tests do not establish deployed-version compatibility. Consider additional API-backed commands only after this path is verified.
 - Keep the OLDAP ontology/list tooling stable and documented.
 - `chama:IMG_1520` has been attached successfully and is visible through its 4032x3024 IIIF service in SALSAH.
 - Add copy implementations for URL sources and the reserved audio, video, document, and preserve-original ingest profiles only when their server-side contracts can be fully verified.
@@ -60,3 +66,9 @@
 - Exercise the archive YAML importer against a running development GraphDB, then add a Staging-tree generator that emits the same canonical YAML rather than creating a second import path.
 - Maintain `fasnacht/fasnachts-onto.md` as concise technical model documentation.
 - Maintain laienfreundliche Fasnacht object documentation in `fasnacht/objekte/` for domain experts who do not work with data modeling concepts.
+
+- Ontology YAML dump/load includes native Lucene connector configuration through the API; default load skip remains unchanged. See docs/ontology-api.md#lucene-configuration-roundtrip.
+
+- Local Lucene activation (2026-09-22): native API uses an unpublished development oldaplib wheel still versioned 0.7.21 and was safely restarted. Read-only dump/load planning preserves the Fasnacht connector and yields zero operations; user-confirmed recovery after Workbench graph deletion exposed and resolved stale model reads. Paired published releases remain pending.
+
+- Recovery freshness (2026-09-22): model JSON GET and TriG download bypass the DataModel cache, so Workbench graph deletion cannot make API import planning skip missing definitions. Scoped cache invalidation remains necessary for other direct GraphDB edits; never flush the writer-coordination Redis store.
