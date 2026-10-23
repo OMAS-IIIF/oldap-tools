@@ -1,5 +1,41 @@
 # CODEX_LOG
 
+### Update 2026-10-23 23:10
+- Decisions: Extend the active flat ObjectTaxonomy for catalog materials absent from current categories; retain object/media distinction.
+- Implementation: Added SoundRecording, ProjectedMedium, Manuscript, MixedMaterials with multilingual labels and definitions; documented the taxonomy reference in fasnacht-onto.yaml. Applied additive list loader locally after private repository backup; four node IRIs independently verified. Harvester imported/verified 59 records using these types plus existing Plakette; all 345 prior catalog records unchanged.
+- Open: Deploy the four list additions before extended Swisscovery imports in production.
+- Risks/Assumptions: No existing node deletion/reparenting and no new property/class; historical migration mappings remain historical. Local only.
+
+### Update 2026-10-23 01:31
+- Decisions: Keep fasnacht-onto.yaml canonical for derived PDF text; do not assert a document language.
+- Implementation: Added optional single-valued xsd:string searchableText and textExtraction on ArchiveMediaObject; added archiveMediaObjectText index field and empty language range for untagged strings. Applied only these model additions locally with repository backup, rebuilt merged connector, verified 10 document-only searches.
+- Open: Production model/index rollout remains pending.
+- Risks/Assumptions: Version 1 extraction JSON retains unreviewed raw page text and provenance; aggregate text is normalized for search. Existing Story lead-image edits preserved.
+
+### Update 2026-10-22 00:05
+- Decisions: Widen Story.leadImage target to shared:MediaObject so library and archive objects are allowed; retain min/max count 1.
+- Implementation: Updated canonical YAML and used oldap-tools API planning/backup/apply for exactly one class-target POST on local and production. Repeated planning confirms zero operations. Model backups: ../BACKUP/lead-image-model-{local,production}-20261022.zip.
+- Open: Compatible frontend rollout and production lead-image identity migration are coordinated in FasnachtsPage.
+- Risks/Assumptions: No other model attributes or instance data were changed by these imports; source YAML was validated. Local lead-data migration is separately backed up by the frontend tool.
+
+### Update 2026-10-21 23:13
+- Decisions: Apply the same isolated Story.referencesMedium addition to production using oldap-tools over https://api.oldap.org.
+- Implementation: Previewed exactly one PUT, validated and saved the pre-write model/taxonomy ZIP, then applied that operation. Fresh planning confirms zero remaining operations and identical taxonomy exports; saved the post-update model JSON in ../BACKUP/production-story-reference-20261021-231351.
+- Open: Application synchronization and bidirectional navigation remain unimplemented.
+- Risks/Assumptions: Additive optional property only; no instance-data mutations requested. Backup covers the model and taxonomies, not the full repository. Production SSH was unavailable; the authenticated API workflow succeeded.
+
+### Update 2026-10-21 23:11
+- Decisions: Apply only Story.referencesMedium to the local model through the existing oldap-tools API import workflow.
+- Implementation: Generated a minimal YAML import from the canonical property; previewed and applied exactly one property creation via localhost:8000. Repeated preview reports zero operations. Saved model ZIP and explicit repository before/after snapshots in ../BACKUP/local-story-reference-20261021-231107.
+- Open: Save-time reference synchronization, existing-story reconciliation and archive/story navigation.
+- Risks/Assumptions: RDF graph comparison confirms changes only in fasnacht onto/shacl; instance data and all other explicit graphs remain unchanged. Production was not accessed.
+
+### Update 2026-10-21 23:07
+- Decisions: Describe Story.referencesMedium as an optional multi-valued relation to shared:MediaObject for embedded media from either the library or archive.
+- Implementation: Completed English, German, French and Italian labels/descriptions in fasnacht/fasnacht-onto.yaml; retained the user's target class and order. Ontology YAML schema validation passes.
+- Open: Live model update, save-time reference synchronization and archive/story navigation are separate follow-up steps.
+- Risks/Assumptions: Metadata-only YAML change; no live model or data writes. Omitted cardinality bounds retain 0–n semantics.
+
 ### Update 2026-09-22 23:37
 - Decisions: Make operations.md the practical entry point for the API ontology workflow, with explicit transport/backup scope and recovery guidance. User confirmed all resources are visible again after the model recovery.
 - Implementation: Reworked operations.md around dump/validate/preview/apply/verify, native Lucene modes, ZIP contents, partial failures, isolated restoration tests and Workbench cache freshness. Aligned README, command reference, API contracts, installation, update semantics, YAML examples, docs index and stable project context. Corrected the direct replacement command, stale connector exclusions and outdated property-removal checklist. Checked 43 relative links/anchors and shell syntax of 45 examples across nine documents; diff whitespace checks pass.

@@ -16,6 +16,8 @@ ontology:
       it: Il Carnevale di Basilea e patrimonio culturale immateriale dell'umanita dell'UNESCO dal 2017. La piattaforma fasnacht.digital e un portale informativo rivolto ad associazioni, istituzioni e privati che desiderano contribuire, curiosare e trovare informazioni.
   lists:
     CreativeCommons: ./CreativeCommons.yaml
+    # Includes SoundRecording, ProjectedMedium, Manuscript and MixedMaterials.
+    # These classify catalog objects; digital access remains ArchiveMediaObject.
     ObjectTaxonomy: ./ObjectTaxonomy.yaml
     LocationTaxonomy: ./LocationTaxonomy.yaml
     StoryKeywords: ./StoryKeywords.yaml
@@ -658,7 +660,7 @@ ontology:
         order: 1
         editor: TEXT_FIELD_WITH_LANG
       - iri: fasnacht:leadImage
-        to_class: fasnacht:MediaLibraryObject
+        to_class: shared:MediaObject
         name:
           en: Lead image
           de: Lead image
@@ -785,6 +787,20 @@ ontology:
           fr: Un objet de carnaval, un événement, une organisation ou une histoire liés à cet endroit.
           it: Un oggetto di Carnevale, un evento, un'organizzazione o una storia correlati a questo luogo.
         order: 9
+      - iri: fasnacht:referencesMedium
+        to_class: shared:MediaObject
+        name:
+          en: Referenced media object
+          de: Referenziertes Medienobjekt
+          fr: Objet média référencé
+          it: Oggetto multimediale referenziato
+        description:
+          en: A media object embedded in the story content, from either the media library or the archive. This relation identifies the media resource independently of its delivery URL and allows finding stories that use it.
+          de: Ein im Inhalt der Geschichte eingebettetes Medienobjekt aus der Medienbibliothek oder dem Archiv. Diese Beziehung identifiziert die Medienressource unabhängig von ihrer Auslieferungs-URL und ermöglicht es, Geschichten zu finden, die sie verwenden.
+          fr: Un objet média intégré au contenu de l'histoire, provenant de la médiathèque ou des archives. Cette relation identifie la ressource indépendamment de son URL de diffusion et permet de retrouver les histoires qui l'utilisent.
+          it: Un oggetto multimediale incorporato nel contenuto della storia, proveniente dalla mediateca o dall'archivio. Questa relazione identifica la risorsa indipendentemente dal suo URL di distribuzione e permette di trovare le storie che la utilizzano.
+        order: 10
+
 
     fasnacht:Place:
       superclass:
@@ -1273,6 +1289,24 @@ ontology:
           it: Descrizione della rappresentazione multimediale e di ciò che mostra dell'oggetto d'archivio.
         order: 2
         editor: TEXT_AREA_WITH_LANG
+      - iri: fasnacht:searchableText
+        datatype: xsd:string
+        name:
+          en: Automatically extracted search text
+          de: Automatisch gewonnener Suchtext
+        description:
+          en: Unreviewed document text for search, derived from embedded PDF text or OCR. Separate from editorial metadata; source pages and extraction provenance are in textExtraction.
+        max_count: 1
+        order: 2.1
+      - iri: fasnacht:textExtraction
+        datatype: xsd:string
+        name:
+          en: Document text extraction provenance
+          de: Herkunft des automatisch gewonnenen Dokumenttexts
+        description:
+          en: Versioned JSON with source URL and SHA-256, extractor/model versions, unreviewed status, and per-page original text, method and failures. Updated atomically with searchableText.
+        max_count: 1
+        order: 2.2
       - iri: fasnacht:publicationStatus
         to_class: list:PublicationStatus
         name:
@@ -1514,6 +1548,7 @@ ontology:
       - fasnacht:CarnivalEvent
       - fasnacht:ArchiveMediaObject
       languages:
+      - "" # Derived document text has no asserted language tag.
       - en
       - de
       - fr
@@ -1523,6 +1558,7 @@ ontology:
         archiveObjectDescription: schema:description
         archiveMediaObjectTitle: schema:name
         archiveMediaObjectDescription: schema:description
+        archiveMediaObjectText: fasnacht:searchableText
         representedArchiveObjectTitle:
           chain:
           - fasnacht:archiveMediaObjectOf

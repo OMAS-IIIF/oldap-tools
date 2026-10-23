@@ -1,5 +1,9 @@
 # oldap-tools Project Context
 
+- ObjectTaxonomy.yaml now includes SoundRecording, ProjectedMedium, Manuscript and MixedMaterials; fasnacht-onto.yaml documents its canonical reference. Additive local list load verified; production pending. These are catalog-object types, distinct from digital media DCMI forms.
+
+- fasnacht/fasnacht-onto.yaml defines optional ArchiveMediaObject searchableText and textExtraction (xsd:string) for unreviewed PDF/OCR text. The archive connector indexes only searchableText and explicitly includes language "" for untagged literals. The local merged connector was rebuilt; production remains pending. Extraction JSON schema/policy is owned by oldap-harvesters (docs/pdf-text.md).
+
 - Docker release workflow: `make docker-build` first runs `ensure-pypi-release`. The helper in `scripts/ensure_pypi_release.py` checks tag/package version agreement and PyPI; only HTTP 404 triggers a fresh build and publication using a temporary distribution directory. Existing releases are reused, registry errors stop the build, and publication must become visible before Docker starts. Existing Poetry credentials are used.
 
 - Production archive compatibility requires oldaplib >=0.7.18,<0.8.0. Verify the installed library in released Docker images; local lockfiles alone do not establish deployed compatibility.
@@ -72,3 +76,5 @@
 - Local Lucene activation (2026-09-22): native API uses an unpublished development oldaplib wheel still versioned 0.7.21 and was safely restarted. Read-only dump/load planning preserves the Fasnacht connector and yields zero operations; user-confirmed recovery after Workbench graph deletion exposed and resolved stale model reads. Paired published releases remain pending.
 
 - Recovery freshness (2026-09-22): model JSON GET and TriG download bypass the DataModel cache, so Workbench graph deletion cannot make API import planning skip missing definitions. Scoped cache invalidation remains necessary for other direct GraphDB edits; never flush the writer-coordination Redis store.
+
+- Story.leadImage now targets shared:MediaObject with min/max 1 (local and production model updated 2026-10-22). The FasnachtsPage API migration tool converts legacy delivery URLs into resource IRIs; model widening alone does not migrate data.

@@ -88,3 +88,35 @@ ObjectTaxonomy:
         - Zeedel@de
         - Feuillet de carnaval (Zeedel)@fr
         - Foglio carnevalesco (Zeedel)@it
+    SoundRecording:
+      label:
+        - Sound recording@en
+        - Tonaufnahme@de
+        - Enregistrement sonore@fr
+        - Registrazione sonora@it
+      definition:
+        - An independently described musical or nonmusical sound recording; access files and carriers are described separately.@en
+    ProjectedMedium:
+      label:
+        - Film or projected medium@en
+        - Film oder Projektionsmedium@de
+        - Film ou document projeté@fr
+        - Film o materiale da proiezione@it
+      definition:
+        - An independently described motion picture, video, slide, filmstrip or transparency; a catalog record alone does not imply a playable digital file.@en
+    Manuscript:
+      label:
+        - Manuscript text@en
+        - Handschriftlicher Text@de
+        - Texte manuscrit@fr
+        - Testo manoscritto@it
+      definition:
+        - An independently described manuscript language material, including typescripts; manuscript musical notation is classified as sheet music.@en
+    MixedMaterials:
+      label:
+        - Mixed archival material@en
+        - Gemischtes Archivgut@de
+        - Documents d'archives mixtes@fr
+        - Materiali archivistici misti@it
+      definition:
+        - An independently described aggregation of mixed materials; no single carrier or media form is inferred for the whole.@en
