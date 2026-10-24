@@ -1,3 +1,9 @@
+### Update 2026-10-25 00:55
+- Decisions: Apply only approved Swisscovery schema/taxonomy/index additions through oldap-tools API transport, preserving production definitions.
+- Implementation: Used published tools v0.3.21; exported model/10 taxonomies/native connector and wrote API ZIP backup. Applied exactly seven operations (four nodes, two text properties, connector extension including untagged literals). Stale process-local list export cache required graceful gunicorn HUP; final dry-run reports zero operations. Export comparison confirms only intended changes; 25,376 data triples and SHA-256 unchanged. Search control returns 229 hits, API health OK.
+- Open: User performs application deployment. Published tools image still embeds oldaplib 0.7.28; rebuild for 0.7.29 consistency. No PDF data imported.
+- Risks/Assumptions: Connector was rebuilt preserving existing fields/types/options. Server backup: /users/staff/gkw/rosenth/swisscovery-model-2026-10-25/before-api.zip; private local evidence in oldap-harvesters/tmp/production-model-2026-10-25.
+
 # CODEX_LOG
 
 ### Update 2026-10-23 23:10

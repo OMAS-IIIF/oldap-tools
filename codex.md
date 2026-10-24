@@ -1,5 +1,8 @@
 # oldap-tools Project Context
 
+- Production Swisscovery model migration completed 2026-10-25 via oldap-tools: two optional text fields, four material nodes and preserved/extended Lucene connector with untagged-language support. Zero-operation replay; all existing definitions/data verified unchanged except intended additions. Application deployment remains separate; tools image v0.3.21 currently contains oldaplib 0.7.28.
+
+
 - ObjectTaxonomy.yaml now includes SoundRecording, ProjectedMedium, Manuscript and MixedMaterials; fasnacht-onto.yaml documents its canonical reference. Additive local list load verified; production pending. These are catalog-object types, distinct from digital media DCMI forms.
 
 - fasnacht/fasnacht-onto.yaml defines optional ArchiveMediaObject searchableText and textExtraction (xsd:string) for unreviewed PDF/OCR text. The archive connector indexes only searchableText and explicitly includes language "" for untagged literals. The local merged connector was rebuilt; production remains pending. Extraction JSON schema/policy is owned by oldap-harvesters (docs/pdf-text.md).
