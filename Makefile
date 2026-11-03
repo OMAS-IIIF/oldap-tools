@@ -30,7 +30,7 @@ bump-minor-level:
 
 .PHONY: bump-major-level
 bump-major-level:
-	poetry run bump-my-version-version bump major
+	poetry run bump-my-version bump major
 	git push
 
 .PHONY: dump-fasnacht
