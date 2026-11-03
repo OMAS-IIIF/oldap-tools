@@ -19,6 +19,7 @@ from oldaplib.src.enums.editor import Editor
 from oldaplib.src.xsd.xsd_ncname import Xsd_NCName
 
 from oldap_tools.lucene_api import read_connector
+from oldap_tools.fulltext_api import read_fulltext
 from oldap_tools.api_client import OldapApiClient, api_path
 from oldap_tools.list_api import read_api_lists
 from oldap_tools.ontology import ATTR_TO_YAML, _as_langstring, _schema_path
@@ -157,7 +158,7 @@ def _publish_dump(directory: Path, files: dict[str, bytes], *, overwrite: bool) 
 
 def dump_ontology_api(*, api_base: str, user: str, password: str, project_id: str,
                       out_dir: Path | None = None, out: Path | None = None,
-                      include_taxonomies: bool = False, overwrite: bool = False, include_connectors: bool = True,
+                      include_taxonomies: bool = False, overwrite: bool = False, include_connectors: bool = True, search_backend: str = "graphdb",
                       emit: Callable[[str], None] = print) -> Path:
     """Read and export an ontology, optionally with every taxonomy in a directory.
 
@@ -169,13 +170,16 @@ def dump_ontology_api(*, api_base: str, user: str, password: str, project_id: st
         out_dir: Package directory; created if missing. Uses ontology.yaml and taxonomies/.
         out: Alternative single YAML filename, optionally gzip compressed.
         include_taxonomies: Download all taxonomies; requires out_dir.
-        include_connectors: Export complete native Lucene options (requires updated API).
+        include_connectors: Export search configuration from the selected backend.
+        search_backend: graphdb (default) for native connectors, jena for portable fields.
         overwrite: Replace conflicting export files, preserving unrelated files.
         emit: Receives the final export summary.
 
     Returns:
         Absolute path of the written ontology YAML document.
     """
+    if search_backend not in {"graphdb", "jena"}:
+        raise ValueError("search_backend must be graphdb or jena.")
     if out_dir is not None and out is not None:
         raise ValueError("Use either --out-dir or --out, not both.")
     if include_taxonomies and out_dir is None:
@@ -193,7 +197,11 @@ def dump_ontology_api(*, api_base: str, user: str, password: str, project_id: st
         lists = read_api_lists(client, project_id, project["namespaceIri"]) if include_taxonomies else {}
         list_files = {key: f"taxonomies/{key}.yaml" for key in lists}
         document = api_model_to_yaml(project, model, list_files)
-        if include_connectors:
+        if include_connectors and search_backend == "jena":
+            fulltext = read_fulltext(client, project_id, project["namespaceIri"])
+            if fulltext["configuration"] is not None:
+                document["ontology"]["fulltext"] = {"fields": fulltext["configuration"]["fields"]}
+        elif include_connectors:
             connector = read_connector(client, project_id)
             if connector["configuration"] is not None:
                 document["ontology"]["lucene_connectors"] = {project_id: {"configuration": connector["configuration"]}}

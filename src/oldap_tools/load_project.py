@@ -65,6 +65,29 @@ def load_project(graphdb_base: str,
                  password: str,
                  graphdb_user: str | None = None,
                  graphdb_password: str | None = None) -> None:
+    """Load a gzip project dump through the explicitly selected backend.
+
+    GraphDB retains its administrative restore behavior. With OLDAP_BACKEND=jena,
+    accept only native scoped graph dumps for a provisioned project; append all
+    RDF atomically and never restore/delete users. See jena-project-transfer.md.
+
+    Args:
+        graphdb_base: GraphDB URL; Jena uses its server-owned environment instead.
+        repo: GraphDB repository name.
+        inf: Input gzip TriG file.
+        user: OLDAP administrator login.
+        password: OLDAP password.
+        graphdb_user: Optional GraphDB HTTP Basic Auth login.
+        graphdb_password: Optional GraphDB HTTP Basic Auth password.
+    """
+    from oldap_tools import jena_project_transfer
+    if jena_project_transfer.enabled():
+        try:
+            return jena_project_transfer.load(inf, user=user, password=password)
+        except (OldapError, OSError, ValueError) as error:
+            log.error("Jena project import failed: %s", error)
+            raise typer.Exit(code=1) from None
+
     cache = CacheSingletonRedis()
     cache.clear()
 

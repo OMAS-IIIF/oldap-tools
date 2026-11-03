@@ -900,7 +900,7 @@ ontology:
         editor: TEXT_FIELD
       - iri: dcterms:isPartOf
         to_class: fasnacht:Place
-        inverse_of: dcterms:hasPart
+        inverse_of: null  # Only isPartOf is stored; children are found by reverse lookup.
         name:
           en: Part of
           de: Teil von
@@ -913,20 +913,6 @@ ontology:
           it: Luogo o unità spaziale più ampia di cui questo luogo fa parte.
         max_count: 1
         order: 7
-      - iri: dcterms:hasPart
-        to_class: fasnacht:Place
-        inverse_of: dcterms:isPartOf
-        name:
-          en: Contains
-          de: Enthält
-          fr: Contient
-          it: Contiene
-        description:
-          en: Smaller places or spatial units contained within this place.
-          de: Untergeordnete Orte oder räumliche Einheiten, die in diesem Ort enthalten sind.
-          fr: Lieux ou unités spatiales plus petits contenus dans ce lieu.
-          it: Luoghi o unità spaziali più piccoli contenuti in questo luogo.
-        order: 8
       - iri: rdfs:comment
         datatype: rdf:langString
         name:
@@ -1015,7 +1001,7 @@ ontology:
           order: 5
         - iri: dcterms:isPartOf
           to_class: fasnacht:CarnivalThing
-          inverse_of: dcterms:hasPart
+          inverse_of: null  # Only isPartOf is stored; children are found by reverse lookup.
           name:
             en: Part of
             de: Teil von
@@ -1027,20 +1013,6 @@ ontology:
             fr: Indique que l'objet d'archive fait partie d'un objet de carnaval plus grand, tel qu'un festival, une exposition ou un événement.
             it: Indica che l'oggetto d'archivio fa parte di un oggetto di Carnevale più grande, come un festival, un'esposizione o un evento.
           order: 6
-        - iri: dcterms:hasPart
-          to_class: fasnacht:CarnivalThing
-          inverse_of: dcterms:isPartOf
-          name:
-            en: Has part
-            de: Hat Teil
-            fr: A une partie
-            it: Ha parte
-          description:
-            en: Indicates that the archival object is part of a larger carnival thing, such as a festival, exhibition, or event.
-            de: Gibt an, dass das Fasnachtsding Teil eines größeren Fasnachtsding ist, z. B. eines Festivals, einer Ausstellung oder eines Ereignisses.
-            fr: Indique que l'objet d'archive fait partie d'un objet de carnaval plus grand, tel qu'un festival, une exposition ou un événement.
-            it: Indica che l'oggetto d'archivio fa parte di un oggetto di Carnevale più grande, come un festival, un'esposizione o un evento.
-          order: 7
         - iri: fasnacht:location
           to_class: fasnacht:Place
           name:
@@ -1237,7 +1209,9 @@ ontology:
         order: 8
       - iri: fasnacht:archiveUnit
         to_class: shared:ArchiveUnit
-        inverse_of: schema:about
+        # Explicit null removes the legacy axiom on incremental model imports.
+        # Archival assignment is stored here; schema:about remains a subject link.
+        inverse_of: null
         name:
           en: Archive unit
           de: Archiveinheit

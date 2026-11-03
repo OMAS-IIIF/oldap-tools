@@ -1,0 +1,17 @@
+# Fulltext configuration example only, not a replacement for fasnacht-onto.yaml.
+# Native GraphDB type/language/analyzer options are not converted automatically.
+ontology:
+  project:
+    shortname: fasnacht
+    namespace: http://fasnacht.digital/ns/
+  fulltext:
+    fields:
+      storyContent: [fasnacht:storyContent]
+      abstract: [schema:abstract]
+      archiveObjectTitle: [schema:name]
+      archiveObjectDescription: [schema:description]
+      archiveMediaObjectTitle: [schema:name]
+      archiveMediaObjectDescription: [schema:description]
+      archiveMediaObjectText: [fasnacht:searchableText]
+      representedArchiveObjectTitle: [fasnacht:archiveMediaObjectOf, schema:name]
+      representedArchiveObjectDescription: [fasnacht:archiveMediaObjectOf, schema:description]

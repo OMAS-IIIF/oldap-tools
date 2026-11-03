@@ -1,5 +1,41 @@
 # oldap-tools Project Context
 
+- Merge preparation (2026-11-03): Jena Tools implementation reviewed and locally checkpointed with its tests, example and migration documentation. Full suite: 171 offline tests + 7 subtests; wheel build and extracted CLI plan pass. Fixed eager Jena import on legacy GraphDB project commands and native dump-header size accounting. Public project-transfer signatures remain unchanged; ontology API helpers add optional keyword-only modes. Version remains 0.3.22; 1.x constraints/lock and final installed-candidate acceptance remain open. See docs/jena-merge-readiness.md. No push, tag or deployment.
+
+- Jena image release (2026-11-02): API `jena-0.2.37-rc1-c1cb0919375a` and tools `jena-0.3.22-rc1-c1cb0919375a` published for AMD64/ARM64 with exact source-matched library wheel; stable/latest untouched. Legacy migration-checkout publication targets are disabled. Deployment requires reviewed digests. Installed-image transport passes locally and published API passes on native home.org; full app/source migration and activation remain open. See ../oldap-setup/docs/jena-images-results.json and the setup README. Source snapshots capture uncommitted changes; no Git/PyPI publication.
+
+- Offline recovery and first remote target (2026-11-02): user selects `home.org` for initial testing before production. No remote operation performed. Built service now includes an offline five-component backup/verify/restore operator; local real-service/Redis restore checks preserve admin login/grants, receipts, text and representative media/config bytes. Restore creates a new generation handoff but does not activate/fence workers automatically. Actual deployment inventory, coordinator reconciliation and host acceptance remain open. See [recovery workflow](../oldaplib/docs/migration/graphdb-to-jena-cutover.md#offline-backuprestore-and-first-remote-target--2026-11-02).
+
+- Production target decision (2026-11-02): user selects Jena/Fuseki following the GraphDB pricing discussion. Prioritize persistent service packaging, full backup/restore, real identity/data migration and release/target acceptance over further benchmark tuning. Source audit finds a 256-transaction process budget and test-only service lifecycle; present probe is not production-ready. Current ordered gates and acceptance criteria: [cutover readiness review](../oldaplib/docs/migration/graphdb-to-jena-cutover.md#production-target-and-readiness-review--2026-11-02). No runtime or production change in this review.
+
+- Fasnacht fulltext acceptance (2026-10-31): YAML-configured fields support word-order-independent AND searches, including separate values. Referenced text requires current read access at every hop. Search configuration reads coexist with active readers; rebuilding stays exclusive. See ../oldap-api/doc/jena-fasnacht-fulltext.md. Production latency/analyzer acceptance and GraphDB comparison remain open.
+
+- Real Fasnacht rehearsal (2026-10-30): Real local Fasnacht TriG-star export rehearsed on a fresh owned Jena target: 38,674 instance triples, two hasPart reversals, 11 canonical pairs, all 38,663 other triples unchanged. All 23 focused checks pass, including five parent API comparisons and a single-resource read. Source export byte-stable. Archived gzip exports with encoded RDF4J triple IRIs are refused; use native TriG-star with infer=false. Accounts retained/not restored; owned audit-role identity only. Fulltext, binaries, real-user/cache/browser and performance acceptance remain open. See ../oldap-api/doc/jena-fasnacht-export.md.
+
+- Full Fasnacht fresh-target acceptance (2026-10-30): The actual migration YAML imports through tools/HTTP with 16 classes, 88 property declarations, 10 taxonomies and 3 external registrations. 224 operations, then zero-write replay. Canonical isPartOf reverse lookup excludes an ungranted child after transactional conversion. All 13 focused checks pass. GraphDB connectors skipped; fulltext, actual instance transfer, in-place cleanup and browser/cache acceptance remain open. See ../oldap-api/doc/jena-fasnacht-model.md.
+
+- Fasnacht part-direction decision (2026-10-30): use only dcterms:isPartOf; find children by reverse API lookup, without a hasPart response field or inverse SHACL field. Migration YAML and public detail are adapted; scoped target data conversion/preflight is in OLDAP-Jena/oldaplib/docs/migration/fasnacht-parts.md. Full target model cleanup, live-data migration and browser acceptance remain open. Chama schema.org relations are separate.
+
+**Resume the eventual GraphDB → Jena migration here:** [Cutover knowledge and open gates](../oldaplib/docs/migration/graphdb-to-jena-cutover.md). The user explicitly requires retaining this knowledge for the actual transition. Read this index before planning a source export, conversion, restore or cutover; tested prototypes are not a completed production migration.
+
+- Scoped project transfer (2026-10-28): native RDF 1.2 project graph export/import preserves cross-graph blank nodes and grants; server rechecks root rights and validates scope before atomic append. Existing tools project dump/load route via explicit OLDAP_BACKEND=jena with --no-admin; target project/identities must already exist. 154 owned checks and 31 offline tests pass, including real CLI gzip/cache and managed-index rollback. Existing 256 KiB request limit remains; full administrative/legacy restore, streaming, binary/export-job and production recovery remain gates. See ../oldap-tools/docs/jena-project-transfer.md and ../oldap-api/doc/jena-project-transfer.md. Public signatures unchanged.
+
+- Managed fulltext API integration (2026-10-28): --fulltext apply opts into existing-project preflight, revision-checked final activation and fulltext.json API snapshots. --search-backend jena exports portable fields with dump/load parity. Default/direct rejection and native GraphDB behavior remain; ordinary API still needs a bound Jena adapter. 76 tools tests plus three subtests pass. See docs/jena-fulltext.md and sibling API contract.
+
+## Jena migration branch (2026-10-28)
+
+This checkout is `migration/jena` under OLDAP-Jena. Its local Python 3.13 `.venv`
+uses editable sibling `../oldaplib`; released dependency metadata is unchanged.
+`ontology.fulltext.fields` defines named forward predicate paths for new projects.
+`src/oldap_tools/fulltext.py` shares oldaplib's validator and produces an offline,
+normalized report through `ontology fulltext-plan`. Direct imports reject portable fulltext; API imports support explicit
+`--fulltext apply` with preflight, final activation and backup. Native GraphDB
+connector behavior remains available. The sibling 162-check full API probe also
+exercises real Tools CLI model/fulltext and native project transfer. Final 1.0
+packaging and target acceptance remain separate. See
+[docs/jena-fulltext.md](docs/jena-fulltext.md) for setup, semantics and next steps.
+
+
 - Production Swisscovery model migration completed 2026-10-25 via oldap-tools: two optional text fields, four material nodes and preserved/extended Lucene connector with untagged-language support. Zero-operation replay; all existing definitions/data verified unchanged except intended additions. Application deployment remains separate; tools image v0.3.21 currently contains oldaplib 0.7.28.
 
 
@@ -48,7 +84,7 @@
 - The Fasnacht model is declared in `fasnacht/fasnacht-onto.yaml` with companion taxonomies in YAML files in the same folder.
 - Existing Fasnacht StagingAreas can be reconciled with the application-managed `Mobile` folder through `oldap-tools staging ensure-mobile-folder`. The command is idempotent, validates the `top` hierarchy, defaults to dry-run, and writes only when `--apply` is supplied.
 - Fasnacht archive metadata is media-first: `ArchiveMediaObject.archiveMediaObjectOf` is optional, direct media topics and associated organisations are supported, and `representationRole` uses `MediumRepresentationTaxonomy`. `dcterms:creator` targets `fasnacht:Agent` for both archive objects and media, while `contributingAgent` remains separate provenance metadata.
-- `fasnacht:ArchiveObject` has the optional single-valued `fasnacht:archiveUnit` placement relation to `shared:ArchiveUnit`. It is the inverse of the Shared model's generic `schema:about` relation, so archive structure remains project-neutral while each Fasnacht archival object can belong to at most one archive unit. Carnival events deliberately have no direct archive placement.
+- `fasnacht:ArchiveObject` has the optional single-valued `fasnacht:archiveUnit` placement relation to `shared:ArchiveUnit`. It is stored directly on the object and is independent of Shared's generic `schema:about` subject relation. The YAML explicitly clears the former inverse axiom with `inverse_of: null` because omitted attributes are preserved during incremental API imports. Each Fasnacht archival object can belong to at most one archive unit; existing subject links must not be converted automatically. Carnival events deliberately have no direct archive placement.
 - `fasnacht:ArchiveMediaObject` has the optional multi-valued `fasnacht:carnivalGrouping` content classification backed by the flat ten-node `CarnivalGroupingTaxonomy`. It describes represented actor/formation types independently of named `associatedOrganisation` resources, authorship, deposit, and custody.
 - `fasnacht:ArchiveMediaObject` can also carry optional multi-valued `fasnacht:representedObjectType` and `fasnacht:representedEventType` classifications from ObjectTaxonomy and CarnivalEventTaxonomy. These properties capture recognisable content without inventing or requiring a concrete ArchiveObject/CarnivalEvent; exact identities remain separate `archiveMediaObjectOf` links. Search and UI integrations should combine direct classifications with types reached through concrete links while detecting redundant or contradictory values.
 - `fasnacht:StagingArea` has optional `fasnacht:defaultRights` pointing to `CreativeCommons`; the agreed initial data value is `L-CreativeCommons:CC_BY-ND` and must be populated on StagingArea instances separately from the ontology definition.
