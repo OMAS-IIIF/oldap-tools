@@ -1,5 +1,7 @@
 # oldap-tools Project Context
 
+- Final release preparation (2026-11-09): package 1.0.0; core metadata/locks move from RC to final while public API contracts remain unchanged. Final artifact acceptance/publication/deployment is coordinated by oldap-setup. Zod 3 remains an explicitly accepted temporary risk for oldap-app.
+
 - Jena mainline integration (2026-11-09): the accepted migration is integrated into `main` with its complete ancestry. Core runtime/package versions remain the tested RC versions; this Git integration does not publish final 1.0.0 packages or change deployed images. Prior primary ref is retained by `pre-jena-merge-20261109`; this tag records Git history, not the deployed GraphDB baseline. Migration branches and old GraphDB checkouts are retained. Coordinated evidence: ../oldap-setup/docs/jena-mainline-merge-20261109.md. Older pending-merge notes below are historical.
 
 - Coordinated 1.0 candidate (2026-11-03): core packages and OLDAP service wrapper now use 1.0.0rc1. API/tools depend on >=1.0.0rc1,<2.0.0 instead of a sibling path/0.x constraint. Poetry-generated portable locks use the exact candidate library wheel hash; library lock is now tracked. Existing development venvs were not reinstalled. Clean installed-wheel tests and rebuilt Java service pass. See ../oldap-setup/docs/jena-1.0rc1-preparation.md and results JSON. No publication, tag, merge or deployment; older dated version statements below describe historical checkpoints.
