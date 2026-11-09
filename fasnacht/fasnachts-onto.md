@@ -208,7 +208,7 @@ Properties:
 - `dcterms:type`: Ortskategorie über `LocationTaxonomy`, Pflichtfeld, genau ein Wert.
 - `geo:asWKT`: Geometrie im WKT-Format, maximal ein Wert.
 - `dcterms:isPartOf`: übergeordneter Ort, maximal ein Wert.
-- `dcterms:hasPart`: untergeordnete Orte.
+- Untergeordnete Orte werden über deren `dcterms:isPartOf` abgefragt; kein separates `hasPart`-Feld.
 - `rdfs:comment`: historische Bemerkung oder redaktioneller Kommentar, maximal ein Wert.
 
 ### `fasnacht:CarnivalThing`
@@ -223,7 +223,7 @@ Properties:
 - `fasnacht:associatedOrganisation`: Verbindung zu einer Person, Organisation oder Institution als `fasnacht:Agent`.
 - `fasnacht:connectedToOrganisationTaxonomy`: Verknüpfung mit einer Organisationseinheit aus `OrganisationTaxonomy`.
 - `dcterms:isPartOf`: übergeordnetes Fasnachtsding.
-- `dcterms:hasPart`: untergeordnetes Fasnachtsding.
+- Untergeordnete Fasnachtsdinge werden über deren `dcterms:isPartOf` abgefragt; kein separates `hasPart`-Feld.
 - `fasnacht:location`: Ort als `fasnacht:Place`.
 
 ### `fasnacht:CarnivalEvent`
@@ -258,7 +258,7 @@ Properties:
 - `fasnacht:usedAt`: Datierung der Verwendung als `oldap:Dating`.
 - `fasnacht:currentLocation`: aktueller Ort als `fasnacht:Place`, maximal ein Wert.
 - `schema:identifier`: Signatur oder Identifikator, maximal ein Wert.
-- `fasnacht:archiveUnit`: optionale, eindeutige Zuordnung zur `shared:ArchiveUnit`; die inverse Beziehung wird als `schema:about` an der Archiveinheit ausgedrückt.
+- `fasnacht:archiveUnit`: optionale, eindeutige Zuordnung zur `shared:ArchiveUnit`; direkt am Archivobjekt gespeichert. `schema:about` beschreibt unabhängig davon einen inhaltlichen Bezug und ist keine inverse Zuordnungsbeziehung.
 
 Name, Beschreibung, Datierung, Organisationsbezug, Teil-Ganzes-Beziehungen und Ort kommen über die Oberklasse `fasnacht:CarnivalThing` hinzu.
 

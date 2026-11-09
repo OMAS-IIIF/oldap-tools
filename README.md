@@ -273,3 +273,9 @@ oldap-tools [common_options] staging ensure-mobile-folder --staging-area <stagin
 After checking the report, repeat the command with `--apply` to create the missing folder. Use
 `--staging-area` more than once for an explicit set or use `--all` to process every StagingArea in
 the project. The command aborts on ambiguous or misplaced system folders instead of guessing.
+
+### Jena migration: configurable fulltext fields
+
+See [Jena fulltext configuration](docs/jena-fulltext.md) for the portable ontology
+YAML section, offline validation/planning, migration environment setup and the
+remaining index activation boundary.

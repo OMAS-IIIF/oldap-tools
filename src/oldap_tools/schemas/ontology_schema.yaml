@@ -6,6 +6,7 @@ ontology:
   external_ontologies: map(str(), include('external_ontology'), required=False)
   classes: map(str(), include('resource_class'), required=False)
   standalone_properties: map(str(), include('property'), required=False)
+  fulltext: include('fulltext', required=False)
   lucene_connectors: map(str(), include('lucene_connector'), required=False)
 
 project:
@@ -54,6 +55,7 @@ property:
   max_inclusive: any(num(), null(), required=False)
   less_than: any(str(), null(), required=False)
   less_than_or_equals: any(str(), null(), required=False)
+  inverse_path: any(str(), null(), required=False)
   inverse_of: any(str(), null(), required=False)
   equivalent_property: any(str(), null(), required=False)
   min_count: any(int(), null(), required=False)
@@ -73,3 +75,6 @@ lucene_connector:
   skipInitialIndexing: bool(required=False)
   boostProperties: list(any(), required=False)
   stripMarkup: bool(required=False)
+
+fulltext:
+  fields: map(list(str()))

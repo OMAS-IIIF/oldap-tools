@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 from dataclasses import replace
 
@@ -24,7 +25,8 @@ from oldap_tools.dump_project import dump_project
 from oldap_tools.load_list import load_list
 from oldap_tools.load_project import load_project
 from oldap_tools.load_sysgraph import load_sysgraph, restore_sysgraph, purge_sysgraph, SystemGraphs
-from oldap_tools.ontology import dump_ontology, load_ontology, validate_ontology_yaml
+from oldap_tools.ontology import _read_yaml, dump_ontology, load_ontology, validate_ontology_yaml
+from oldap_tools.fulltext import plan_fulltext
 from oldap_tools.ontology_api import load_ontology_api
 from oldap_tools.ontology_api_dump import dump_ontology_api
 from oldaplib.src.helpers.oldaperror import OldapError
@@ -227,6 +229,18 @@ def ontology_validate(
     typer.echo(f"{inf} is valid")
 
 
+@ontology.command("fulltext-plan", help="Resolve Jena fulltext fields offline; does not activate an index.")
+def ontology_fulltext_plan(
+        inf: Path = typer.Option(..., "--inf", "-i", help="Input ontology YAML file")):
+    """Print a deterministic JSON plan without credentials or backend access."""
+    try:
+        plan = plan_fulltext(_read_yaml(inf))
+    except (ValueError, OSError, OldapError) as error:
+        typer.echo(f"ERROR: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    typer.echo(json.dumps(plan, ensure_ascii=False, indent=2))
+
+
 @ontology.command("load", help="Load or update an ontology datamodel from YAML.")
 def ontology_load(
         ctx: typer.Context,
@@ -235,6 +249,7 @@ def ontology_load(
         mode: str = typer.Option("update", "--mode", "-m", help="Load mode: 'update' or 'replace' (direct only)"),
         remove_unused: bool = typer.Option(False, "--remove-unused", help="Request removal of omitted class properties, subject to server in-use checks"),
         dry_run: bool = typer.Option(False, "--dry-run", help="Read live API state and show planned changes without applying them"),
+        fulltext: str = typer.Option("reject", "--fulltext", help="Managed Jena fulltext: reject (default) or apply with revision preflight"),
         connectors: str = typer.Option("skip", "--connectors", help="Lucene connector mode: 'skip', 'create', or 'replace'"),
         backup: bool = typer.Option(True, "--backup/--no-backup", help="Dump model and lists before loading"),
         backup_out: Path | None = typer.Option(None, "--backup-out", help="API snapshot .zip or direct backup .trig.gz output file")):
@@ -249,12 +264,14 @@ def ontology_load(
         raise typer.BadParameter("API loading supports --mode update. Use --transport direct for full model replacement.")
     if transport == "direct" and dry_run:
         raise typer.BadParameter("--dry-run is available with --transport api only.")
+    if fulltext not in {"reject", "apply"} or (transport == "direct" and fulltext != "reject"):
+        raise typer.BadParameter("--fulltext apply requires API transport.")
     cfg = connection_config(ctx)
     if transport == "api":
         try:
             load_ontology_api(api_base=cfg.api_base, user=cfg.user, password=cfg.password,
                               inf=inf, remove_unused=remove_unused, dry_run=dry_run, connector_mode=connectors,
-                              backup=backup, backup_out=backup_out, emit=typer.echo)
+                              backup=backup, backup_out=backup_out, fulltext_mode=fulltext, emit=typer.echo)
         except (ValueError, OSError, OldapError) as error:
             typer.echo(f"ERROR: {error}", err=True)
             raise typer.Exit(code=1) from error
@@ -282,6 +299,7 @@ def ontology_dump(
         out_dir: Path | None = typer.Option(None, "--out-dir", help="API YAML package directory; created if missing"),
         overwrite: bool = typer.Option(False, "--overwrite", help="Replace existing API dump files"),
         fmt: str = typer.Option("yaml", "--format", "-f", help="Output format: 'yaml' or 'trig'"),
+        search_backend: str = typer.Option("graphdb", "--search-backend", help="Export search configuration from graphdb or jena"),
         include_connectors: bool = typer.Option(True, "--include-connectors/--no-connectors", help="Include Lucene configuration in YAML dumps"),
         include_taxonomies: bool = typer.Option(
             False,
@@ -299,12 +317,14 @@ def ontology_dump(
         raise typer.BadParameter("--include-taxonomies requires --out-dir with API transport.")
     if transport == "direct" and (out_dir is not None or overwrite):
         raise typer.BadParameter("--out-dir and --overwrite are API dump options; use --out for direct dumps.")
+    if search_backend not in {"graphdb", "jena"} or (transport == "direct" and search_backend != "graphdb"):
+        raise typer.BadParameter("Jena search export requires API transport.")
     cfg = connection_config(ctx)
     if transport == "api":
         try:
             dump_ontology_api(api_base=cfg.api_base, user=cfg.user, password=cfg.password,
                               project_id=project_id, out=out, out_dir=out_dir,
-                              include_taxonomies=include_taxonomies, overwrite=overwrite, include_connectors=include_connectors, emit=typer.echo)
+                              include_taxonomies=include_taxonomies, overwrite=overwrite, include_connectors=include_connectors, search_backend=search_backend, emit=typer.echo)
         except (ValueError, OSError, OldapError) as error:
             typer.echo(f"ERROR: {error}", err=True)
             raise typer.Exit(code=1) from error

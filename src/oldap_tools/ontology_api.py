@@ -25,6 +25,8 @@ from oldaplib.src.xsd.xsd_ncname import Xsd_NCName
 from oldaplib.src.xsd.xsd_qname import Xsd_QName
 
 from oldap_tools.api_client import ApiError, ApiOperation, OldapApiClient, api_path
+from oldap_tools.fulltext import require_supported_fulltext_import
+from oldap_tools.fulltext_api import plan_fulltext_api
 from oldap_tools.lucene_api import plan_connector
 from oldap_tools.list_api import plan_list, read_list_specs, read_api_lists
 from oldap_tools.ontology import PROP_KEY_MAP, _as_datatype, _as_langstring, _read_yaml
@@ -50,6 +52,7 @@ class OntologyApiPlan:
     list_yaml: dict[str, bytes] = field(default_factory=dict)
     model_trig: bytes | None = None
     connector_before: dict | None = None
+    fulltext_before: dict | None = None
 
 
 def _language_values(value: Any) -> list[str] | None:
@@ -147,9 +150,13 @@ def _require_property_type(payload: dict, iri: str) -> None:
         raise ValueError(f"New property {iri} requires exactly one of datatype or to_class.")
 
 
-def prepare_api_ontology(inf: Path) -> tuple[dict, dict]:
+def prepare_api_ontology(inf: Path, *, fulltext_mode: str = "reject") -> tuple[dict, dict]:
     """Validate input and all referenced list files locally before authentication."""
     ontology = _read_yaml(inf)
+    if fulltext_mode not in {"reject", "apply"}:
+        raise ValueError("fulltext mode must be reject or apply.")
+    if fulltext_mode == "reject":
+        require_supported_fulltext_import(ontology)
     project = ontology["project"]["shortname"]
     Xsd_NCName(project, validate=True)
     lists = read_list_specs(inf.parent, ontology.get("lists") or {})
@@ -171,19 +178,26 @@ def prepare_api_ontology(inf: Path) -> tuple[dict, dict]:
     return ontology, lists
 
 
-def plan_ontology_api(client: OldapApiClient, ontology: dict, lists: dict, *, remove_unused: bool = False, connector_mode: str = "skip") -> OntologyApiPlan:
+def plan_ontology_api(client: OldapApiClient, ontology: dict, lists: dict, *, remove_unused: bool = False, connector_mode: str = "skip", fulltext_mode: str = "reject") -> OntologyApiPlan:
     """Read remote state and plan a complete incremental import without writes.
 
     New classes are created in superclass order before their properties, allowing
     property references between classes regardless of YAML declaration order. Omitted
-    standalone properties/classes are never deleted. With remove_unused, only
+    standalone properties/classes are never deleted. With fulltext_mode="apply",
+    backend state and permission are checked before writes; activation is last.
+    With remove_unused, only
     omitted properties of explicitly supplied class property sets are candidates.
     """
+    if fulltext_mode not in {"reject", "apply"}:
+        raise ValueError("fulltext mode must be reject or apply.")
+    if fulltext_mode == "reject":
+        require_supported_fulltext_import(ontology)
     project_spec = ontology["project"]
     project = project_spec["shortname"]
     root = api_path("admin", "datamodel", project)
     project_path = api_path("admin", "project", project)
     current_project = client.get_json(project_path, missing_ok=True)
+    fulltext_operation, fulltext_before = plan_fulltext_api(client, ontology, current_project)
     operations: list[ApiOperation] = []
     if current_project is None:
         missing = [key for key in ("iri", "namespace", "start") if not project_spec.get(key)]
@@ -307,12 +321,14 @@ def plan_ontology_api(client: OldapApiClient, ontology: dict, lists: dict, *, re
     connector_operation, connector_before = plan_connector(client, ontology, current_project, connector_mode)
     if connector_operation is not None:
         operations.append(connector_operation)
+    if fulltext_operation is not None:
+        operations.append(fulltext_operation)
     for operation in operations:
         try:
             json.dumps(operation.payload, allow_nan=False)
         except (TypeError, ValueError) as error:
             raise ValueError(f"{operation.path}: payload cannot be represented as JSON: {error}") from error
-    return OntologyApiPlan(project, operations, current_project, current_model, list_yaml, connector_before=connector_before)
+    return OntologyApiPlan(project, operations, current_project, current_model, list_yaml, connector_before=connector_before, fulltext_before=fulltext_before)
 
 
 def write_api_backup(client: OldapApiClient, plan: OntologyApiPlan, out: Path) -> None:
@@ -347,6 +363,8 @@ def write_api_backup(client: OldapApiClient, plan: OntologyApiPlan, out: Path) -
                 archive.writestr("manifest.json", json.dumps({"format": "oldap-tools-api-snapshot", "version": 1,
                     "project": plan.project, "created": datetime.now().astimezone().isoformat(),
                     "includesInstanceData": False, "rawGraphBackup": False}, indent=2))
+                if plan.fulltext_before is not None:
+                    archive.writestr("fulltext.json", json.dumps(plan.fulltext_before, ensure_ascii=False, indent=2))
                 if plan.connector_before is not None:
                     archive.writestr("lucene.json", json.dumps(plan.connector_before, ensure_ascii=False, indent=2))
                 archive.writestr("project.json", json.dumps(plan.project_before, ensure_ascii=False, indent=2))
@@ -386,21 +404,23 @@ def apply_ontology_plan(client: OldapApiClient, plan: OntologyApiPlan, emit: Cal
 
 def load_ontology_api(*, api_base: str, user: str, password: str, inf: Path,
                       remove_unused: bool = False, dry_run: bool = False, connector_mode: str = "skip",
-                      backup: bool = True, backup_out: Path | None = None,
+                      backup: bool = True, backup_out: Path | None = None, fulltext_mode: str = "reject",
                       emit: Callable[[str], None] = print) -> OntologyApiPlan:
     """Validate, authenticate, plan, back up and incrementally load ontology YAML.
 
     Dry-run authenticates and reads live state but makes no model/list writes
     and creates no backup. API credentials/repository selection belong to the
     configured server; no GraphDB address or password is consumed by this path.
+    fulltext_mode defaults to reject; apply opts into a synchronous final index
+    activation with revision preflight and a fulltext.json backup entry.
     """
     inf = inf.expanduser().resolve()
-    ontology, lists = prepare_api_ontology(inf)
+    ontology, lists = prepare_api_ontology(inf, fulltext_mode=fulltext_mode)
     if backup_out is not None and backup_out.suffix.lower() != ".zip":
         raise ValueError("API backups require a .zip filename.")
     with OldapApiClient(api_base) as client:
         client.login(user, password)
-        plan = plan_ontology_api(client, ontology, lists, remove_unused=remove_unused, connector_mode=connector_mode)
+        plan = plan_ontology_api(client, ontology, lists, remove_unused=remove_unused, connector_mode=connector_mode, fulltext_mode=fulltext_mode)
         emit(f"Planned {len(plan.operations)} API operation(s) for {plan.project}.")
         if dry_run:
             for operation in plan.operations:

@@ -13,7 +13,7 @@ help:
 	@echo "  bump-patch-level   increase patch level of version number and push"
 	@echo "  bump-minor-level   increase patch level of version number and push"
 	@echo "  bump-major-level   increase patch level of version number and push"
-	@echo "  docker-build       ensure PyPI release, build Docker image and push it"
+	@echo "  docker-build       Disabled here; use the Jena candidate workflow"
 	@echo "  dump-fasnacht      dump fasnacht data"
 	@echo "  load-fasnacht      load fasnacht data"
 
@@ -30,7 +30,7 @@ bump-minor-level:
 
 .PHONY: bump-major-level
 bump-major-level:
-	poetry run bump-my-version-version bump major
+	poetry run bump-my-version bump major
 	git push
 
 .PHONY: dump-fasnacht
@@ -45,17 +45,12 @@ load-fasnacht:
 show-version:
 	@echo "VERSION=${VERSION}"
 
-# Docker installs the tagged package from PyPI, not from this working tree.
-# Only a confirmed missing release triggers a fresh Poetry build/publication.
-# Existing releases are reused; tag/version mismatch or network errors abort.
-# Uses configured Poetry/PyPI credentials and never uploads stale dist/ files.
+# Normal GraphDB/PyPI publication is disabled in this migration checkout.
+# Build the source-matched Jena candidates through sibling oldap-setup.
 .PHONY: ensure-pypi-release docker-build
 ensure-pypi-release:
-	poetry run python scripts/ensure_pypi_release.py --version "$(PYPI_VERSION)"
-
-docker-build: ensure-pypi-release
-	docker buildx build --platform $(PLATFORMS) \
-		--build-arg OLDAP_TOOLS_VERSION=$(PYPI_VERSION) \
-		-t $(IMAGE):$(VERSION) \
-		--push \
-		.
+	@echo "Normal release publication is disabled in this migration checkout. Use oldap-setup/scripts/jena-images.py (see its README)." >&2
+	@exit 1
+docker-build:
+	@echo "Normal release publication is disabled in this migration checkout. Use oldap-setup/scripts/jena-images.py (see its README)." >&2
+	@exit 1

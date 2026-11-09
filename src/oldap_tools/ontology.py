@@ -35,6 +35,7 @@ from oldaplib.src.xsd.xsd_integer import Xsd_integer
 from oldaplib.src.xsd.xsd_ncname import Xsd_NCName
 from oldaplib.src.xsd.xsd_qname import Xsd_QName
 
+from oldap_tools.fulltext import plan_fulltext, require_supported_fulltext_import
 from oldap_tools.dump_project import dump_project
 from oldap_tools.connection import create_connection
 from oldap_tools.list_merge import (
@@ -61,6 +62,7 @@ PROP_KEY_MAP = {
     "max_inclusive": "maxInclusive",
     "less_than": "lessThan",
     "less_than_or_equals": "lessThanOrEquals",
+    "inverse_path": "inversePath",
     "inverse_of": "inverseOf",
     "equivalent_property": "equivalentProperty",
     "min_count": "minCount",
@@ -82,6 +84,7 @@ ATTR_TO_YAML = {
     "maxInclusive": "max_inclusive",
     "lessThan": "less_than",
     "lessThanOrEquals": "less_than_or_equals",
+    "inversePath": "inverse_path",
     "inverseOf": "inverse_of",
     "equivalentProperty": "equivalent_property",
     "minCount": "min_count",
@@ -99,6 +102,10 @@ def validate_ontology_yaml(inf: Path, schema: Path | None = None) -> None:
         schema_obj = yamale.make_schema(str(schema_file))
         data = yamale.make_data(str(inf))
         yamale.validate(schema=schema_obj, data=data)
+        with inf.open(encoding="utf-8") as stream:
+            ontology = yaml.safe_load(stream)["ontology"]
+        if "fulltext" in ontology:
+            plan_fulltext(ontology)
     except Exception as err:
         log.error(f"ERROR: YAML validation failed: {err}")
         raise typer.Exit(code=1)
@@ -752,6 +759,7 @@ def load_ontology(
 ) -> None:
     inf = inf.expanduser().resolve()
     ontology = _read_yaml(inf)
+    require_supported_fulltext_import(ontology)
     con = _connect(graphdb_base, repo, user, password, graphdb_user, graphdb_password)
     try:
         project = _read_or_create_project(con, ontology["project"])
