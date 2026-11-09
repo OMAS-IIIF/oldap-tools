@@ -1,3 +1,9 @@
+### Update 2026-11-09 17:33
+- Decisions: Preserve complete migration history in main via a non-squashed merge; keep pre-jena-merge-20261109 at the previous remote primary tip. No final release/version change or deployment.
+- Implementation: Refreshed origin; primary has no unique commits and merge-tree exactly matches reviewed migration a4be9592f3f6. Added current integration context only; runtime sources remain unchanged.
+- Open: Verify coordinated remote refs and record final merge IDs in setup/docs/jena-mainline-merge-20261109.md. Final 1.0.0 artifact publication and old checkout cleanup remain separate.
+- Risks/Assumptions: Existing deployed/candidate acceptance covers identical runtime trees; this is not a fresh full-system test. All nine checkouts were clean. Existing GraphDB checkouts and migration branches are retained.
+
 ### Update 2026-11-03 23:54
 - Decisions: Prepare 1.0.0rc1 for library/API/tools and the OLDAP Jena wrapper; final 1.0.0 waits for acceptance. Keep independent media/harvester versions and running environments unchanged.
 - Implementation: Checkpointed HTTP pooling (e62651a) and API evidence (44cecf7). Aligned runtime/package/bump/OpenAPI/wrapper metadata; API/tools use portable 1.x requirements. Poetry solver regenerated locks offline from existing packages plus the exact new library wheel, with no path/source entry; library lock now tracked. Setup pins candidate wrapper and supports existing isolated image tags with prerelease metadata. Fixed tools bump command typo; documented local wheel/editable workflows and artifact hashes.
