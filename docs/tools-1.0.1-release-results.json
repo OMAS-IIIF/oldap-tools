@@ -1,0 +1,22 @@
+{
+  "version": "1.0.1",
+  "source_commit": "3b944299db222c5e88c7b99bd2e50ad76f959fba",
+  "published_at": "2026-11-10T12:26:30.706002+01:00",
+  "pypi": {
+    "oldap_tools-1.0.1-py3-none-any.whl": "be644e21aab446a7bd5324d120cb1e782bc9e3f801e0230256b3f8e0fe1904ea",
+    "oldap_tools-1.0.1.tar.gz": "83af7edda649db9f26940fcb36c21a1a652300da9fc76034ca948821bb9c6890"
+  },
+  "image": "lrosenth/oldap-tools:v1.0.1",
+  "digest": "sha256:339056aba1906c834a8a365e490b2a88e432fedf4f883eb7a0bf2a680a921d16",
+  "platforms": {
+    "amd64": "sha256:4d0a0f6179e3614acc0ea9cfa4414498c71bf6833b11a16b5c9b2632ee14f557",
+    "arm64": "sha256:484a9ecaee3e788cb4e1dba08ebaf12a7155132c39fa1cf486a1159280283935"
+  },
+  "library": "1.0.1",
+  "installed_wheel_tests": {
+    "passed": 173,
+    "subtests": 7
+  },
+  "container_checks": "Both architectures: offline ontology/fulltext preparation, version, pip check, CLI; AMD64 emulated",
+  "production_changes": false
+}

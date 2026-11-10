@@ -1,3 +1,9 @@
+### Update 2026-11-10 12:26
+- Decisions: Publish the requested 1.0.1 Python distribution and multi-platform operator image; no daemon deployment is required.
+- Implementation: Published wheel/sdist to PyPI with verified hashes; built and published AMD64/ARM64 images plus v1.0.1 manifest using exact tools/library 1.0.1 wheels, pinned base and prior accepted third-party constraints. Added release report and machine-readable receipt.
+- Open: Restore the legacy Makefile release/deployment workflow during the planned workflow consolidation. Production service configuration is unchanged.
+- Risks/Assumptions: Isolated installed-wheel suite passes 173 tests and seven subtests; both images pass offline snapshot preparation, CLI/version and pip checks. AMD64 checked under emulation. Production inspection found no running tools service requiring replacement. No live ontology mutations were performed.
+
 ### Update 2026-11-10 12:11
 - Decisions: Bump tools to 1.0.1 and consolidate the reviewed Jena work into main and the primary OLDAP checkout.
 - Implementation: Updated package/runtime/bump metadata; include Jena export default, documented fulltext workflows and the production ontology/taxonomy snapshot with zero-operation verification receipt. Remote main and migration checkout shared the same base before this commit.
