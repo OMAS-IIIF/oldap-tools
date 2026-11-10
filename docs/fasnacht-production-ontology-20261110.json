@@ -1,0 +1,32 @@
+{
+  "checked_at": "2026-11-10T12:07:35.344663+01:00",
+  "source": "https://api.oldap.org",
+  "mode": "read-only export and import planning; authentication POST only",
+  "classes": 16,
+  "taxonomies": 10,
+  "fulltext_fields": [
+    "abstract",
+    "archiveMediaObjectDescription",
+    "archiveMediaObjectText",
+    "archiveMediaObjectTitle",
+    "archiveObjectDescription",
+    "archiveObjectTitle",
+    "representedArchiveObjectDescription",
+    "representedArchiveObjectTitle",
+    "storyContent"
+  ],
+  "planned_operations": 0,
+  "files": {
+    "fasnacht/fasnacht-onto.yaml": "c9f69521ed77bf75e95dfec61c4086690e3e3034c3b801d4ee9475a8cc06fbe9",
+    "fasnacht/CarnivalEventTaxonomy.yaml": "5ad99436fe14ed7683abebcac3aab59c807648bbd28da2118e5009e0a6152315",
+    "fasnacht/CarnivalGroupingTaxonomy.yaml": "effb680a716a88ad1bb9478cb8657a2f0322beee70537b997fd9d3aa67394530",
+    "fasnacht/CarnivalPracticeTaxonomy.yaml": "374f878b9bfc092ee1c28566f3b14752d07c93ecfd247f3df8ac9908f1fa34bc",
+    "fasnacht/CreativeCommons.yaml": "b93060e26c662e8e55facd0e9dc3ccb667082da42636d3691ee50d4b72669486",
+    "fasnacht/LocationTaxonomy.yaml": "1af8d46553364c273e98957ffadeb96a036dffbd3477c3194ceeedb0a69c4122",
+    "fasnacht/MediumRepresentationTaxonomy.yaml": "e058c1019bc1f029b6f3153cd5ee456d615856c09a161870b3ada01a84c80706",
+    "fasnacht/ObjectTaxonomy.yaml": "f1cbc3cbd72e2301a8fccee1545c85f20cec6b11c163c09cd9044eed3ab83ed4",
+    "fasnacht/OrganisationTaxonomy.yaml": "e8a90b9b0d024ee24af8173edeb297d292b3489901c2271520d37e77a16f02d7",
+    "fasnacht/PublicationStatus.yaml": "96dd8bde7981656e4bcbc0da96e3d88ab5ae88766c3a8d08faff7272a5683c02",
+    "fasnacht/StoryKeywords.yaml": "8d68cee174f96d529e90b4f936aca418c302e3e60c5f9b5300504af4d09ed27e"
+  }
+}

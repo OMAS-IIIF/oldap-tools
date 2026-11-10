@@ -1,26 +1,25 @@
 # Jena fulltext configuration
 
-The `migration/jena` branch accepts a portable `ontology.fulltext` section.
+oldap-tools 1.x accepts a portable `ontology.fulltext` section.
 It is validated using the same oldaplib helper as the Jena query adapter.
 Offline planning does not activate an index. API imports can explicitly activate
 the configuration with `--fulltext apply`, after backend/revision preflight.
 
 ## Development environment
 
-From the migration oldap-tools checkout, create an isolated environment linked
-explicitly to the sibling migration library:
+Install the declared oldap-tools dependencies with Poetry. Released oldaplib
+1.x includes the Jena adapter; a migration branch is no longer required.
+
+For coordinated development against a sibling library checkout, an editable
+environment is also supported:
 
 ```sh
 python3.13 -m venv .venv
 .venv/bin/python -m pip install -e . -e ../oldaplib pytest
 ```
 
-This environment has been created locally. Select `.venv/bin/python` in PyCharm.
-The published dependency/version alone does not identify the Jena implementation;
-use the editable sibling checkout. The release dependency and lockfile remain
-unchanged. Reinstalling with Poetry may select the released library instead.
-Legacy GraphDB commands do not import the migration-only validator unless a
-fulltext section is supplied.
+Select `.venv/bin/python` in PyCharm. An editable sibling remains a local
+development choice; published dependencies and the lockfile use released packages.
 
 ## YAML and offline commands
 
@@ -92,11 +91,18 @@ connections return 503, never a misleading absent-index response.
 .venv/bin/oldap-tools --api http://localhost:8000 --user USER ontology load \
   -i ontology.yaml --fulltext apply
 .venv/bin/oldap-tools --api http://localhost:8000 --user USER ontology dump demo \
-  --search-backend jena --out ontology-export.yaml
+  --out ontology-export.yaml
 ```
 
-These commands require a Jena-enabled API; the normal API is not switched by
-this feature. A new project must be created first, then its ontology imported.
+API dumps default to Jena and include portable fulltext fields. Use
+`--search-backend graphdb` explicitly when exporting from a legacy GraphDB API.
+The explicit legacy `--transport direct` dump keeps its GraphDB default.
+`--no-connectors` deliberately omits search configuration for either backend;
+it is not a complete search-configuration backup. A failed Jena endpoint never
+silently falls back to GraphDB or drops the fields.
+
+These commands require a Jena-enabled API; choosing an export mode does not
+switch the server's backend. A new project must be created first, then its ontology imported.
 Preflight resolves authoritative namespace and reads index state before any
 model/list writes. Activation is the final operation, guarded by the reviewed
 revision. Unchanged configuration does not rebuild. API snapshots include
@@ -118,7 +124,8 @@ oldaplib function signatures have not changed in this step.
 .venv/bin/python -m pytest --noconftest tests/test_fulltext_api.py tests/test_fulltext.py tests/test_ontology_api.py -q
 ```
 
-76 tests and three subtests passed. Coverage includes namespace/path expansion,
+The complete offline suite passes 173 tests and seven subtests (2026-11-10),
+with socket connections blocked. Coverage includes namespace/path expansion,
 alias deduplication, malformed configurations, offline CLI use, the current
 Fasnacht field example and rejection before API authentication/direct connection.
 New tests cover backend/permission preflight failures with zero mutations, final
@@ -126,3 +133,31 @@ activation order, no retry after uncertainty, snapshot state, unchanged replay
 and portable dump/load parity. Existing API import/native connector tests remain
 green. Real backend authorization/rebuild is exercised by the sibling library
 probe; the tools model/list endpoints remain fixtures in these offline tests.
+
+## Existing Fasnacht files
+
+`fasnacht/fasnacht-onto.yaml` and its ten referenced taxonomy files were refreshed
+from the production Jena API on 2026-11-10. The snapshot includes 16 classes and
+nine managed fulltext fields, replacing the legacy GraphDB connector section.
+Its local list paths retain the existing sibling-file layout. A read-only import
+plan against production contains zero operations, including no index rebuild;
+see [verification receipt](fasnacht-production-ontology-20261110.json).
+
+The snapshot follows production project metadata, including its 2026-02-08 start
+date and current labels; it is not a merge of production and older local proposals.
+YAML ordering, language-string representation and formatting are normalized by
+the exporter. Handwritten comments are not part of an API export.
+`examples/ontology/fasnacht-jena.yaml` remains a fulltext-only example.
+
+To refresh the current model including its fields and taxonomy files, export
+from the target API:
+
+```sh
+oldap-tools --api https://api.example.org --user USER ontology dump fasnacht \
+  --out-dir export/fasnacht --include-taxonomies
+oldap-tools --api https://api.example.org --user USER ontology load \
+  -i export/fasnacht/ontology.yaml --fulltext apply --dry-run
+```
+
+Review the plan before omitting `--dry-run`. Existing GraphDB type/language/analyzer
+options must not be mechanically renamed to portable fields.

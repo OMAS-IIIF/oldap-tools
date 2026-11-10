@@ -6,6 +6,13 @@ lists, and sends only the required changes. GraphDB credentials, addresses and
 repository options are not used by this transport. The API server selects its
 repository and enforces OLDAP permissions for the authenticated user.
 
+API YAML exports default to Jena's managed `ontology.fulltext.fields`.
+For a legacy GraphDB API, explicitly select `--search-backend graphdb`.
+Imports containing portable fulltext require `--fulltext apply`, including for
+a dry run; activation happens after model/list updates with revision protection.
+See [Jena fulltext configuration](jena-fulltext.md) for roundtrip examples and
+the distinction between portable fields and legacy connector options.
+
 ```bash
 oldap-tools --api https://api.example.org --user "$OLDAP_USER" \
   ontology load --inf ontology.yaml --dry-run

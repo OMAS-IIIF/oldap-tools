@@ -1,122 +1,122 @@
 OrganisationTaxonomy:
   label:
-    - Organisation types@en
-    - Organisationskategorien@de
+  - Organisation types@en
+  - Organisationskategorien@de
   nodes:
-    Clique:
-      label:
-        - Carnival group@en
-        - Glygge@de
-        - Group de carnaval@fr
-        - compagnia di carnevale@it
-    Wagenclique:
-      label:
-        - Float group@en
-        - Waage@de
-        - Groupe de char@fr
-        - Gruppo di carro@it
-    Guggenmusik:
-      label:
-        - Guggen band@en
-        - Guggemuusig@de
-        - Guggenmusik@fr
-        - Guggenmusik@it
-    Chaise:
-      label:
-        - Chaise@en
-        - Chaise@de
-        - Chaise@fr
-        - Chaise@it
-    Schyssdraeggzuegli:
-      label:
-        - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@en
-        - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@de
-        - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@fr
-        - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@it
-    Schnitzelbangg:
-      label:
-        - Schnitzelbangg@en
-        - Schnitzelbangg@de
-        - Schnitzelbangg@fr
-        - Schnitzelbangg@it
-    Wilde:
-      label:
-        - Wilde / Pfeiffer und Trommelgruppen@en
-        - Wilde / Pfeiffer und Trommelgruppen@de
-        - Wilde / Pfeiffer und Trommelgruppen@fr
-        - Wilde / Pfeiffer und Trommelgruppen@it
-    Fasnachtscomite:
-      label:
-        - Carnival committee@en
-        - Fasnachts-Comité@de
-        - Comité du carnaval@fr
-        - Comitato del carnevale@it
     Artist:
       label:
-        - Artist / Business@en
-        - Künstler*in / Gewerbe@de
-        - Artiste / Entreprise@fr
-        - Artista / Attività commerciale@it
+      - Künstler*in / Gewerbe@de
+      - Artist / Business@en
+      - Artiste / Entreprise@fr
+      - Artista / Attività commerciale@it
+    Chaise:
+      label:
+      - Chaise@de
+      - Chaise@en
+      - Chaise@fr
+      - Chaise@it
+    Clique:
+      label:
+      - Glygge@de
+      - Carnival group@en
+      - Group de carnaval@fr
+      - compagnia di carnevale@it
+    Fasnachtscomite:
+      label:
+      - Fasnachts-Comité@de
+      - Carnival committee@en
+      - Comité du carnaval@fr
+      - Comitato del carnevale@it
     Gedaechtnisinstitutionen:
       label:
-        - Memory institutions@en
-        - Gedächtnisinstitutionen@de
-        - Institutions de mémoire@fr
-        - Istituzioni della memoria@it
+      - Gedächtnisinstitutionen@de
+      - Memory institutions@en
+      - Institutions de mémoire@fr
+      - Istituzioni della memoria@it
       nodes:
         Archiv:
           label:
-            - Archive@en
-            - Archiv@de
-            - Archives@fr
-            - Archivio@it
+          - Archiv@de
+          - Archive@en
+          - Archives@fr
+          - Archivio@it
           nodes:
             Bundesarchiv:
               label:
-                - Federal archive@en
-                - Bundesarchiv@de
-                - Archives fédérales@fr
-                - Archivio federale@it
-            Staatsarchiv:
-              label:
-                - State/Cantonal archive@en
-                - Staats-/Kantonsarchiv@de
-                - Archives cantonales@fr
-                - Archivio cantonale@it
+              - Bundesarchiv@de
+              - Federal archive@en
+              - Archives fédérales@fr
+              - Archivio federale@it
             Cliqenarchiv:
               label:
-                - Carnival group archive@en
-                - Cliquenarchiv@de
-                - Archives de clique@fr
-                - Archivio di clique@it
+              - Cliquenarchiv@de
+              - Carnival group archive@en
+              - Archives de clique@fr
+              - Archivio di clique@it
             Institutionsarchiv:
               label:
-                - Institutional archive@en
-                - Institutionelles Archiv@de
-                - Archives institutionnelles@fr
-                - Archivio istituzionale@it
+              - Institutionelles Archiv@de
+              - Institutional archive@en
+              - Archives institutionnelles@fr
+              - Archivio istituzionale@it
             Privatarchiv:
               label:
-                - Private archive@en
-                - Privatarchiv@de
-                - Archives privées@fr
-                - Archivio privato@it
+              - Privatarchiv@de
+              - Private archive@en
+              - Archives privées@fr
+              - Archivio privato@it
+            Staatsarchiv:
+              label:
+              - Staats-/Kantonsarchiv@de
+              - State/Cantonal archive@en
+              - Archives cantonales@fr
+              - Archivio cantonale@it
         Museum:
           label:
-            - Museum@en
-            - Museum@de
-            - Musée@fr
-            - Museo@it
+          - Museum@de
+          - Museum@en
+          - Musée@fr
+          - Museo@it
           nodes:
-            Staatsmuseum:
-              label:
-                - State/Cantonal museum@en
-                - Staatliches/Kantonales Museum@de
-                - Musée cantonal@fr
-                - Museo cantonale@it
             Privatmuseum:
               label:
-                - Private museum@en
-                - Privates Museum@de
-                - Musée privé@fr
-                - Museo privato@it
+              - Privates Museum@de
+              - Private museum@en
+              - Musée privé@fr
+              - Museo privato@it
+            Staatsmuseum:
+              label:
+              - Staatliches/Kantonales Museum@de
+              - State/Cantonal museum@en
+              - Musée cantonal@fr
+              - Museo cantonale@it
+    Guggenmusik:
+      label:
+      - Guggemuusig@de
+      - Guggen band@en
+      - Guggenmusik@fr
+      - Guggenmusik@it
+    Schnitzelbangg:
+      label:
+      - Schnitzelbangg@de
+      - Schnitzelbangg@en
+      - Schnitzelbangg@fr
+      - Schnitzelbangg@it
+    Schyssdraeggzuegli:
+      label:
+      - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@de
+      - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@en
+      - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@fr
+      - Schyssdräggziigli / Wildi Tambour- oder Pfyffergruppe@it
+    Wagenclique:
+      label:
+      - Waage@de
+      - Float group@en
+      - Groupe de char@fr
+      - Gruppo di carro@it
+    Wilde:
+      label:
+      - Wilde / Pfeiffer und Trommelgruppen@de
+      - Wilde / Pfeiffer und Trommelgruppen@en
+      - Wilde / Pfeiffer und Trommelgruppen@fr
+      - Wilde / Pfeiffer und Trommelgruppen@it

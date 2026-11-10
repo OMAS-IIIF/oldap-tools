@@ -1,122 +1,133 @@
-# Active flat archive-material taxonomy referenced by fasnacht-onto.yaml.
 ObjectTaxonomy:
-  label:
-    - Archive material types@en
-    - Archivgutarten@de
-    - Types de documents et objets d'archive@fr
-    - Tipi di materiali d'archivio@it
   definition:
-    - Flat controlled vocabulary for independently described archival objects. The digital media form is classified separately.@en
-    - Flaches kontrolliertes Vokabular für eigenständig beschriebene Archivobjekte. Die digitale Medienform wird separat klassifiziert.@de
-    - Vocabulaire contrôlé plat pour les objets d'archive décrits de manière autonome. La forme du média numérique est classée séparément.@fr
-    - Vocabolario controllato piatto per oggetti d'archivio descritti autonomamente. La forma del supporto digitale è classificata separatamente.@it
+  - Vocabolario controllato piatto per oggetti d'archivio descritti autonomamente.
+    La forma del supporto digitale è classificata separatamente.@it
+  - Flat controlled vocabulary for independently described archival objects. The digital
+    media form is classified separately.@en
+  - Vocabulaire contrôlé plat pour les objets d'archive décrits de manière autonome.
+    La forme du média numérique est classée séparément.@fr
+  - Flaches kontrolliertes Vokabular für eigenständig beschriebene Archivobjekte.
+    Die digitale Medienform wird separat klassifiziert.@de
+  label:
+  - Tipi di materiali d'archivio@it
+  - Archive material types@en
+  - Types de documents et objets d'archive@fr
+  - Archivgutarten@de
   nodes:
-    Musikinstrument:
-      label:
-        - Instrument@en
-        - Instrument@de
-        - Instrument@fr
-        - Strumento@it
-    Larve:
-      label:
-        - Carnival mask@en
-        - Larve@de
-        - Masque de carnaval@fr
-        - Maschera carnevalesca@it
-    Kostuem:
-      label:
-        - Costume@en
-        - Kostüm@de
-        - Costume@fr
-        - Costume@it
-    Laterne:
-      label:
-        - Lantern@en
-        - Laterne@de
-        - Lanterne@fr
-        - Lanterna@it
-    Plakette:
-      label:
-        - Carnival badge@en
-        - Plakette@de
-        - Insigne de carnaval@fr
-        - Distintivo di carnevale@it
-    Requisite:
-      label:
-        - Prop@en
-        - Requisit@de
-        - Accessoire@fr
-        - Oggetto di scena@it
-    Vereinsdokument:
-      label:
-        - Club record@en
-        - Vereinsdokument@de
-        - Document associatif@fr
-        - Documento associativo@it
-    MusicalNotation:
-      label:
-        - Sheet music@en
-        - Notenblatt@de
-        - Partition@fr
-        - Spartito@it
-    PublicationsAndPress:
-      label:
-        - Printed matter@en
-        - Drucksachen@de
-        - Imprimés@fr
-        - Stampati@it
-    Kunst:
-      label:
-        - Image@en
-        - Bild@de
-        - Image@fr
-        - Immagine@it
-      definition:
-        - An independently described physical or intellectual image work, not merely a digital image file.@en
-        - Ein eigenständig beschriebenes physisches oder geistiges Bildwerk, nicht bloss eine digitale Bilddatei.@de
-        - Une œuvre visuelle physique ou intellectuelle décrite de manière autonome, et non un simple fichier image numérique.@fr
-        - Un'opera visiva fisica o intellettuale descritta autonomamente, non un semplice file immagine digitale.@it
     Honour:
       label:
-        - Honour@en
-        - Ehrung@de
-        - Distinction@fr
-        - Onorificenza@it
+      - Ehrung@de
+      - Honour@en
+      - Distinction@fr
+      - Onorificenza@it
+    Kostuem:
+      label:
+      - Kostüm@de
+      - Costume@en
+      - Costume@fr
+      - Costume@it
+    Kunst:
+      definition:
+      - Ein eigenständig beschriebenes physisches oder geistiges Bildwerk, nicht bloss
+        eine digitale Bilddatei.@de
+      - An independently described physical or intellectual image work, not merely
+        a digital image file.@en
+      - Une œuvre visuelle physique ou intellectuelle décrite de manière autonome,
+        et non un simple fichier image numérique.@fr
+      - Un'opera visiva fisica o intellettuale descritta autonomamente, non un semplice
+        file immagine digitale.@it
+      label:
+      - Bild@de
+      - Image@en
+      - Image@fr
+      - Immagine@it
+    Larve:
+      label:
+      - Larve@de
+      - Carnival mask@en
+      - Masque de carnaval@fr
+      - Maschera carnevalesca@it
+    Laterne:
+      label:
+      - Laterne@de
+      - Lantern@en
+      - Lanterne@fr
+      - Lanterna@it
+    Manuscript:
+      definition:
+      - An independently described manuscript language material, including typescripts;
+        manuscript musical notation is classified as sheet music.@en
+      label:
+      - Handschriftlicher Text@de
+      - Manuscript text@en
+      - Texte manuscrit@fr
+      - Testo manoscritto@it
+    MixedMaterials:
+      definition:
+      - An independently described aggregation of mixed materials; no single carrier
+        or media form is inferred for the whole.@en
+      label:
+      - Gemischtes Archivgut@de
+      - Mixed archival material@en
+      - Documents d'archives mixtes@fr
+      - Materiali archivistici misti@it
+    MusicalNotation:
+      label:
+      - Notenblatt@de
+      - Sheet music@en
+      - Partition@fr
+      - Spartito@it
+    Musikinstrument:
+      label:
+      - Instrument@de
+      - Instrument@en
+      - Instrument@fr
+      - Strumento@it
+    Plakette:
+      label:
+      - Plakette@de
+      - Carnival badge@en
+      - Insigne de carnaval@fr
+      - Distintivo di carnevale@it
+    ProjectedMedium:
+      definition:
+      - An independently described motion picture, video, slide, filmstrip or transparency;
+        a catalog record alone does not imply a playable digital file.@en
+      label:
+      - Film oder Projektionsmedium@de
+      - Film or projected medium@en
+      - Film ou document projeté@fr
+      - Film o materiale da proiezione@it
+    PublicationsAndPress:
+      label:
+      - Drucksachen@de
+      - Printed matter@en
+      - Imprimés@fr
+      - Stampati@it
+    Requisite:
+      label:
+      - Requisit@de
+      - Prop@en
+      - Accessoire@fr
+      - Oggetto di scena@it
+    SoundRecording:
+      definition:
+      - An independently described musical or nonmusical sound recording; access files
+        and carriers are described separately.@en
+      label:
+      - Tonaufnahme@de
+      - Sound recording@en
+      - Enregistrement sonore@fr
+      - Registrazione sonora@it
+    Vereinsdokument:
+      label:
+      - Vereinsdokument@de
+      - Club record@en
+      - Document associatif@fr
+      - Documento associativo@it
     Zeedel:
       label:
-        - Carnival leaflet (Zeedel)@en
-        - Zeedel@de
-        - Feuillet de carnaval (Zeedel)@fr
-        - Foglio carnevalesco (Zeedel)@it
-    SoundRecording:
-      label:
-        - Sound recording@en
-        - Tonaufnahme@de
-        - Enregistrement sonore@fr
-        - Registrazione sonora@it
-      definition:
-        - An independently described musical or nonmusical sound recording; access files and carriers are described separately.@en
-    ProjectedMedium:
-      label:
-        - Film or projected medium@en
-        - Film oder Projektionsmedium@de
-        - Film ou document projeté@fr
-        - Film o materiale da proiezione@it
-      definition:
-        - An independently described motion picture, video, slide, filmstrip or transparency; a catalog record alone does not imply a playable digital file.@en
-    Manuscript:
-      label:
-        - Manuscript text@en
-        - Handschriftlicher Text@de
-        - Texte manuscrit@fr
-        - Testo manoscritto@it
-      definition:
-        - An independently described manuscript language material, including typescripts; manuscript musical notation is classified as sheet music.@en
-    MixedMaterials:
-      label:
-        - Mixed archival material@en
-        - Gemischtes Archivgut@de
-        - Documents d'archives mixtes@fr
-        - Materiali archivistici misti@it
-      definition:
-        - An independently described aggregation of mixed materials; no single carrier or media form is inferred for the whole.@en
+      - Zeedel@de
+      - Carnival leaflet (Zeedel)@en
+      - Feuillet de carnaval (Zeedel)@fr
+      - Foglio carnevalesco (Zeedel)@it

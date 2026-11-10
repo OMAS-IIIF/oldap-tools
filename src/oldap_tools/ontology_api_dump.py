@@ -158,7 +158,7 @@ def _publish_dump(directory: Path, files: dict[str, bytes], *, overwrite: bool) 
 
 def dump_ontology_api(*, api_base: str, user: str, password: str, project_id: str,
                       out_dir: Path | None = None, out: Path | None = None,
-                      include_taxonomies: bool = False, overwrite: bool = False, include_connectors: bool = True, search_backend: str = "graphdb",
+                      include_taxonomies: bool = False, overwrite: bool = False, include_connectors: bool = True, search_backend: str = "jena",
                       emit: Callable[[str], None] = print) -> Path:
     """Read and export an ontology, optionally with every taxonomy in a directory.
 
@@ -171,7 +171,7 @@ def dump_ontology_api(*, api_base: str, user: str, password: str, project_id: st
         out: Alternative single YAML filename, optionally gzip compressed.
         include_taxonomies: Download all taxonomies; requires out_dir.
         include_connectors: Export search configuration from the selected backend.
-        search_backend: graphdb (default) for native connectors, jena for portable fields.
+        search_backend: jena (default) for portable fields, graphdb for legacy native connectors.
         overwrite: Replace conflicting export files, preserving unrelated files.
         emit: Receives the final export summary.
 

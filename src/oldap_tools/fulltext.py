@@ -23,11 +23,11 @@ def plan_fulltext(ontology: dict[str, Any]) -> dict[str, Any]:
         ValueError: Missing namespace/configuration or mixed backend formats.
         OldapError: Invalid field, namespace or predicate identifier.
     """
-    # Lazy import keeps legacy GraphDB commands usable with released oldaplib.
+    # Import only when a fulltext plan is requested.
     try:
         from oldaplib.src.helpers.jena_fulltext import jena_fulltext_fields
     except ImportError as error:
-        raise ValueError("Fulltext planning requires the migration/jena version of oldaplib.") from error
+        raise ValueError("Fulltext planning requires oldaplib 1.x with Jena support.") from error
     if 'fulltext' not in ontology:
         raise ValueError("Ontology has no fulltext section.")
     if 'lucene_connectors' in ontology:

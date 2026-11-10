@@ -299,7 +299,7 @@ def ontology_dump(
         out_dir: Path | None = typer.Option(None, "--out-dir", help="API YAML package directory; created if missing"),
         overwrite: bool = typer.Option(False, "--overwrite", help="Replace existing API dump files"),
         fmt: str = typer.Option("yaml", "--format", "-f", help="Output format: 'yaml' or 'trig'"),
-        search_backend: str = typer.Option("graphdb", "--search-backend", help="Export search configuration from graphdb or jena"),
+        search_backend: str | None = typer.Option(None, "--search-backend", help="Search configuration: jena (API default) or graphdb (direct default)"),
         include_connectors: bool = typer.Option(True, "--include-connectors/--no-connectors", help="Include Lucene configuration in YAML dumps"),
         include_taxonomies: bool = typer.Option(
             False,
@@ -317,6 +317,8 @@ def ontology_dump(
         raise typer.BadParameter("--include-taxonomies requires --out-dir with API transport.")
     if transport == "direct" and (out_dir is not None or overwrite):
         raise typer.BadParameter("--out-dir and --overwrite are API dump options; use --out for direct dumps.")
+    # The normal API is Jena; explicit legacy direct exports retain GraphDB.
+    search_backend = search_backend or ("jena" if transport == "api" else "graphdb")
     if search_backend not in {"graphdb", "jena"} or (transport == "direct" and search_backend != "graphdb"):
         raise typer.BadParameter("Jena search export requires API transport.")
     cfg = connection_config(ctx)

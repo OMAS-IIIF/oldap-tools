@@ -44,6 +44,8 @@ class ReadClient:
         self.apply = Mock()
 
     def get_json(self, path, **kwargs):
+        if path == "/admin/fulltext/demo":
+            return {"project": "demo", "configuration": None, "revision": None, "status": "absent"}
         if path == "/admin/lucene/demo":
             return {"name": "demo", "configuration": None, "revision": None}
         if path == "/admin/project/demo":
@@ -190,7 +192,9 @@ class OntologyApiPlanningTests(unittest.TestCase):
     def test_real_fasnacht_document_validates_without_network(self):
         source = Path(__file__).resolve().parents[1] / "fasnacht/fasnacht-onto.yaml"
         with patch("requests.Session.request", side_effect=AssertionError("Unexpected network")):
-            ontology, lists = prepare_api_ontology(source)
+            ontology, lists = prepare_api_ontology(source, fulltext_mode="apply")
+        self.assertEqual(len(ontology["fulltext"]["fields"]), 9)
+        self.assertNotIn("lucene_connectors", ontology)
         self.assertEqual(ontology["project"]["shortname"], "fasnacht")
         self.assertIn("CreativeCommons", lists)
 
@@ -372,7 +376,24 @@ class OntologyCliTests(unittest.TestCase):
         self.assertNotIn("hidden-password", result.output)
         self.assertEqual(api.call_args.kwargs["out_dir"], Path("export/demo"))
         self.assertTrue(api.call_args.kwargs["include_taxonomies"])
+        self.assertEqual(api.call_args.kwargs["search_backend"], "jena")
         direct.assert_not_called()
+
+    @patch("oldap_tools.cli.dump_ontology")
+    @patch("oldap_tools.cli.dump_ontology_api")
+    def test_explicit_legacy_exports_remain_available(self, api, direct):
+        for options in (["--search-backend", "graphdb"], ["--transport", "direct"]):
+            api.reset_mock()
+            direct.reset_mock()
+            result = CliRunner().invoke(app, ["--user", "u", "ontology", "dump", "demo", *options],
+                                        input="hidden-password\n")
+            self.assertEqual(result.exit_code, 0, result.output)
+            if "--transport" in options:
+                direct.assert_called_once()
+                api.assert_not_called()
+            else:
+                self.assertEqual(api.call_args.kwargs["search_backend"], "graphdb")
+                direct.assert_not_called()
 
     @patch("oldap_tools.cli.typer.prompt")
     def test_dump_rejects_ambiguous_paths_before_password_prompt(self, prompt):
@@ -549,7 +570,7 @@ class LuceneApiTests(unittest.TestCase):
         with TemporaryDirectory() as folder, patch("oldap_tools.ontology_api_dump.OldapApiClient") as factory:
             factory.return_value.__enter__.return_value = client
             path = dump_ontology_api(api_base="https://api.example", user="u", password="secret",
-                                     project_id="demo", out_dir=Path(folder), emit=Mock())
+                                     project_id="demo", out_dir=Path(folder), search_backend="graphdb", emit=Mock())
             ontology, lists = prepare_api_ontology(path)
             self.assertEqual(ontology["lucene_connectors"]["demo"]["configuration"], self.configuration)
             plan = plan_ontology_api(client, ontology, lists, connector_mode="replace")
@@ -585,7 +606,7 @@ class LuceneApiTests(unittest.TestCase):
             factory.return_value.__enter__.return_value = client
             target = Path(folder) / "package"
             with self.assertRaises(ApiError):
-                dump_ontology_api(api_base="https://api.example", user="u", password="secret", project_id="demo", out_dir=target, emit=Mock())
+                dump_ontology_api(api_base="https://api.example", user="u", password="secret", project_id="demo", out_dir=target, search_backend="graphdb", emit=Mock())
             self.assertFalse(target.exists())
             dump_ontology_api(api_base="https://api.example", user="u", password="secret", project_id="demo", out_dir=target, include_connectors=False, emit=Mock())
             self.assertTrue((target / "ontology.yaml").exists())

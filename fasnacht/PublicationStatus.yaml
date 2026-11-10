@@ -1,17 +1,17 @@
 PublicationStatus:
   label:
-    - Publication status@en
-    - Publikationsstatus@de
+  - Publikationsstatus@de
+  - Publication status@en
   nodes:
     InProgress:
       label:
-        - In progress@en
-        - In Bearbeitung@de
-    ReadyToPublish:
-      label:
-        - Ready to publish@en
-        - Bereit zur Veröffentlichung@de
+      - In Bearbeitung@de
+      - In progress@en
     Published:
       label:
-        - Published@en
-        - Veröffentlicht@de
+      - Veröffentlicht@de
+      - Published@en
+    ReadyToPublish:
+      label:
+      - Bereit zur Veröffentlichung@de
+      - Ready to publish@en

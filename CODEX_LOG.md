@@ -1,3 +1,21 @@
+### Update 2026-11-10 12:11
+- Decisions: Bump tools to 1.0.1 and consolidate the reviewed Jena work into main and the primary OLDAP checkout.
+- Implementation: Updated package/runtime/bump metadata; include Jena export default, documented fulltext workflows and the production ontology/taxonomy snapshot with zero-operation verification receipt. Remote main and migration checkout shared the same base before this commit.
+- Open: Package/image publication and deployment are separate from this requested Git consolidation.
+- Risks/Assumptions: 173 tests and seven subtests pass with sockets blocked; updated the real Fasnacht fixture test to require explicit fulltext apply and verify nine fields. Preserve older migration checkout as a reference until remaining repositories are consolidated. No dependency constraint or lock change is required by this patch.
+
+### Update 2026-11-10 12:07
+- Decisions: Refresh the Fasnacht ontology and referenced taxonomies from the authoritative production Jena API, including managed fulltext; retain the existing local sibling-file layout.
+- Implementation: Replaced fasnacht/fasnacht-onto.yaml and ten taxonomy YAML files with the export (16 classes, nine fulltext fields). Removed legacy connector configuration. Preserved prior local files alongside the original export under the private OLDAP-Jena exports/20261110-120630-fasnacht-production directory. Added verification receipt and updated usage documentation.
+- Open: Consolidation, commit and release remain separate; no production model/index changes were applied.
+- Risks/Assumptions: Both original export and final local package produce zero planned operations against production. Local schema/list preparation and whitespace checks pass. Export normalizes formatting/order and omits handwritten comments; production project labels/start date supersede older local proposals. This is an ontology/taxonomy snapshot, not a full data/roles/media backup.
+
+### Update 2026-11-10 11:53
+- Decisions: Complete Jena YAML verification before consolidating the tools checkout; default API exports to Jena while retaining explicit legacy GraphDB workflows.
+- Implementation: Changed CLI/API dump defaults, preserved direct GraphDB default, corrected obsolete branch-only dependency guidance and documented fulltext import/export and legacy Fasnacht YAML. Added regressions for CLI selection, default fulltext roundtrip/no-op replay, and export failure without incomplete YAML.
+- Open: Consolidate reviewed changes into main/OLDAP and release separately. No live ontology/index mutations, publication or deployment performed.
+- Risks/Assumptions: 173 tests and 7 subtests pass with socket connections blocked; git diff --check passes. Offline suite uses API fixtures and the editable sibling library; not a new live Fuseki activation test. GraphDB API users now need --search-backend graphdb. Model/list writes remain separate transactions; final activation failure does not roll them back. Import continues to require an existing project and --fulltext apply.
+
 ### Update 2026-11-09 18:17
 - Decisions: Complete the approved final release; preserve existing tags and database namespace.
 - Implementation: Published exact core 1.0.0 wheels/images and app 0.2.8, mainline commits/tags; scoped production activation changes only API, identity and app. Evidence in oldap-setup/docs/oldap-1.0.0-release-results.json.

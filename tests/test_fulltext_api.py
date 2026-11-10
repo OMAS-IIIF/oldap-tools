@@ -89,7 +89,7 @@ def test_dump_reloads_same_fields_without_native_connector_calls(tmp_path):
         remote = factory.return_value.__enter__.return_value
         remote.get_json.side_effect = client.get_json
         output = dump_ontology_api(api_base='http://unused', user='u', password='p', project_id='demo',
-                                   out=tmp_path / 'ontology.yaml', search_backend='jena', emit=lambda _: None)
+                                   out=tmp_path / 'ontology.yaml', emit=lambda _: None)
     dumped = yaml.safe_load(output.read_text())['ontology']
     assert 'lucene_connectors' not in dumped
     assert plan_fulltext(dumped) == normalized
@@ -102,3 +102,16 @@ def test_mismatched_backend_graph_fails_before_apply():
     with pytest.raises(ValueError, match='graph differs'):
         plan_ontology_api(client, ontology(), {}, fulltext_mode='apply')
     client.apply.assert_not_called()
+
+
+def test_default_dump_failure_does_not_publish_incomplete_yaml(tmp_path):
+    """An unavailable Jena configuration must not silently lose search fields."""
+    client = Client()
+    client.failure = ApiError('unavailable', status=503)
+    output = tmp_path / 'ontology.yaml'
+    with patch('oldap_tools.ontology_api_dump.OldapApiClient') as factory:
+        factory.return_value.__enter__.return_value.get_json.side_effect = client.get_json
+        with pytest.raises(ApiError):
+            dump_ontology_api(api_base='http://unused', user='u', password='p',
+                              project_id='demo', out=output, emit=lambda _: None)
+    assert not output.exists()

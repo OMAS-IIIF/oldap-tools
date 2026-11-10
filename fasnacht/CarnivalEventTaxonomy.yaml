@@ -1,103 +1,102 @@
-# Active flat event taxonomy referenced by fasnacht-onto.yaml.
 CarnivalEventTaxonomy:
-  label:
-    - Carnival event types@en
-    - Arten von Fasnachtsanlässen@de
-    - Types d'événements carnavalesques@fr
-    - Tipi di eventi carnevaleschi@it
   definition:
-    - Flat controlled vocabulary for identifiable carnival events.@en
-    - Flaches kontrolliertes Vokabular für identifizierbare Fasnachtsanlässe.@de
-    - Vocabulaire contrôlé plat pour les événements carnavalesques identifiables.@fr
-    - Vocabolario controllato piatto per eventi carnevaleschi identificabili.@it
+  - Flaches kontrolliertes Vokabular für identifizierbare Fasnachtsanlässe.@de
+  - Vocabolario controllato piatto per eventi carnevaleschi identificabili.@it
+  - Vocabulaire contrôlé plat pour les événements carnavalesques identifiables.@fr
+  - Flat controlled vocabulary for identifiable carnival events.@en
+  label:
+  - Carnival event types@en
+  - Arten von Fasnachtsanlässen@de
+  - Tipi di eventi carnevaleschi@it
+  - Types d'événements carnavalesques@fr
   nodes:
-    Vorfasnacht:
-      label:
-        - Pre-carnival@en
-        - Vorfasnacht@de
-        - Précarnaval@fr
-        - Pre-carnevale@it
-    Fasnacht:
-      label:
-        - Carnival@en
-        - Fasnacht@de
-        - Carnaval@fr
-        - Carnevale@it
     Bummelausflug:
       label:
-        - Bummel@en
-        - Bummel@de
-        - Bummel@fr
-        - Bummel@it
-    Intern:
-      label:
-        - Club activity@en
-        - Vereinsaktivität@de
-        - Activité associative@fr
-        - Attività associativa@it
-    Morgenstreich:
-      label:
-        - Morgenstreich@en
-        - Morgenstreich@de
-        - Morgenstreich@fr
-        - Morgenstreich@it
-    Dienstag:
-      label:
-        - Carnival Tuesday@en
-        - Fasnachtsdienstag@de
-        - Mardi du carnaval@fr
-        - Martedì di carnevale@it
-    Cortege:
-      label:
-        - Cortège@en
-        - Cortège@de
-        - Cortège@fr
-        - Cortège@it
-    Endstreich:
-      label:
-        - Endstreich@en
-        - Endstreich@de
-        - Endstreich@fr
-        - Endstreich@it
-    StarMarch:
-      label:
-        - Star march@en
-        - Sternmarsch@de
-        - Marche en étoile@fr
-        - Marcia a stella@it
-    Guggenkonzert:
-      label:
-        - Guggen concert@en
-        - Guggenkonzert@de
-        - Concert de Guggenmusik@fr
-        - Concerto di Guggenmusik@it
+      - Bummel@de
+      - Bummel@en
+      - Bummel@fr
+      - Bummel@it
     ClosingEvening:
       label:
-        - Closing evening@en
-        - Schlussabend@de
-        - Soirée de clôture@fr
-        - Serata conclusiva@it
-    Performance:
+      - Schlussabend@de
+      - Closing evening@en
+      - Soirée de clôture@fr
+      - Serata conclusiva@it
+    Cortege:
       label:
-        - Performance@en
-        - Auftritt@de
-        - Représentation@fr
-        - Esibizione@it
-    FloatPreview:
+      - Cortège@de
+      - Cortège@en
+      - Cortège@fr
+      - Cortège@it
+    Dienstag:
       label:
-        - Float preview@en
-        - Wagenvernissage@de
-        - Vernissage de char@fr
-        - Vernissage del carro@it
+      - Fasnachtsdienstag@de
+      - Carnival Tuesday@en
+      - Mardi du carnaval@fr
+      - Martedì di carnevale@it
+    Endstreich:
+      label:
+      - Endstreich@de
+      - Endstreich@en
+      - Endstreich@fr
+      - Endstreich@it
+    Fasnacht:
+      label:
+      - Fasnacht@de
+      - Carnival@en
+      - Carnaval@fr
+      - Carnevale@it
     Fasnachtsball:
       label:
-        - Masked ball@en
-        - Maskenball@de
-        - Bal masqué@fr
-        - Ballo in maschera@it
+      - Maskenball@de
+      - Masked ball@en
+      - Bal masqué@fr
+      - Ballo in maschera@it
+    FloatPreview:
+      label:
+      - Wagenvernissage@de
+      - Float preview@en
+      - Vernissage de char@fr
+      - Vernissage del carro@it
+    Guggenkonzert:
+      label:
+      - Guggenkonzert@de
+      - Guggen concert@en
+      - Concert de Guggenmusik@fr
+      - Concerto di Guggenmusik@it
+    Intern:
+      label:
+      - Vereinsaktivität@de
+      - Club activity@en
+      - Activité associative@fr
+      - Attività associativa@it
+    Morgenstreich:
+      label:
+      - Morgenstreich@de
+      - Morgenstreich@en
+      - Morgenstreich@fr
+      - Morgenstreich@it
+    Performance:
+      label:
+      - Auftritt@de
+      - Performance@en
+      - Représentation@fr
+      - Esibizione@it
+    StarMarch:
+      label:
+      - Sternmarsch@de
+      - Star march@en
+      - Marche en étoile@fr
+      - Marcia a stella@it
+    Vorfasnacht:
+      label:
+      - Vorfasnacht@de
+      - Pre-carnival@en
+      - Précarnaval@fr
+      - Pre-carnevale@it
     Wettbewerb:
       label:
-        - Competition@en
-        - Wettbewerb@de
-        - Concours@fr
-        - Concorso@it
+      - Wettbewerb@de
+      - Competition@en
+      - Concours@fr
+      - Concorso@it
