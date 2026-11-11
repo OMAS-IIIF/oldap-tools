@@ -108,7 +108,7 @@ def project_dump(
         ctx: typer.Context,
         project_id: str = typer.Argument(..., help="Project ID (e.g. swissbritnet, hyha, ...)"),
         out: Path = typer.Option(Path("<project>.trig.gz"), "--out", "-o", help="Output dump file"),
-        include_data: bool = typer.Option(True, "--data/--no-data", help="Include '<project>:data' graph"),
+        include_data: bool = typer.Option(True, "--data/--no-data", help="Include project data and its history (Jena)"),
         include_model: bool = typer.Option(True, "--model/--no-model", help="Include '<project>:model' graph"),
         include_admin: bool = typer.Option(True, "--admin/--no-admin", help="Include '<project>:admin' graph"),
         include_lists: bool = typer.Option(True, "--lists/--no-lists", help="Include '<project>:lists' graph")

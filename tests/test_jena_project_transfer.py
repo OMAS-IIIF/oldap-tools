@@ -109,7 +109,7 @@ def test_existing_public_project_functions_route_to_jena_without_graphdb(monkeyp
     monkeypatch.setattr(transfer, 'load', restore)
     path = tmp_path / 'dump.gz'
     dump_project('demo', 'unused', 'unused', path, True, True, False, False, 'root', 'secret')
-    export.assert_called_once_with('demo', path, ['shacl', 'onto', 'data'], user='root', password='secret', include_admin=False)
+    export.assert_called_once_with('demo', path, ['shacl', 'onto', 'data', 'history'], user='root', password='secret', include_admin=False)
     load_project('unused', 'unused', path, 'root', 'secret')
     restore.assert_called_once_with(path, user='root', password='secret')
 
@@ -137,3 +137,28 @@ def test_dump_accounts_for_native_header_at_transfer_limit(monkeypatch, tmp_path
     with pytest.raises(OldapErrorValue, match='limit'):
         transfer.dump('demo', path, ['data'], user='root', password='secret', include_admin=False)
     assert path.read_bytes() == b'previous backup'
+
+
+@pytest.mark.parametrize('parts', [['data'], ['data', 'history'], ['history']])
+def test_history_and_legacy_dumps_roundtrip(monkeypatch, tmp_path, parts):
+    """Explicit history scope survives the gzip header without decoding RDF terms."""
+    trig = '<urn:demo:history> { <urn:version> <urn:value> "früher"@de . }' if 'history' in parts else ''
+    con = Mock()
+    con._project_graph_export.return_value = trig
+    monkeypatch.setattr(jena_connection, 'JenaConnection', Mock(return_value=con))
+    monkeypatch.setattr(transfer, 'CacheSingletonRedis', Mock(return_value=Mock()))
+    path = tmp_path / 'history.gz'
+    transfer.dump('demo', path, parts, user='root', password='secret', include_admin=False)
+    transfer.load(path, user='root', password='secret')
+    con._project_graph_import.assert_called_once_with('demo', parts, trig)
+
+
+def test_no_data_omits_history(monkeypatch, tmp_path):
+    from oldap_tools.dump_project import dump_project
+    monkeypatch.setenv('OLDAP_BACKEND', 'jena')
+    export = Mock()
+    monkeypatch.setattr(transfer, 'dump', export)
+    path = tmp_path / 'model.gz'
+    dump_project('demo', 'unused', 'unused', path, False, True, False, True, 'root', 'secret')
+    export.assert_called_once_with('demo', path, ['shacl', 'onto', 'lists'],
+                                  user='root', password='secret', include_admin=False)

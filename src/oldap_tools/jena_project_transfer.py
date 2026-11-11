@@ -31,7 +31,7 @@ def dump(project: str, out: Path, parts: list[str], *, user: str, password: str,
     Args:
         project: Existing project short name.
         out: Destination file; replaced only after complete serialization.
-        parts: Selected data, shacl, onto and/or lists graph suffixes.
+        parts: Selected data, history, shacl, onto and/or lists graph suffixes.
         user: OLDAP root administrator's login.
         password: OLDAP password; never included in output.
         include_admin: Must be false until administrative identity migration is supported.
@@ -82,7 +82,7 @@ def load(inf: Path, *, user: str, password: str):
     if (not isinstance(metadata, dict) or set(metadata) != {'version', 'project', 'parts'}
             or type(metadata['version']) is not int or metadata['version'] != 1 or not isinstance(metadata['project'], str)
             or not isinstance(metadata['parts'], list)
-            or any(part not in ('data', 'shacl', 'onto', 'lists') for part in metadata['parts'])):
+            or any(part not in ('data', 'history', 'shacl', 'onto', 'lists') for part in metadata['parts'])):
         raise OldapErrorValue('Invalid Jena project dump metadata.')
     payload = {'project': metadata['project'], 'parts': metadata['parts'], 'trig': trig}
     if len(json.dumps(payload).encode('utf-8')) > MAX_REQUEST:

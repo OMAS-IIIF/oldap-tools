@@ -63,7 +63,7 @@ def dump_project(project_id: str,
                  graphdb_password: str | None = None):
     """Export project admin, model, list, and data graphs to a gzipped TriG dump.
 
-    Jena requires --no-admin and exports native RDF 1.2 graph snapshots using
+    Jena includes history with data, requires --no-admin, and exports native RDF 1.2 snapshots using
     the configured private service. GraphDB retains its existing full dump.
 
     The GraphDB dump path deliberately bypasses the Redis object cache for OLDAP admin
@@ -74,7 +74,8 @@ def dump_project(project_id: str,
     if jena_project_transfer.enabled():
         parts = (['shacl', 'onto'] if include_model else [])
         parts += ['lists'] if include_lists else []
-        parts += ['data'] if include_data else []
+        # Keep previous property states with the current project data.
+        parts += ['data', 'history'] if include_data else []
         try:
             return jena_project_transfer.dump(project_id, out, parts, user=user, password=password,
                                               include_admin=include_admin)

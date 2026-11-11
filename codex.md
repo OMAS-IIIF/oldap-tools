@@ -1,5 +1,7 @@
 # oldap-tools Project Context
 
+- Release 1.1.0 (2026-11-11): Include history whenever project data is exported; preserve old dump compatibility. Requires Jena service 1.1.0 for history graph transfer. --no-data excludes history; limits unchanged.
+
 - Published patch (2026-11-10): oldap-tools 1.0.1 wheel/sdist are on PyPI; Docker v1.0.1 supports AMD64/ARM64 with oldaplib 1.0.1. Tools remains an on-demand operator CLI, not a daemon. Release hashes, checks and recipe: docs/tools-1.0.1-release.md and its JSON receipt. Production services are unchanged. This supersedes the pending-publication note below.
 
 - Consolidation (2026-11-10): version 1.0.1 incorporates Jena-default YAML exports and the verified production Fasnacht ontology snapshot. Main is the integration branch; OLDAP/oldap-tools is the primary development checkout after synchronization. Use the sibling OLDAP/oldaplib for editable local development, not OLDAP-Jena. This Git release does not publish packages/images or deploy services.

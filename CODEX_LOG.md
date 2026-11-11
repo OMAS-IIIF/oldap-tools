@@ -1,3 +1,9 @@
+### Update 2026-11-11 17:12
+- Decisions: Include history whenever project data is exported; preserve old dump compatibility.
+- Implementation: Added native history import allowlist and dump selection, tests, and oldaplib 1.1.0 dependency/lock.
+- Open: 169 tools tests and five native transfer checks pass; Docker publication pending.
+- Risks/Assumptions: Requires Jena service 1.1.0 for history graph transfer. --no-data excludes history; limits unchanged.
+
 ### Update 2026-11-10 12:26
 - Decisions: Publish the requested 1.0.1 Python distribution and multi-platform operator image; no daemon deployment is required.
 - Implementation: Published wheel/sdist to PyPI with verified hashes; built and published AMD64/ARM64 images plus v1.0.1 manifest using exact tools/library 1.0.1 wheels, pinned base and prior accepted third-party constraints. Added release report and machine-readable receipt.

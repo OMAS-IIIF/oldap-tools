@@ -87,15 +87,22 @@ The graphdb options see above. The other options are defined as follows:
 - `-verbose`: Print more information
 - `<project_id>`: Project identifier (project shortname)
 
-The file is basically a dump of the project specific named graphs of the GraphDB repository.
+For native Jena transfers (`OLDAP_BACKEND=jena`), use `--no-admin`; the target
+project must already exist and raw transfers require root permission. Version
+1.1.0 includes history with data and requires Jena service 1.1.0. Older native
+dumps without history remain importable. `--no-data` excludes both data and
+history. Transfers are additive and retain the existing bounded request size.
+
+The dump contains the project-specific named graphs.
 This are the following graphs:
 
 - `<project_id>:shacl`: Contains all the SHACL shapes of the project
 - `<project_id>:onto`: Contains all the OWL ontology information of the project
 - `<project_id>:lists`: Contains all the hierarchical lists of the project
 - `<project_id>:data`: Contains all the resources (instances) of the project
+- `<project_id>:history`: Contains previous business-property values (native Jena, included with data)
 
-The user information is stored as special comment in the TriG file and is interpreted by oldap-tools project load.
+For legacy GraphDB dumps, the user information is stored as special comment in the TriG file and is interpreted by oldap-tools project load.
 
 ## Project load
 
