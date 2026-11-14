@@ -1,5 +1,7 @@
 # oldap-tools Project Context
 
+- Release 1.2.0 preparation (2026-11-14): Reviewed reification stages 1–4 are merged into main. Coordinated package/image publication and home.org deployment are authorized and in progress; consumers require library >=1.2.0. Production is unchanged.
+
 - Final reification source review (2026-11-14): Two complete passes cover stages 1–4 across library/API/tools; concrete findings corrected and regression/package/performance evidence recorded in ../oldaplib/docs/reification-final-check.md. Complete owner model snapshots now cache reifier definitions without extra RDF probes; explicit policy validation remains fresh, and shape writes invalidate at outer transaction completion. Specialized annotated hierarchy restores remain unsupported. Local source only; coordinated release versions and installed/live acceptance are separate.
 
 - Reification stage 3 (2026-11-14): Managed assertion annotation CRUD, parent ACLs, fresh validation, transactional cleanup and history/restore are implemented locally. Explicit annotation reads preserve ordinary read/search queries and payloads; paired native measurements resolve no slowdown. See ../oldaplib/docs/reification-stage3.md. Annotated transformations and instance-data YAML v1 remain explicitly unsupported. Stage 4 annotation search is next; no release/deployment.
