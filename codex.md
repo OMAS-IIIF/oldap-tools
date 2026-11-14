@@ -145,3 +145,6 @@ packaging and target acceptance remain separate. See
 - Recovery freshness (2026-09-22): model JSON GET and TriG download bypass the DataModel cache, so Workbench graph deletion cannot make API import planning skip missing definitions. Scoped cache invalidation remains necessary for other direct GraphDB edits; never flush the writer-coordination Redis store.
 
 - Story.leadImage now targets shared:MediaObject with min/max 1 (local and production model updated 2026-10-22). The FasnachtsPage API migration tool converts legacy delivery URLs into resource IRIs; model widening alone does not migrate data.
+
+## Patch release 1.2.1 (2026-11-15)
+Requires oldaplib >=1.2.1,<2.0.0, fixing generated taxonomy shape parsing in mixed reifier models. Publish versioned AMD64/ARM64 images with exact library 1.2.1. No deployment is authorized. See docs/release-1.2.1.md and publication receipt.
