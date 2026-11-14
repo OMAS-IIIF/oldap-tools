@@ -147,4 +147,4 @@ packaging and target acceptance remain separate. See
 - Story.leadImage now targets shared:MediaObject with min/max 1 (local and production model updated 2026-10-22). The FasnachtsPage API migration tool converts legacy delivery URLs into resource IRIs; model widening alone does not migrate data.
 
 ## Patch release 1.2.1 (2026-11-15)
-Requires oldaplib >=1.2.1,<2.0.0, fixing generated taxonomy shape parsing in mixed reifier models. Publish versioned AMD64/ARM64 images with exact library 1.2.1. No deployment is authorized. See docs/release-1.2.1.md and publication receipt.
+Published and verified: all three packages 1.2.1 on PyPI; API/tools versioned AMD64/ARM64 images with exact oldaplib 1.2.1; source commits and v1.2.1 tags pushed. Taxonomy/reifier model reads are corrected. Installed regressions and isolated packaged Jena acceptance pass on both architectures. No deployment; latest tags and deployment selections unchanged. See docs/release-1.2.1.md and its receipt.
