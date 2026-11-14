@@ -9,6 +9,7 @@ fallback. The direct CLI remains available for administrative-only features.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from copy import deepcopy
 from datetime import date, datetime
 from graphlib import TopologicalSorter, CycleError
 import json
@@ -29,12 +30,13 @@ from oldap_tools.fulltext import require_supported_fulltext_import
 from oldap_tools.fulltext_api import plan_fulltext_api
 from oldap_tools.lucene_api import plan_connector
 from oldap_tools.list_api import plan_list, read_list_specs, read_api_lists
+from oldap_tools.ontology_reification import prepare_reification
 from oldap_tools.ontology import PROP_KEY_MAP, _as_datatype, _as_langstring, _read_yaml
 
 
 _LANG_FIELDS = {"label", "comment", "name", "description"}
 _SET_FIELDS = {"superclass", "languageIn", "inSet", "proposedResourceClass",
-               "proposedDatatypePropertyClass", "proposedObjectPropertyClass"}
+               "proposedDatatypePropertyClass", "proposedObjectPropertyClass", "reifierShapes"}
 
 
 @dataclass
@@ -61,7 +63,7 @@ def _language_values(value: Any) -> list[str] | None:
     return [f"{text}@{lang.name.lower()}" for lang, text in langstring.items()] if langstring else None
 
 
-def _property_payload(spec: dict, project: str, list_ids: set[str]) -> dict:
+def _property_payload(spec: dict, project: str, list_ids: set[str], *, annotation: bool = False) -> dict:
     """Translate YAML property keys to the API write contract (``class``).
 
     GET responses use ``toClass``; writes use ``class``. Explicit nulls are
@@ -71,7 +73,7 @@ def _property_payload(spec: dict, project: str, list_ids: set[str]) -> dict:
     for key, value in spec.items():
         if key == "iri":
             continue
-        if key == "node_kind":
+        if key == "node_kind" and not annotation:
             raise ValueError("The current OLDAP API does not support node_kind writes; use --transport direct.")
         target = "class" if key == "to_class" else PROP_KEY_MAP.get(key, key)
         if key == "to_class" and isinstance(value, str) and value.startswith("list:"):
@@ -126,7 +128,7 @@ def _changes(desired: dict, current: dict) -> dict:
             continue
         if key == "superclass" and value == []:
             value = {"del": previous} if previous else None
-        elif key in _SET_FIELDS and value == []:
+        elif key in _SET_FIELDS and key != "reifierShapes" and value == []:
             value = None
         changes[key] = value
     return changes
@@ -175,6 +177,9 @@ def prepare_api_ontology(inf: Path, *, fulltext_mode: str = "reject") -> tuple[d
             Xsd_QName(prop_iri, validate=True)
             seen.add(prop_iri)
             _property_payload(prop, project, set(lists))
+    for spec in (ontology.get("reifier_shapes") or {}).values():
+        for prop in (spec or {}).get("properties", []):
+            _property_payload(prop, project, set(lists), annotation=True)
     return ontology, lists
 
 
@@ -236,6 +241,43 @@ def plan_ontology_api(client: OldapApiClient, ontology: dict, lists: dict, *, re
     for list_id, spec in lists.items():
         operations.extend(plan_list(project, list_id, spec, current_lists.get(list_id)))
 
+    from oldap_tools.ontology_api_dump import reification_preflight_state
+    def read_project(prefix):
+        remote_model = client.get_json(api_path("admin", "datamodel", prefix))
+        return reification_preflight_state(remote_model)
+    current_yaml = reification_preflight_state(model)
+    preflight_input = deepcopy(ontology)
+    if remove_unused:
+        for iri, spec in (preflight_input.get("classes") or {}).items():
+            if "properties" not in spec:
+                continue
+            wanted = {prop["iri"] for prop in spec["properties"]}
+            normalized = {prop["iri"]: prop for prop in current_yaml["classes"].get(iri, {}).get("properties", [])}
+            for prop in classes.get(iri, {}).get("properties", []):
+                if prop["iri"] not in wanted and (prop["iri"] in standalone or prop.get("projectid") != project):
+                    # Match the established removal planner: foreign/standalone
+                    # uses survive, so their references still protect shapes.
+                    spec["properties"].append(normalized[prop["iri"]])
+    shapes, deleted_shapes = prepare_reification(preflight_input, current_yaml, remove_unused=remove_unused,
+                                                 read_project=read_project)
+    old_shapes = _index(model.get("reifierShapes", []), "iri", "reifier shape")
+    shape_operations = []
+    for iri, spec in (ontology.get("reifier_shapes") or {}).items():
+        if spec is None:
+            continue
+        fields = [{"iri": prop["iri"], **_property_payload(prop, project, set(lists) | set(current_lists), annotation=True)}
+                  for prop in shapes[iri]["properties"]]
+        old_fields = [{"iri": prop["iri"], **_property_payload(prop, project, set(lists) | set(current_lists), annotation=True)}
+                      for prop in current_yaml.get("reifier_shapes", {}).get(iri, {}).get("properties", [])]
+        def equal_fields(left, right):
+            left, right = _index(left, "iri", "field"), _index(right, "iri", "field")
+            return left.keys() == right.keys() and all(
+                all(_equal(key, prop.get(key), right[name].get(key)) for key in prop.keys() | right[name].keys())
+                for name, prop in left.items())
+        if iri not in old_shapes or not equal_fields(fields, old_fields):
+            shape_operations.append(ApiOperation("POST" if iri in old_shapes else "PUT",
+                api_path("admin", "datamodel", project, "reifier-shape", iri), {"properties": fields}))
+
     for prefix, spec in (ontology.get("external_ontologies") or {}).items():
         Xsd_NCName(prefix, validate=True)
         payload = {"namespaceIri": spec["namespace"]}
@@ -272,6 +314,8 @@ def plan_ontology_api(client: OldapApiClient, ontology: dict, lists: dict, *, re
                        for key in ("label", "comment", "closed", "superclass") if key in spec and spec[key] is not None}
             operations.append(ApiOperation("PUT", api_path("admin", "datamodel", project, iri), payload))
 
+    operations.extend(shape_operations)
+
     for iri, spec in (ontology.get("standalone_properties") or {}).items():
         payload = _property_payload(spec, project, set(lists))
         previous = standalone.get(iri)
@@ -284,7 +328,8 @@ def plan_ontology_api(client: OldapApiClient, ontology: dict, lists: dict, *, re
                                            api_path("admin", "datamodel", project, "property", iri), payload))
 
     removals = []
-    for iri, spec in wanted_classes.items():
+    for iri in class_order:
+        spec = wanted_classes[iri]
         previous = classes.get(iri)
         attributes = {key: _language_values(spec[key]) if key in _LANG_FIELDS else spec[key]
                       for key in ("label", "comment", "closed", "superclass") if key in spec}
@@ -318,6 +363,8 @@ def plan_ontology_api(client: OldapApiClient, ontology: dict, lists: dict, *, re
                         continue
                     removals.append(ApiOperation("DELETE", api_path("admin", "datamodel", project, iri, prop_iri), remove_unused=True))
     operations.extend(removals)
+    for iri in sorted(deleted_shapes & old_shapes.keys()):
+        operations.append(ApiOperation("DELETE", api_path("admin", "datamodel", project, "reifier-shape", iri), remove_unused=True))
     connector_operation, connector_before = plan_connector(client, ontology, current_project, connector_mode)
     if connector_operation is not None:
         operations.append(connector_operation)

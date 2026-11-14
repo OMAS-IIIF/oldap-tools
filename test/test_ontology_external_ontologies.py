@@ -98,6 +98,8 @@ class TestExternalOntologyYaml(unittest.TestCase):
         }
         external.get.side_effect = values.get
         model = Mock()
+        model.reifier_shapes = {}
+        model.get_propclasses.return_value = []
         model.get_extontos.return_value = ["fasnacht:foaf"]
         model.get_resclasses.return_value = []
         model.__getitem__ = Mock(return_value=external)

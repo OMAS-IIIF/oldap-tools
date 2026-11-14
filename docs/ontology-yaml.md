@@ -209,3 +209,88 @@ Native values are passed verbatim, so use full IRIs rather than shorthand QNames
 `configuration` cannot be combined with shorthand keys or other connector groups.
 Existing shorthand remains accepted. For modes, API requirements and roundtrip
 behavior, see [API workflow](ontology-api.md#lucene-configuration-roundtrip).
+
+## Reifier shapes (stage 2)
+
+Named annotation definitions are available through both ontology transports.
+They require the matching local stage 1B library/API sources; released 1.1.0
+packages do not yet provide these endpoints. No deployment is implied.
+
+```yaml
+ontology:
+  project:
+    shortname: travel
+  reifier_shapes:
+    travel:VisitAnnotationShape:
+      properties:
+        - iri: travel:dateTime
+          datatype: xsd:dateTime
+          min_count: 1
+          max_count: 1
+  classes:
+    travel:Travel:
+      properties:
+        - iri: travel:isAt
+          to_class: travel:GeographicLocation
+          reifier_shapes: [travel:VisitAnnotationShape]
+          reification_required: true
+    travel:GeographicLocation: {}
+```
+
+The complete [Travel fixture](../examples/ontology/travel-reification.yaml)
+also includes new-project metadata. `ontology validate --inf FILE` checks local
+syntax and supported field keys; connected planning resolves existing/shared
+shape references and merged constraints before mutations. Shape declarations
+may follow their references in the YAML file.
+
+`reifier_shapes` on a property is a list of named local or `shared:` shapes.
+All listed shapes apply together. The attachment belongs to that class's
+property use, not to every occurrence of the predicate. Shared definitions
+remain in their own project; exports preserve references without copying them.
+`reification_required` accepts true, false, or null (explicit removal).
+A flag, including false, requires local or inherited shape references.
+
+A definition's fields reuse supported property constraints: datatype or
+`to_class`, cardinalities, string/numeric restrictions, enumeration, language
+restrictions and display metadata. `node_kind` may supplement a type; node kind
+alone, inverse paths, nested annotation policies and cross-property constraints
+are not supported. Unsupported keys and duplicate field identities fail early.
+The API transport accepts `node_kind` for annotation fields; its existing
+restriction for ordinary property imports is unchanged.
+
+### Incremental changes and removal
+
+| Input | Update behavior |
+| --- | --- |
+| Omitted definition, property field or attribute | Preserve existing state |
+| `reification_required: false` | Store explicit false |
+| `reification_required: null` | Remove the optional flag |
+| `reifier_shapes: []` on a property | Clear its own references; also clear the flag if no inherited reference remains |
+| Definition with omitted `properties` | Preserve fields (create an empty shape if new) |
+| Definition with supplied `properties` | Merge fields by IRI and explicitly supplied attributes |
+| Field attribute set to null | Remove that attribute, subject to model validity |
+| `--remove-unused` with supplied shape `properties` | Also remove omitted fields; `properties: []` empties the shape |
+| `reifier_shapes: {travel:VisitAnnotationShape: null}` | Delete this definition, only with `--remove-unused` |
+
+Omitted shape definitions are never garbage-collected. Delete a shape by
+explicitly removing its references and flag in the same input and requesting
+its null definition. Planning rejects references that would remain dangling.
+The store still refuses deletion when other models reference the shape, and
+refuses unsafe structural/policy changes on predicates with existing data.
+Those checks are transactional and cannot be guaranteed by an earlier dry run.
+
+API plans create definitions before property references and delete definitions
+after reference removals. Shape updates send complete merged field lists, as
+required by the API replacement contract. `--dry-run` prints the concrete
+requests and affected class/property paths. Each request commits independently;
+an error identifies completed steps. Inspect failures and produce a fresh plan
+before resuming; already completed changes are omitted on replay. Never retry
+an ambiguous failed HTTP mutation blindly. Direct updates also retain their
+existing per-object transaction boundaries.
+
+Both YAML dumps include managed definitions and property references. API ZIP
+snapshots retain shapes in `datamodel.json` and `model.trig`; direct model-graph
+backups already include their RDF. These are model operations only: instance
+annotation writes remain gated until stage 3. OLDAP keeps its own validation.
+
+See [stage 2 acceptance](reification-stage2.md) for local tests and commands.

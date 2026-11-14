@@ -1,3 +1,33 @@
+### Update 2026-11-14 18:53
+- Decisions: Completed explicitly requested final-check across all four stages and three repositories; two full review passes. Ready for coordinated local source merge; no merge performed.
+- Implementation: Corrected model-cache overhead/transaction completion eviction, graph and nested-node ownership, model attachment guards, copy notifications, legacy dialect, scalar comparisons, permission revocation, protected fields, API errors/hierarchy restore and OpenAPI quoting. Updated tests and current cache/profile documentation; see oldaplib/docs/reification-final-check.md (relative to OLDAP workspace).
+- Open: Coordinated release versions, installed-artifact and live HTTP/Redis/GraphDB/platform acceptance remain separate. No unresolved source findings.
+- Risks/Assumptions: Combined isolated suite 366 passed plus 9 subtests; three opt-in checks passed separately. Three wheels built; full OpenAPI validation passed. No measured warm-path regression, with transport/cold-cache/production limits documented. No commits, push, merge or live changes.
+
+### Update 2026-11-14 18:41
+- Decisions: Explicit final-check workflow covers all four stages across all three repositories. First audit completed before fixes; see oldaplib/docs/reification-final-check.md.
+- Implementation: Starting collective corrections for cache/read overhead, graph/nested ownership, model attachment guards, copy tracking, legacy dialect, scalar comparison and API restore/error boundaries.
+- Open: Regression verification, second complete review, package/schema checks and final readiness conclusion.
+- Risks/Assumptions: No live test targets, service changes, commits, push or merge; existing source-matched local environment used.
+
+### Update 2026-11-14 01:25
+- Decisions: Accept stage 3 locally; annotation loading is explicit and ordinary reads/searches retain exact query text/count. OLDAP remains the validator; stage 4 search is next.
+- Implementation: Completed managed annotation lifecycle, typed JSON, parent ACL/ownership checks, transactional cleanup, history restore/no-ops and API documentation. Added native cross-graph/shared identity and self-link deletion regressions. Acceptance: 18 native tests, 100 focused library/API tests, 200 tools tests/seven subtests; source-hashed paired performance receipt resolves no slowdown.
+- Open: Stage 4 filters/projection; separate artifact release and live HTTP/Redis acceptance. Instance-data YAML and annotated class transformations explicitly reject unsupported operations.
+- Risks/Assumptions: Pinned isolated Jena 6.2.0; local warm timings are not production capacity evidence. External/blank/shared/orphan reifiers remain read-only. No live changes, commits or publication.
+
+### Update 2026-11-14 01:18
+- Decisions: Stage 3 uses explicit lazy annotation loading; ordinary reads/searches retain their query text/count. Parent ACLs, fresh policy checks and resource transactions govern writes.
+- Implementation: Added identified annotation CRUD, typed RDF-term JSON, history snapshots/restoration and native integration tests. Unsupported annotated transformations and instance-data YAML remain explicitly blocked. Local benchmark compares current sources with pre-stage-3 HEAD on the same Jena dataset.
+- Open: Complete edge-case/API regression acceptance, documentation and final performance receipt before closing stage 3.
+- Risks/Assumptions: Managed exclusive IRI reifiers only; blank/shared/external/orphan records are read-only. Matching local sources required; no live service changes.
+
+### Update 2026-11-14 00:53
+- Decisions: Complete stage 2 locally on codex/reification-properties; preserve omitted definitions and require explicit null plus --remove-unused for shape deletion.
+- Implementation: Extended schema, converters, builders/synchronizers, read-only planner and exporters; added complete Travel fixture and six real RDF/Flask/Jena integration cases. Acceptance: 199 tools tests/seven subtests and 84 focused library/API tests pass; native cases use pinned Jena 6.2.0 in disposable TDB2 with Python sockets blocked.
+- Open: Stage 3 instance annotation CRUD/validation; stage 4 search. Coordinated package release and deployment remain separate.
+- Risks/Assumptions: Existing per-request/per-object commits; fresh plans support recovery, not whole-file atomicity. Final in-use/foreign-reference checks remain server-side. Matching sibling development sources required; no live HTTP or Redis acceptance.
+
 ### Update 2026-11-11 17:23
 - Decisions: Complete authorized 1.1.0 Git/PyPI/Docker release without deploying live services.
 - Implementation: Published and hash-verified oldaplib 1.1.0 on PyPI; API/tools multiarch v1.1.0 and harvester 0.1.15 standard/OCR images are published. Retained Jena service 1.1.0 artifact and immutable release receipts.

@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 import unittest
+from unittest.mock import patch
 
 from oldaplib.src.enums.xsd_datatypes import XsdDatatypes
 from oldaplib.src.helpers.context import Context
@@ -163,6 +164,13 @@ class DataImportPreflightTest(unittest.TestCase):
 
     def setUp(self):
         FakeCataloguedPhotograph.created_iris = []
+
+    def test_annotation_models_are_rejected_before_batch_writes(self):
+        prop = FakeCataloguedPhotograph.properties[Xsd_QName("schema:name")]
+        with patch.object(prop, "reifierShapes", ["chama:AnnotationShape"], create=True):
+            with self.assertRaisesRegex(DataImportPreflightError, "cannot represent assertion annotations"):
+                self.prepare()
+        self.assertEqual(FakeCataloguedPhotograph.created_iris, [])
 
     def test_prepares_typed_values_links_roles_and_create_candidate(self):
         plan = self.prepare()

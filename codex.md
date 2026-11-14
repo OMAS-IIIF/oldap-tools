@@ -1,5 +1,11 @@
 # oldap-tools Project Context
 
+- Final reification source review (2026-11-14): Two complete passes cover stages 1–4 across library/API/tools; concrete findings corrected and regression/package/performance evidence recorded in ../oldaplib/docs/reification-final-check.md. Complete owner model snapshots now cache reifier definitions without extra RDF probes; explicit policy validation remains fresh, and shape writes invalidate at outer transaction completion. Specialized annotated hierarchy restores remain unsupported. Local source only; coordinated release versions and installed/live acceptance are separate.
+
+- Reification stage 3 (2026-11-14): Managed assertion annotation CRUD, parent ACLs, fresh validation, transactional cleanup and history/restore are implemented locally. Explicit annotation reads preserve ordinary read/search queries and payloads; paired native measurements resolve no slowdown. See ../oldaplib/docs/reification-stage3.md. Annotated transformations and instance-data YAML v1 remain explicitly unsupported. Stage 4 annotation search is next; no release/deployment.
+
+- Reification stage 2 (2026-11-14): Reification stage 2 YAML is implemented for direct and API transports: named definitions, property-use references, shared preflight, incremental merging, explicit guarded removal and complete export/backup round trips. See docs/reification-stage2.md. Local `codex/reification-properties`; no release/deployment.
+
 - Published 1.1.0 (2026-11-11): oldaplib is on PyPI; API/tools multiarch images and harvester 0.1.15 standard/OCR images are available. Git release tags are pushed and acceptance passes. No deployment. The next history-aware transfer deployment needs Jena service 1.1.0. See docs/release-1.1.0.md and its immutable receipt.
 
 - Release 1.1.0 (2026-11-11): Include history whenever project data is exported; preserve old dump compatibility. Requires Jena service 1.1.0 for history graph transfer. --no-data excludes history; limits unchanged.

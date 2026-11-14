@@ -228,6 +228,11 @@ def _instance_values(
     """Build constructor values and typed links from a validated resource."""
 
     properties = resource_type.resolved_properties()
+    if any(getattr(prop, "reifierShapes", None) or getattr(prop, "reificationRequired", None) is not None
+           for prop in properties.values()):
+        raise DataImportPreflightError(
+            "Instance-data YAML version 1 cannot represent assertion annotations; use the annotation-aware library/API."
+        )
     constructor_values: dict[str, Any] = {}
     references: list[tuple[Iri, Xsd_QName]] = []
     for property_identifier, values in resource.properties.items():

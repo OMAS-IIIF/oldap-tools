@@ -449,3 +449,12 @@ It contains three owner-cleared HEIC photographs (`IMG_1508`, `IMG_1521`, and
 the corrected Foster's filename `IMG_0171`), their three complete
 KnowledgeContributions, two shared places, and locomotive 489. Dependencies
 precede their users, and every local file checksum is verified by dry-run.
+
+## Assertion annotations
+
+Instance-data YAML v1 does not encode assertion annotation identities or operations.
+The importer explicitly rejects classes using `reifierShapes` or
+`reificationRequired` before their instance writes. Ontology YAML still supports
+these definitions. Use the [stage 3 library/API operations](../../oldaplib/docs/reification-stage3.md)
+for annotated instances; native graph transfer preserves identities but does not
+normalize external or shared reifiers.

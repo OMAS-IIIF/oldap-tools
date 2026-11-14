@@ -278,3 +278,15 @@ This does not make arbitrary Workbench edits cache-aware. Other cached entities
 may still need scoped invalidation. Never use Redis FLUSHALL: the deployment's
 writer-coordination database must remain intact. Ontology YAML and API snapshots
 exclude instance data; preserve a complete RDF backup before destructive tests.
+
+## Reification model import/export
+
+Local stage 2 supports named `reifier_shapes`, property-use `reifier_shapes`
+references and `reification_required`. See the
+[YAML contract](ontology-yaml.md#reifier-shapes-stage-2) for omission, false,
+null and guarded deletion. Shape writes use the stage 1B
+`/admin/datamodel/<project>/reifier-shape/<shape>` endpoint; snapshots and YAML
+dumps include complete definitions. Imports require matching updated API and
+library sources. Read-only planning resolves references before writes; the
+server retains final transactional in-use checks. Plans remain independently
+committed requests and can be resumed from freshly read state.

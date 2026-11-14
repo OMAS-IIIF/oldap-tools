@@ -29,12 +29,16 @@ from oldaplib.src.oldaplist_helpers import ListFormat, dump_list_to
 from oldaplib.src.project import Project
 from oldaplib.src.propertyclass import PropertyClass
 from oldaplib.src.resourceclass import ResourceClass
+from oldaplib.src.reifier_shape import ReifierShape
+from oldaplib.src.xsd.xsd_boolean import Xsd_boolean
+from oldaplib.src.helpers.observable_set import ObservableSet
 from oldaplib.src.xsd.xsd_date import Xsd_date
 from oldaplib.src.xsd.xsd_decimal import Xsd_decimal
 from oldaplib.src.xsd.xsd_integer import Xsd_integer
 from oldaplib.src.xsd.xsd_ncname import Xsd_NCName
 from oldaplib.src.xsd.xsd_qname import Xsd_QName
 
+from oldap_tools.ontology_reification import prepare_reification, validate_reification_syntax
 from oldap_tools.fulltext import plan_fulltext, require_supported_fulltext_import
 from oldap_tools.dump_project import dump_project
 from oldap_tools.connection import create_connection
@@ -48,6 +52,8 @@ log = logging.getLogger(__name__)
 
 
 PROP_KEY_MAP = {
+    "reifier_shapes": "reifierShapes",
+    "reification_required": "reificationRequired",
     "subproperty_of": "subPropertyOf",
     "to_class": "toClass",
     "node_kind": "nodeKind",
@@ -70,6 +76,8 @@ PROP_KEY_MAP = {
 }
 
 ATTR_TO_YAML = {
+    "reifierShapes": "reifier_shapes",
+    "reificationRequired": "reification_required",
     "subPropertyOf": "subproperty_of",
     "toClass": "to_class",
     "nodeKind": "node_kind",
@@ -104,6 +112,7 @@ def validate_ontology_yaml(inf: Path, schema: Path | None = None) -> None:
         yamale.validate(schema=schema_obj, data=data)
         with inf.open(encoding="utf-8") as stream:
             ontology = yaml.safe_load(stream)["ontology"]
+        validate_reification_syntax(ontology)
         if "fulltext" in ontology:
             plan_fulltext(ontology)
     except Exception as err:
@@ -586,6 +595,38 @@ def _build_resource_class(
     return ResourceClass(con=con, project=project, owlclass_iri=Xsd_QName(iri), **kwargs)
 
 
+def _build_reifier_shape(con, project, iri, spec, lists) -> ReifierShape:
+    """Build one independently owned definition without persisting fields."""
+    return ReifierShape(con=con, project=project, shape_iri=iri,
+                        properties=[_build_property(con, project, prop, lists)
+                                    for prop in spec.get("properties", [])])
+
+
+def _model_reification_yaml(model: DataModel) -> dict:
+    """Expose fresh library model state for the shared incremental preflight."""
+    return {
+        "reifier_shapes": {str(iri): {"properties": [_dump_property(prop) for prop in shape.properties.values()]}
+                           for iri, shape in model.reifier_shapes.items()},
+        "classes": {str(iri): _dump_resource(model[iri]) for iri in model.get_resclasses()},
+        "standalone_properties": {str(iri): _dump_property(model[iri]) for iri in model.get_propclasses()},
+    }
+
+
+def _direct_reification(con, project, ontology, lists, model=None, *, remove_unused=False):
+    """Resolve all requested definitions before direct model/list mutations."""
+    def read_project(prefix):
+        return _model_reification_yaml(DataModel.read(con, prefix, ignore_cache=True))
+    context = Context(name=con.context_name)
+    for prefix, spec in (ontology.get("external_ontologies") or {}).items():
+        context[prefix] = NamespaceIRI(spec["namespace"])
+    shapes, deleted = prepare_reification(ontology, _model_reification_yaml(model) if model else {},
+                                          remove_unused=remove_unused, read_project=read_project)
+    # Construct every merged definition now so invalid OLDAP field constraints
+    # fail before any definition is written.
+    built = {iri: _build_reifier_shape(con, project, iri, spec, lists) for iri, spec in shapes.items()}
+    return built, deleted
+
+
 def _build_datamodel(con: Connection, project: Project, ontology: dict[str, Any], lists: dict[str, OldapList]) -> DataModel:
     extontos = [
         _build_external_ontology(con, project, prefix, spec)
@@ -599,7 +640,10 @@ def _build_datamodel(con: Connection, project: Project, ontology: dict[str, Any]
         _build_resource_class(con, project, iri, spec, lists)
         for iri, spec in (ontology.get("classes") or {}).items()
     ]
-    return DataModel(con=con, project=project, extontos=extontos, propclasses=propclasses, resclasses=resclasses)
+    shapes = [_build_reifier_shape(con, project, iri, spec, lists)
+              for iri, spec in (ontology.get("reifier_shapes") or {}).items() if spec is not None]
+    return DataModel(con=con, project=project, extontos=extontos, propclasses=propclasses,
+                     resclasses=resclasses, reifier_shapes=shapes)
 
 
 def _values_equal(current: Any, desired: Any) -> bool:
@@ -624,7 +668,7 @@ def _set_attr(obj: Any, attr: Any, value: Any) -> None:
 def _property_constructor_key(attr: PropClassAttr) -> str:
     """Return the normalized constructor key for an OLDAP property attribute."""
     fragment = attr.value.fragment
-    return {"class": "toClass", "in": "inSet"}.get(fragment, fragment)
+    return {"class": "toClass", "in": "inSet", "reifierShape": "reifierShapes"}.get(fragment, fragment)
 
 
 def _sync_property(existing: PropertyClass, desired_spec: dict[str, Any], lists: dict[str, OldapList]) -> None:
@@ -676,9 +720,29 @@ def _apply_update(con: Connection, project: Project, ontology: dict[str, Any], l
     try:
         model = DataModel.read(con, project, ignore_cache=True)
     except OldapErrorNotFound:
-        model = DataModel(con=con, project=project)
+        model = _build_datamodel(con, project, ontology, lists)
+        _direct_reification(con, project, ontology, lists, remove_unused=remove_unused)
         model.create()
-        model = DataModel.read(con, project, ignore_cache=True)
+        return
+
+    shapes, deleted = _direct_reification(con, project, ontology, lists, model, remove_unused=remove_unused)
+    for iri in ontology.get("reifier_shapes", {}):
+        key = Xsd_QName(iri)
+        existing = model.reifier_shapes.get(key)
+        if iri in deleted:
+            if existing is not None:
+                del model[key]
+        elif existing is None:
+            model[key] = shapes[iri]
+        else:
+            wanted = shapes[iri]
+            for field_iri in list(existing.properties):
+                if field_iri not in wanted.properties:
+                    del existing[field_iri]
+            for field_iri, field in wanted.properties.items():
+                previous = existing.properties.get(field_iri)
+                if previous is None or _dump_property(previous) != _dump_property(field):
+                    existing[field_iri] = field
 
     for prefix, spec in (ontology.get("external_ontologies") or {}).items():
         key = Xsd_QName(project.projectShortName, prefix)
@@ -742,6 +806,33 @@ def _backup_path(project_id: str) -> Path:
     return Path(f"{project_id}-model-backup-{stamp}.trig.gz")
 
 
+def _preflight_direct_ontology(con, ontology, base_dir, mode, remove_unused):
+    """Validate reification and list inputs before project/list/model writes."""
+    from types import SimpleNamespace
+    from oldap_tools.list_api import read_list_specs
+    if mode not in {"replace", "update"}:
+        raise ValueError(f'Unknown mode "{mode}"')
+    spec = ontology["project"]
+    try:
+        project = Project.read(con, spec["shortname"], ignore_cache=True)
+    except OldapErrorNotFound:
+        missing = [key for key in ("iri", "namespace", "start") if not spec.get(key)]
+        if missing:
+            raise ValueError(f'New project requires {", ".join(missing)}.')
+        project = Project(con=con, projectIri=spec["iri"], projectShortName=spec["shortname"],
+                          namespaceIri=NamespaceIRI(spec["namespace"]), projectStart=Xsd_date(str(spec["start"])))
+    list_specs = read_list_specs(base_dir, ontology.get("lists") or {})
+    lists = {name: SimpleNamespace(node_classIri=Xsd_QName(spec["shortname"], name + "Node"))
+             for name in list_specs}
+    model = None
+    if mode == "update":
+        try:
+            model = DataModel.read(con, project, ignore_cache=True)
+        except OldapErrorNotFound:
+            pass
+    _direct_reification(con, project, ontology, lists, model, remove_unused=remove_unused)
+
+
 def load_ontology(
     *,
     graphdb_base: str,
@@ -762,6 +853,7 @@ def load_ontology(
     require_supported_fulltext_import(ontology)
     con = _connect(graphdb_base, repo, user, password, graphdb_user, graphdb_password)
     try:
+        _preflight_direct_ontology(con, ontology, inf.parent, mode, remove_unused)
         project = _read_or_create_project(con, ontology["project"])
         if backup:
             out = backup_out or _backup_path(str(project.projectShortName))
@@ -809,7 +901,9 @@ def _plain(value: Any) -> Any:
         return str(value)
     if isinstance(value, (Xsd_integer, Xsd_decimal)):
         return int(value) if isinstance(value, Xsd_integer) else float(value)
-    if isinstance(value, set):
+    if isinstance(value, Xsd_boolean):
+        return bool(value)
+    if isinstance(value, (set, ObservableSet)):
         return sorted(_plain(x) for x in value)
     if hasattr(value, "toRdf"):
         return str(value)
@@ -985,6 +1079,18 @@ def dump_ontology(
         lists = _dump_taxonomies(con, project, out)
         if lists:
             doc["ontology"]["lists"] = lists
+    standalone = {}
+    for iri in model.get_propclasses():
+        prop = model[iri]
+        if prop.appliesToProperty:
+            raise ValueError(f'Legacy annotation target on {iri} is not representable in ontology YAML.')
+        item = _dump_property(prop)
+        item.pop("iri")
+        standalone[str(iri)] = item
+    if standalone:
+        doc["ontology"]["standalone_properties"] = standalone
+    if model.reifier_shapes:
+        doc["ontology"]["reifier_shapes"] = _model_reification_yaml(model)["reifier_shapes"]
     doc["ontology"]["classes"] = {}
     for qname in model.get_resclasses():
         doc["ontology"]["classes"][str(qname)] = _dump_resource(model[qname])

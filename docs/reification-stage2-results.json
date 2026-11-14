@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-14 00:53 Europe/Zurich",
+  "scope": "Local sibling sources; no publication or deployment",
+  "toolsTests": {
+    "passed": 199,
+    "subtestsPassed": 7,
+    "includesIntegrationCases": 6
+  },
+  "focusedLibraryApiTests": {
+    "passed": 84
+  },
+  "native": "Three integration cases repeated on isolated Jena TDB2; actual Flask views, no HTTP listener or live Redis",
+  "pythonNetworkConnections": "blocked during full tools acceptance",
+  "fusekiSha256": "2c92c598e65ab69d99820052e05f4277ed1d77980a8845f87545ad35b71a76ee",
+  "sourceSha256": {
+    "src/oldap_tools/ontology.py": "7393c87728674e83f9392fa9a4cf4f12c1ecdf4cdad3e872b2b0fe9c25873656",
+    "src/oldap_tools/ontology_api.py": "876a3a9bcf7daae5a982bd0fe2eccbe5ebd124ac2d2f8965ec3c4504c3479e11",
+    "src/oldap_tools/ontology_api_dump.py": "100b0b41c5db6ef3922352710d45fb9b4ebeb1b434713df2d9107f2b1f84a66a",
+    "src/oldap_tools/ontology_reification.py": "378eaca67e1e2f9758794bb6cc2c721c670569a024ecbeb0e22080e046ec19ca",
+    "src/oldap_tools/schemas/ontology_schema.yaml": "5bd889e3a2c2b0bb1c46e403eeee27cc0d4725b6bc2d6b2145ba6b6a89387c7b",
+    "examples/ontology/travel-reification.yaml": "0af126614e4fb4ed02d50a37209cde5ad55c6b27ea8f78fb465d74c580d14729",
+    "tests/test_ontology_reification.py": "77035581b9039a490cfccfecfb8374f81bb7984cfb6ee6636f58f96c33142820",
+    "tests/integration/test_reification_rdf.py": "b360bcf56bf09d1c84120b3a57fd92b7c34b557b9453509c342e82c23bdf6b0e",
+    "../oldaplib/oldaplib/src/model.py": "c6824a57945c73c226a37555df40195f44cd1a43043af45d982788d1a1ccb24f",
+    "../oldaplib/oldaplib/src/resourceclass.py": "8fd7e4a4eeb18b62b15d0820c7941c157ae5acf42fdd8a3b2b33508e1c637955",
+    "../oldap-api/oldap_api/views/datamodelling_views.py": "3ab2a436c0aa5e301ab891083930cdff11ba558a91d3ca93c19000e53d7f9f67"
+  }
+}

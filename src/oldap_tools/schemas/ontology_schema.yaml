@@ -4,6 +4,7 @@ ontology:
   project: include('project')
   lists: map(str(), any(), required=False)
   external_ontologies: map(str(), include('external_ontology'), required=False)
+  reifier_shapes: map(str(), any(include('reifier_shape'), null()), required=False)
   classes: map(str(), include('resource_class'), required=False)
   standalone_properties: map(str(), include('property'), required=False)
   fulltext: include('fulltext', required=False)
@@ -28,6 +29,9 @@ external_ontology:
   proposedDatatypePropertyClass: any(list(str()), null(), required=False)
   proposedObjectPropertyClass: any(list(str()), null(), required=False)
 
+reifier_shape:
+  properties: list(include('property'), required=False)
+
 resource_class:
   label: any(str(), list(str()), map(str(), any()), null(), required=False)
   comment: any(str(), list(str()), map(str(), any()), null(), required=False)
@@ -36,6 +40,8 @@ resource_class:
   properties: list(include('property'), required=False)
 
 property:
+  reifier_shapes: list(str(), required=False)
+  reification_required: any(bool(), null(), required=False)
   iri: str(required=False)
   subproperty_of: any(str(), null(), required=False)
   datatype: any(str(), null(), required=False)

@@ -1,0 +1,26 @@
+# Complete new-project input. Model definitions only; instance support is stage 3.
+ontology:
+  project:
+    shortname: travel
+    iri: https://example.org/projects/travel
+    namespace: https://example.org/travel/
+    start: '2026-01-01'
+    label: {en: Travel example}
+  classes:
+    travel:Travel:
+      label: {en: Travel}
+      properties:
+        - iri: travel:isAt
+          to_class: travel:GeographicLocation
+          reifier_shapes: [travel:VisitAnnotationShape]
+          reification_required: true
+    travel:GeographicLocation:
+      label: {en: Geographic location}
+  # Definition order is immaterial, including this reference preceding its shape.
+  reifier_shapes:
+    travel:VisitAnnotationShape:
+      properties:
+        - iri: travel:dateTime
+          datatype: xsd:dateTime
+          min_count: 1
+          max_count: 1

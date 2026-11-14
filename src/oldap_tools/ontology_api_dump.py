@@ -58,6 +58,29 @@ def _export_property(prop: dict, list_classes: dict[str, str]) -> dict:
     return result
 
 
+def reification_preflight_state(model: dict) -> dict:
+    """Map policies without requiring unrelated legacy fields to be exportable.
+
+    The public dump remains strict. Preflight preserves legacy annotation
+    targets solely to reject attempts to attach a new business policy to them.
+    """
+    def field(prop):
+        result = _export_property({key: value for key, value in prop.items()
+                                   if key not in {"type", "appliesToProperty"}}, {})
+        if prop.get("appliesToProperty"):
+            result["applies_to_property"] = prop["appliesToProperty"]
+        return result
+    return {
+        "reifier_shapes": {iri: {"properties": [_export_property(prop, {}) for prop in shape["properties"]]}
+                           for iri, shape in _index(model.get("reifierShapes", []), "iri", "reifier shape").items()},
+        "classes": {iri: {"superclass": spec.get("superclass", []),
+                           "properties": [field(prop) for prop in spec.get("properties", [])]}
+                    for iri, spec in _index(model.get("resources", []), "iri", "resource").items()},
+        "standalone_properties": {iri: field(prop) for iri, prop in
+                                  _index(model.get("annotationProperties", []), "iri", "standalone property").items()},
+    }
+
+
 def api_model_to_yaml(project: dict, model: dict, list_files: dict[str, str]) -> dict:
     """Map existing API representations to the canonical ontology YAML schema.
 
@@ -102,6 +125,12 @@ def api_model_to_yaml(project: dict, model: dict, list_files: dict[str, str]) ->
             item = _export_property(prop, list_classes)
             del item["iri"]
             ontology["standalone_properties"][iri] = item
+    shapes = _index(model.get("reifierShapes", []), "iri", "reifier shape")
+    if shapes:
+        ontology["reifier_shapes"] = {
+            iri: {"properties": [_export_property(prop, list_classes) for _, prop in sorted(
+                _index(shape.get("properties"), "iri", "annotation field").items())]}
+            for iri, shape in sorted(shapes.items())}
     ontology["classes"] = {}
     for iri, spec in sorted(_index(model.get("resources"), "iri", "resource").items()):
         item = {}
