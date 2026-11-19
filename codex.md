@@ -1,5 +1,7 @@
 # oldap-tools Project Context
 
+- Coordinated superproperty release published (2026-11-19): library 1.2.2 and tools 1.2.2 on PyPI; API 1.2.3/tools 1.2.2 AMD64+ARM64 images verified. Python subPropertyOf reads are sets; matching consumers required. 125 installed regressions per architecture and packaged Jena acceptance pass. No deployment or latest changes. Evidence: docs/release-1.2.2.md and receipt.
+
 - Coordinated superproperty release preparation (2026-11-19): library 1.2.2, API 1.2.3 and tools 1.2.2. Python parent reads are now sets; deploy matching consumers. See docs/release-1.2.2.md. Publication authorized, no deployment.
 
 - Predicate superproperties support scalar/list YAML inputs and complete list exports with the matching library. API replay compares parent sets, preserving singleton compatibility and avoiding order-only writes; see docs/ontology-yaml.md.
