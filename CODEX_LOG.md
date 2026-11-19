@@ -1,3 +1,9 @@
+### Update 2026-11-20 00:09
+- Decisions: Prepare coordinated patch 1.2.3 requiring oldaplib 1.2.3 for inherited-superproperty insertion; no contract or migration changes.
+- Implementation: Targeted lock refresh changes only oldaplib to 1.2.3; all third-party package entries are identical. Updated package/runtime/bump metadata, dependency minimum and release notes.
+- Open: Orchestrated release/image acceptance and deployment. Source tests passed: 201 tests and seven subtests, including native Jena roundtrips.
+- Risks/Assumptions: Third-party lock versions must remain unchanged; deployment is handled by the release coordinator.
+
 ### Update 2026-11-19 22:56
 - Decisions: Completed authorized coordinated publication; no deployment or frontend release. Keep Python getter compatibility change explicit.
 - Implementation: Pushed final tags/source; published and SHA-256 verified library/tools packages and accepted API/tools multiarch images. Added docs/release-1.2.2-results.json with exact source/image provenance.
