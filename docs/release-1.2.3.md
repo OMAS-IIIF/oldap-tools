@@ -14,3 +14,8 @@ Isolated source acceptance: all 201 tools tests and seven subtests pass using th
 fixed library source, including native Jena roundtrips on disposable local data.
 Network sockets are blocked; the Jena fixture uses owned subprocess pipes.
 Image acceptance and publication are separate release gates.
+
+Publication and production deployment completed on 2026-11-20. Source/tags,
+PyPI packages and AMD64/ARM64 images are verified. Only production API/identity
+changed; home and business data are unchanged. See the adjacent release-results
+JSON for exact digests, tests and rollback provenance.
