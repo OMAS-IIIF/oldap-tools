@@ -1,3 +1,15 @@
+### Update 2026-11-19 22:44
+- Decisions: User selected coordinated library/API/tools publication for set-valued superproperties; no deployment. Document Python getter compatibility break explicitly.
+- Implementation: Prepared release notes and consumer minimum versions. Library release targets distinguish RC finalization and isolate distributions by version; corrected stale LangString expectation. API serializer fixture now uses real local system/shared RDF and mocked caches; Create null contract matches runtime.
+- Open: Finish package/image validation, publish and record immutable receipts.
+- Risks/Assumptions: Existing service-backed legacy tests must not target live databases. Other clients need matching multiple-parent handling before use.
+
+### Update 2026-11-18 23:33
+- Decisions: Keep direct/API YAML imports and exports compatible with set-valued predicate superproperties.
+- Implementation: Accept scalar/list/null subproperty_of, normalize direct inputs to parent sets, and compare API singleton/array parents as unordered sets. Documented the contract and added isolated YAML/RDF export-import/replay regressions for single and multiple parents.
+- Open: Matching library/API/frontend changes must ship together; no release or deployment.
+- Risks/Assumptions: 85 focused offline tests and three subtests pass; five native Jena cases intentionally deselected. Existing dependency deprecation warnings remain. No live services contacted.
+
 ### Update 2026-11-15 00:14
 - Decisions: Completed authorized 1.2.1 publication; no deployment or latest-tag changes.
 - Implementation: Pushed source commits/tags; published and hash-verified PyPI packages and API/tools multiarch images. Recorded immutable digests and source IDs in docs/release-1.2.1-results.json.

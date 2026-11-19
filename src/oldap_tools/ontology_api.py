@@ -101,6 +101,11 @@ def _property_payload(spec: dict, project: str, list_ids: set[str], *, annotatio
 
 def _equal(key: str, desired: Any, current: Any) -> bool:
     """Compare API snapshots without rewriting unordered language/set values."""
+    if key == "subPropertyOf":
+        # Direct YAML exports use arrays; HTTP keeps singleton strings for compatibility.
+        def parents(value):
+            return {value} if isinstance(value, str) else set(value or [])
+        return parents(desired) == parents(current)
     if key == "editor":
         # YAML accepts enum names and DASH aliases; compare the same canonical
         # identifiers returned by the API, while keeping explicit null distinct.

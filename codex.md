@@ -1,5 +1,9 @@
 # oldap-tools Project Context
 
+- Coordinated superproperty release preparation (2026-11-19): library 1.2.2, API 1.2.3 and tools 1.2.2. Python parent reads are now sets; deploy matching consumers. See docs/release-1.2.2.md. Publication authorized, no deployment.
+
+- Predicate superproperties support scalar/list YAML inputs and complete list exports with the matching library. API replay compares parent sets, preserving singleton compatibility and avoiding order-only writes; see docs/ontology-yaml.md.
+
 - Release 1.2.0 live on home (2026-11-14): Reification is merged/tagged/pushed; oldaplib is on PyPI and API/tools AMD64+ARM64 images are published. Home API/library and tools selection use 1.2.0; nine additive ontology triples verified. Only API/identity restarted; Jena 1.1.0 and production unchanged. Use setup releases/home-1.2.0.json for subsequent home updates. Evidence/rollback: docs/release-1.2.0.md and receipt.
 
 - Release 1.2.0 preparation (2026-11-14): Reviewed reification stages 1–4 are merged into main. Coordinated package/image publication and home.org deployment are authorized and in progress; consumers require library >=1.2.0. Production is unchanged.

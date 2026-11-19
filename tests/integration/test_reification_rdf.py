@@ -203,3 +203,34 @@ def test_direct_invalid_reference_precedes_project_or_list_writes(store, tmp_pat
                           backup=False, backup_out=None)
         project_writer.assert_not_called()
         list_writer.assert_not_called()
+
+
+@pytest.mark.parametrize('parents', ['dcterms:coverage', ['dcterms:coverage', 'dc:coverage']])
+def test_superproperty_direct_yaml_rdf_roundtrip_and_replay(store, tmp_path, parents):
+    from oldap_tools.ontology import _build_property, _dump_property, _sync_property
+    from oldaplib.src.reifier_shape import ReifierShape
+
+    con, project, _ = store
+    spec = {'iri': 'travel:temporal', 'datatype': 'xsd:string', 'subproperty_of': parents}
+    prop = _build_property(con, project, spec, {})
+    shape = ReifierShape(con=con, project=project, shape_iri='travel:TemporalShape', properties=[prop])
+    shape.create()
+    shape = ReifierShape.read(con, project, 'travel:TemporalShape')
+    loaded = shape['travel:temporal']
+    expected = sorted([parents] if isinstance(parents, str) else parents)
+    assert sorted(str(parent) for parent in loaded.subPropertyOf) == expected
+    _sync_property(loaded, spec, {})
+    assert not loaded.changeset
+    exported = _dump_property(loaded)
+    path = tmp_path / 'exported-parents.yaml'
+    path.write_text(yaml.safe_dump({'ontology': {'project': {'shortname': 'travel'},
+        'standalone_properties': {'travel:temporal': exported}}}), encoding='utf-8')
+    imported = _read_yaml(path)['standalone_properties']['travel:temporal']
+    assert imported['subproperty_of'] == expected
+    _sync_property(loaded, imported, {})
+    assert not loaded.changeset
+    imported['max_count'] = 2
+    _sync_property(loaded, imported, {})
+    shape.update()
+    reloaded = ReifierShape.read(con, project, 'travel:TemporalShape')['travel:temporal']
+    assert sorted(str(parent) for parent in reloaded.subPropertyOf) == expected

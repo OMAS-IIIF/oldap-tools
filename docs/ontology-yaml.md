@@ -131,6 +131,13 @@ standalone_properties:
       en: Archive object title
 ```
 
+`subproperty_of` accepts one IRI string or a complete list of parent IRIs, including
+multiple imported parents. Direct exports use lists; API exports may retain a
+singleton string. Parent order does not cause an API update on reimport. Omission
+preserves existing parents during incremental import; null or an empty list clears
+them explicitly. The same syntax applies to reifier fields, and library ownership
+checks still protect foreign predicate hierarchies.
+
 Common property keys:
 
 - `iri`

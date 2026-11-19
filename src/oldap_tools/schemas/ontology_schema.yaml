@@ -43,7 +43,7 @@ property:
   reifier_shapes: list(str(), required=False)
   reification_required: any(bool(), null(), required=False)
   iri: str(required=False)
-  subproperty_of: any(str(), null(), required=False)
+  subproperty_of: any(str(), list(str()), null(), required=False)
   datatype: any(str(), null(), required=False)
   to_class: any(str(), null(), required=False)
   node_kind: any(str(), null(), required=False)

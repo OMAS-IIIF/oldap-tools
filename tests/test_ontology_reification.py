@@ -163,3 +163,48 @@ def test_protected_omitted_property_still_prevents_shape_deletion():
            'reifier_shapes': {'demo:VisitShape': None}}
     with pytest.raises(ValueError, match='Unknown or deleted'):
         plan_ontology_api(ReadClient(snapshot), doc, {}, remove_unused=True)
+
+
+@pytest.mark.parametrize('parents', ['dcterms:coverage', ['dcterms:coverage'],
+                                    ['dcterms:coverage', 'dc:coverage']])
+def test_superproperty_yaml_export_import_roundtrip(tmp_path, parents):
+    import yaml
+    from oldaplib.src.helpers.observable_set import ObservableSet
+    from oldaplib.src.enums.propertyclassattr import PropClassAttr
+    from oldaplib.src.xsd.iri import Iri
+    from types import SimpleNamespace
+
+    # Real exports serialize the library's set-valued attribute, even for one parent.
+    expected = sorted([parents] if isinstance(parents, str) else parents)
+    prop = SimpleNamespace(property_class_iri='demo:temporal', _attributes={
+        PropClassAttr.SUBPROPERTY_OF: ObservableSet({Iri(parent) for parent in expected})})
+    exported = _dump_property(prop)
+    assert exported['subproperty_of'] == expected
+    doc = {'ontology': {'project': {'shortname': 'demo'}, 'standalone_properties': {
+        'demo:temporal': {'datatype': 'xsd:string', 'subproperty_of': parents}}}}
+    path = tmp_path / 'parents.yaml'
+    path.write_text(yaml.safe_dump(doc), encoding='utf-8')
+    imported = _read_yaml(path)
+    kwargs = _property_kwargs(imported['standalone_properties']['demo:temporal'], {})
+    # Both input forms normalize to the complete set expected by direct updates.
+    assert sorted(str(value) for value in kwargs['subPropertyOf']) == expected
+    doc['ontology']['standalone_properties']['demo:temporal'].update(exported)
+    path.write_text(yaml.safe_dump(doc), encoding='utf-8')
+    assert _read_yaml(path)['standalone_properties']['demo:temporal']['subproperty_of'] == expected
+
+
+@pytest.mark.parametrize('parents', ['dcterms:coverage', ['dcterms:coverage', 'dc:coverage']])
+def test_api_superproperty_export_reimport_is_noop(tmp_path, parents):
+    import yaml
+
+    snapshot = deepcopy(MODEL)
+    snapshot['resources'][0]['properties'][0]['subPropertyOf'] = parents
+    doc = api_model_to_yaml(PROJECT, snapshot, {})
+    path = tmp_path / 'api-parents.yaml'
+    path.write_text(yaml.safe_dump(doc), encoding='utf-8')
+    parsed = _read_yaml(path)
+    field = parsed['classes']['demo:Book']['properties'][0]
+    # Direct exports normalize singletons to lists; order is never semantic.
+    field['subproperty_of'] = [parents] if isinstance(parents, str) else list(reversed(parents))
+    assert plan_ontology_api(ReadClient(snapshot), parsed, {}).operations == []
+    assert _changes({'subPropertyOf': []}, {'subPropertyOf': parents}) == {'subPropertyOf': []}

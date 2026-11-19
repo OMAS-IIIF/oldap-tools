@@ -32,6 +32,7 @@ from oldaplib.src.resourceclass import ResourceClass
 from oldaplib.src.reifier_shape import ReifierShape
 from oldaplib.src.xsd.xsd_boolean import Xsd_boolean
 from oldaplib.src.helpers.observable_set import ObservableSet
+from oldaplib.src.helpers.predicate_definition import superproperty_set
 from oldaplib.src.xsd.xsd_date import Xsd_date
 from oldaplib.src.xsd.xsd_decimal import Xsd_decimal
 from oldaplib.src.xsd.xsd_integer import Xsd_integer
@@ -188,6 +189,8 @@ def _property_kwargs(spec: dict[str, Any], lists: dict[str, OldapList]) -> dict[
             continue
         key = PROP_KEY_MAP.get(yaml_key, yaml_key)
         match key:
+            case "subPropertyOf":
+                kwargs[key] = superproperty_set(value)
             case "datatype":
                 kwargs[key] = _as_datatype(value)
             case "toClass":
